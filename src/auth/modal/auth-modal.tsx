@@ -61,7 +61,7 @@ const AuthModal = ({ token, onClose }: AuthModalProps) => {
 
         {/* Close Button */}
         <button
-          onClick={()=> navigate("/auth/create-account")}
+          onClick={()=> navigate("/auth/auth-layout/super-admin")}
           className="bg-[#8000BD] text-white font-semibold py-3 px-20 rounded-md hover:bg-[#6e00a3] transition cursor-pointer"
         >
           Close
