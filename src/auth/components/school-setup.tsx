@@ -4,8 +4,18 @@ import { IoIosArrowBack } from "react-icons/io";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { schoolSetupSchema } from "../auth-schema";
 import { useNavigate } from "react-router-dom";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, type Resolver, type SubmitHandler } from "react-hook-form";
 import Upload from "../../assets/image/upload.png";
+
+
+type FormValues = {
+  email: string;
+  number: string;
+  token: string;
+  prefix: string;
+  logo?: FileList | null;
+  stamp?: FileList | null;
+};
 
 export default function SchoolSetup() {
   const navigate = useNavigate();
@@ -17,8 +27,16 @@ export default function SchoolSetup() {
     formState: { errors },
     setValue,
     control,
-  } = useForm({
-    resolver: yupResolver(schoolSetupSchema),
+  } = useForm<FormValues>({
+    resolver: yupResolver(schoolSetupSchema) as Resolver<FormValues>,
+    defaultValues: {
+      email: "",
+      number: "",
+      token: "",
+      prefix: "",
+      logo: null,
+      stamp: null,
+    },
   });
 
     // Watch all form fields
@@ -46,20 +64,17 @@ export default function SchoolSetup() {
     { id: 6, label: "" },
   ];
 
-  interface SchoolsetupFormData {
-    number: string;
-    email: string;
-    token: string;
-    prefix: string;
-    logo: File | null;
-    stamp?: File | null;
-  }
-
-  const onSubmit = async (data: SchoolsetupFormData) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
     try {
-      console.log("Form data submitted:", data);
-      // Add your API call or form processing here
+      // Convert FileList to File objects
+      const formData = {
+        ...data,
+        logo: data.logo?.[0] || null,
+        stamp: data.stamp?.[0] || null,
+      };
+
+      console.log("Form data submitted:", formData);
       await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("");
     } catch (error) {
@@ -68,11 +83,12 @@ export default function SchoolSetup() {
       setIsLoading(false);
     }
   };
+  
   return (
     <div className="rounded-r-2xl backdrop-blur-md px-2">
       {/* Stepper */}
       <div className="mt-5">
-        <Stepper steps={steps} currentStep={1} />
+        <Stepper steps={steps} currentStep={currentStep} />
       </div>
 
       {/* Back Button */}
@@ -146,7 +162,7 @@ export default function SchoolSetup() {
           <div className="input-group relative my-4">
             <input
               {...register("number")}
-              type="number"
+              type="text"
               name="number"
               id="number"
               required
@@ -272,18 +288,20 @@ export default function SchoolSetup() {
             <div className="flex justify-center">
               <img src={Upload} alt="Upload icon" />
             </div>
-            <p className="text-[#545454]">
-              Upload your school logo here
-            </p>
+            <p className="text-[#545454]">Upload your school logo here</p>
             <p className="text-[#BBC0C8] text-xs">
               (Only *.jpeg, *.webp and *.png images will be accepted)
             </p>
             {/* hidden file input */}
             <input
+              {...register("logo")}
               type="file"
               id="logoUpload"
               accept=".jpeg,.webp,.png"
               className="hidden"
+              onChange={(e) => {
+                setValue("logo", e.target.files);
+              }}
             />
           </label>
         </div>
@@ -291,24 +309,26 @@ export default function SchoolSetup() {
         {/* Upload School Stamp */}
         <div className="">
           <label
-            htmlFor="logoUpload"
+            htmlFor="stampUpload"
             className="bg-white rounded-md p-3 text-center border-2 border-gray-300 cursor-pointer block"
           >
             <div className="flex justify-center">
               <img src={Upload} alt="Upload icon" />
             </div>
-            <p className="text-[#545454]">
-              Upload your school stamp here
-            </p>
+            <p className="text-[#545454]">Upload your school stamp here</p>
             <p className="text-[#BBC0C8] text-xs">
               (Only *.jpeg, *.webp and *.png images will be accepted)
             </p>
             {/* hidden file input */}
             <input
+              {...register("stamp")}
               type="file"
-              id="logoUpload"
+              id="stampUpload"
               accept=".jpeg,.webp,.png"
               className="hidden"
+              onChange={(e) => {
+                setValue("stamp", e.target.files);
+              }}
             />
           </label>
         </div>

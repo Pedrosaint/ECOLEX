@@ -37,31 +37,24 @@ export const superAdminSchema = Yup.object().shape({
 
 
 // Schema for school setup form++++++++++++++++++++++++++++
+
 export const schoolSetupSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("Invalid email")
-    .required("Email is required")
-    .notOneOf(
-      [REGISTERED_USER.email],
-      "Email must be different from the registered one"
-    ),
-
-  token: Yup.string()
-    .required("Token is required")
-    .test("Token can only be used once", (value) => {
-      // Replace with your logic to check if token was already used (e.g., API call)
-      return !usedTokens.includes(value); // Assume `usedTokens` is an array of spent tokens
+  email: Yup.string().email().required("Email is required"),
+  number: Yup.string().required("Phone number is required"),
+  token: Yup.string().required("Address is required"),
+  prefix: Yup.string().required("Prefix is required"),
+  logo: Yup.mixed<FileList>()
+    .required("Logo is required")
+    .test("fileType", "Only images are accepted", (value) => {
+      if (!value || value.length === 0) return false;
+      const file = value[0];
+      return ["image/jpeg", "image/png", "image/webp"].includes(file.type);
     }),
-
-    number: Yup.string()
-    .required("Phone number is required"),
-
-    prefix: Yup.string()
-    .required("Prefix is required"),
-
-    // logo: Yup.mixed()
-    // .required("Logo is required"),
-
-    // stamp: Yup.mixed()
-    // .required("Stamp is required"),
-})
+  stamp: Yup.mixed<FileList>()
+    .required("Stamp is required")
+    .test("fileType", "Only images are accepted", (value) => {
+      if (!value || value.length === 0) return false;
+      const file = value[0];
+      return ["image/jpeg", "image/png", "image/webp"].includes(file.type);
+    }),
+});
