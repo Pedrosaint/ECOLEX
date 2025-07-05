@@ -40,21 +40,45 @@ export const superAdminSchema = Yup.object().shape({
 
 export const schoolSetupSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required"),
+
   number: Yup.string().required("Phone number is required"),
+
   token: Yup.string().required("Address is required"),
+  
   prefix: Yup.string().required("Prefix is required"),
-  logo: Yup.mixed<FileList>()
+
+  logo: Yup.mixed()
     .required("Logo is required")
+    .nullable()
+    .notRequired()
     .test("fileType", "Only images are accepted", (value) => {
-      if (!value || value.length === 0) return false;
+      if (!value || !(value instanceof FileList) || value.length === 0)
+        return false;
       const file = value[0];
-      return ["image/jpeg", "image/png", "image/webp"].includes(file.type);
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
+      const validExtensions = [".jpeg", ".jpg", ".png", ".webp"];
+
+      return (
+        validTypes.includes(file.type) ||
+        validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext))
+      );
     }),
-  stamp: Yup.mixed<FileList>()
-    .required("Stamp is required")
+
+
+  stamp: Yup.mixed()
+    .required("stamp is required")
+    .nullable()
+    .notRequired()
     .test("fileType", "Only images are accepted", (value) => {
-      if (!value || value.length === 0) return false;
+      if (!value || !(value instanceof FileList) || value.length === 0)
+        return false;
       const file = value[0];
-      return ["image/jpeg", "image/png", "image/webp"].includes(file.type);
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
+      const validExtensions = [".jpeg", ".jpg", ".png", ".webp"];
+
+      return (
+        validTypes.includes(file.type) ||
+        validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext))
+      );
     }),
 });
