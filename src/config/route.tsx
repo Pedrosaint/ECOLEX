@@ -5,6 +5,7 @@ import SharedLayout from "../auth/components/auth-layout";
 import { SuperAdminForm } from "../auth/components/super-admin-form";
 import SchoolSetup from "../auth/components/school-setup";
 import InputCampus from "../auth/components/input-campus";
+import CustomizeSchoolName from "../auth/components/customize-school-name";
 
 export default function appRouter(): RouteObject[] {
     return [
@@ -37,6 +38,10 @@ export default function appRouter(): RouteObject[] {
           {
             path: "input-campus",
             element: <InputCampus />,
+          },
+          {
+            path: "customize-school-name",
+            element: <CustomizeSchoolName />,
           }
         ],
     },
