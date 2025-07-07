@@ -6,7 +6,9 @@ interface Assessment {
   maxScore: string;
 }
 
-interface ContinuousAssessmentModalProps {
+
+export interface ContinuousAssessmentModalProps {
+  selectedClasses: string[];
   onClose: () => void;
   onSubmit: (assessments: Assessment[]) => void;
 }

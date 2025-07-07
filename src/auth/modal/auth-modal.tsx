@@ -44,7 +44,7 @@ const AuthModal = ({ token, onClose }: AuthModalProps) => {
         {/* Token Box */}
         <div className="relative bg-white border border-gray-300 rounded-md px-4 py-3 mb-6">
           {/* Centered Token Text */}
-          <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 font-medium text-gray-800">
+          <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 font-medium text-[13px] md:text-lg  text-gray-800">
             {token}
           </span>
 
@@ -52,7 +52,7 @@ const AuthModal = ({ token, onClose }: AuthModalProps) => {
           <div className="flex justify-end">
             <button
               onClick={handleCopy}
-              className="text-[#8000BD] font-medium text-sm cursor-pointer"
+              className="text-[#8000BD] font-medium md:text-sm text-[10px] cursor-pointer"
             >
               {copied ? "Copied!" : "Copy token"}
             </button>

@@ -87,15 +87,15 @@ const InputCampus = () => {
     <section className="h-screen bg-gray-100 relative">
       {/* Auth Modal */}
 
-      <div className="relative p-2">
+      <div className="relative p-2 animate-bounce pt-6">
         <img src={Logo} alt=" " />
         <p className="absolute top-5 left-22 text-[#313131] text-3xl font-semibold">
           COLEX
         </p>
       </div>
 
-      <div className="py-10">
-        <div className="mx-auto max-w-2xl px-20 bg-[#FFFFFF] rounded-xl shadow-md space-y-20">
+      <div className="py-10 px-5 md:px-0">
+        <div className="md:mx-auto md:max-w-2xl md:px-20 px-10 bg-[#FFFFFF] rounded-xl shadow-md space-y-20">
           <div className="text-center pt-10">
             <button
               onClick={() => navigate("/auth/auth-layout/school-setup")}
@@ -105,7 +105,7 @@ const InputCampus = () => {
               <span className="text-[12px]">Back to school setup</span>
             </button>
 
-            <h1 className="text-3xl font-bold text-[#313131]">Campus</h1>
+            <h1 className="text-3xl font-bold text-[#313131] pt-2">Campus</h1>
             <p className="text-md text-gray-600 mb-6">
               Input number of campuses.
             </p>
@@ -114,8 +114,8 @@ const InputCampus = () => {
           <input
             type="number"
             min="1"
-            className="w-full px-3 py-2 text-gray-600 text-center bg-[#D9D9D9] border border-[#D9D9D9] rounded-sm outline-none"
-            placeholder=" "
+            className="w-full px-3 py-2 text-gray-600 text-center border border-[#D9D9D9] rounded-sm outline-none"
+            placeholder="Input number of campuses"
             onChange={handleInputChange}
           />
 

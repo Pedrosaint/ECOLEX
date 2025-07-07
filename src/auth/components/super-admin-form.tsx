@@ -10,22 +10,15 @@ export const SuperAdminForm = () => {
     const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  console.log(
-    "Initial state - isLoading:",
-    isLoading,
-    "showPassword:",
-    showPassword
-  );
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
+    mode: "onChange",
     resolver: yupResolver(superAdminSchema),
   });
-
-  console.log("Form errors:", errors);
 
   interface SuperAdminFormData {
     name: string;
@@ -37,36 +30,23 @@ export const SuperAdminForm = () => {
   const onSubmit = async (data: SuperAdminFormData) => {
     console.log("Form submission started with data:", data);
     setIsLoading(true);
-    console.log("Loading state set to true");
 
     try {
-      console.log("Attempting form submission...");
-
       // Simulate API call
       await new Promise((resolve) => {
-        console.log("Starting timeout simulation...");
         setTimeout(() => {
-          console.log("Timeout completed");
           resolve(null);
         }, 1000);
       });
-
-      console.log("Attempting navigation to /auth/auth-layout/school-setup");
       navigate("/auth/auth-layout/school-setup");
-      console.log("Navigate function called - check if this executes");
     } catch (error) {
-      console.error("Submission error:", error);
     } finally {
-      console.log("Submission process completed");
       setIsLoading(false);
-      console.log("Loading state set to false");
     }
   };
 
-  console.log("Rendering form...");
-
   return (
-    <div className="rounded-r-2xl backdrop-blur-md px-4">
+    <div className="md:rounded-r-2xl backdrop-blur-md px-4 md:px-0 pb-5 lg:pb-0 pt-2 md:pt-0 rounded-xl">
       <div className="mt-15">
         <h2 className="text-3xl font-bold text-gray-50">Super Admin</h2>
         <p className="text-[12px] text-[#FFFFFF]">
@@ -75,10 +55,7 @@ export const SuperAdminForm = () => {
       </div>
 
       <div className="mt-6">
-        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              console.log("Enter key pressed in form");
-            }}}>
+        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Name */}
           <div className="">
             <div className="input-group relative my-4">
@@ -220,15 +197,6 @@ export const SuperAdminForm = () => {
                 required
                 className="w-full px-3 py-2 text-white border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-200 peer"
                 placeholder=" "
-                // style={
-                //   !showPassword
-                //     ? ({
-                //         fontFamily: "monospace",
-                //         WebkitTextSecurity: "disc",
-                //         textSecurity: "asterisk",
-                //       } as any)
-                //     : {}
-                // }
               />
               <label
                 htmlFor="password"
@@ -262,7 +230,7 @@ export const SuperAdminForm = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="text-[#FF8682] text-xs -mt-3 flex justify-end">
+              <p className="text-[#FF8682] text-xs mt-2 flex justify-end">
                 {errors.password.message}
               </p>
             )}

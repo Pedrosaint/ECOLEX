@@ -1,5 +1,16 @@
 import * as Yup from "yup";
 
+
+export const registerSchema = Yup.object().shape({
+  email: Yup.string()
+  .required("School email is required"),
+
+  name: Yup.string()
+    .required("School name is required"),
+ 
+});
+
+
 // Mock registered user data (replace with your actual data)
 const REGISTERED_USER = {
   email: "admin@gmail.com",

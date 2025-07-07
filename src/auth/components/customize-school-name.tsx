@@ -4,66 +4,58 @@ import { useNavigate } from "react-router-dom";
 import { BsChevronExpand } from "react-icons/bs";
 import { useAppDispatch } from "../../hooks/typed.hooks";
 import { setSchoolStages } from "../../auth/redux/school-slice";
-
-const EearlyEducationDropdown = [
-  "Creche",
-  "Daycare",
-  "Nursery",
-  "Kindergarten",
-  "Montessori",
-  "Pre-K",
-  "KG (KG1, KG2)",
-  "Early Years",
-  "Foundation Stage",
-  "Reception",
-];
-
-const PrimaryDropdown = [
-    "Basic (Basic 1-6)",
-    "Primary (Primary 1-6)",
-    "Elementary (Grade 1-6)",
-    "Lower Primary / Upper Primary",
-    "Key Stage 1 & 2",
-    "Grade School",
-];
-
-const JuniorSecondaryDropdown = [
-    "Junior Secondary",
-    "Junior High",
-    "Middle School (Grades 6-8)",
-    "College 1-3",
-    "Basic 7-9",
-];
-
-const SeniorSecondaryDropdown = [
-    "SS (SS 1-3)",
-    "SSS",
-    "SHS (Senior High School)",
-    "College 4-6",
-    "Grade 10-12",
-    "High School",
-];
+import { EearlyEducationDropdown, PrimaryDropdown, JuniorSecondaryDropdown, SeniorSecondaryDropdown } from "../dropdown-data";
+import { usePreviewText } from "../hooks/auth.hook";
 
 
 export default function CustomizeSchoolName() {
     const navigate = useNavigate();
-    const [isEarlyEducationActive, setIsEarlyEducationActive] = useState(false);
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [selectedEarlyName, setSelectedEarlyName] = useState<string | null>(null);
-
-    const [isPrimaryActive, setIsPrimaryActive] = useState(false);
     const [isPrimaryDropdownOpen, setIsPrimaryDropdownOpen] = useState(false);
-    const [selectedPrimayName, setSelectedPrimayName] = useState<string | null>(null);
-
-    const [isJuniorSecondaryActive, setIsJuniorSecondaryActive] = useState(false);
     const [isJuniorSecondaryDropdownOpen, setIsJuniorSecondaryDropdownOpen] = useState(false);
-    const [selectedJuniorSecondaryName, setSelectedJuniorSecondaryName] = useState<string | null>(null);
- 
-
-    const [isSeniorSecondaryActive, setIsSeniorSecondaryActive] = useState(false);
     const [isSeniorSecondaryDropdownOpen, setIsSeniorSecondaryDropdownOpen] = useState(false);
-    const [selectedSeniorSecondaryName, setSelectedSeniorSecondaryName] = useState<string | null>(null);
 
+    const {
+      isEarlyEducationActive,
+      setIsEarlyEducationActive,
+      selectedEarlyName,
+      setSelectedEarlyName,
+      earlyStartLevel,
+      setEarlyStartLevel,
+      earlyEndLevel,
+      setEarlyEndLevel,
+
+      isPrimaryActive,
+      setIsPrimaryActive,
+      selectedPrimaryName,
+      setSelectedPrimaryName,
+      primaryStartLevel,
+      setPrimaryStartLevel,
+      primaryEndLevel,
+      setPrimaryEndLevel,
+
+      isJuniorSecondaryActive,
+      setIsJuniorSecondaryActive,
+      selectedJuniorSecondaryName,
+      setSelectedJuniorSecondaryName,
+      juniorStartLevel,
+      setJuniorStartLevel,
+      juniorEndLevel,
+      setJuniorEndLevel,
+
+      isSeniorSecondaryActive,
+      setIsSeniorSecondaryActive,
+      selectedSeniorSecondaryName,
+      setSelectedSeniorSecondaryName,
+      seniorStartLevel,
+      setSeniorStartLevel,
+      seniorEndLevel,
+      setSeniorEndLevel,
+
+      generatePreviewText,
+    } = usePreviewText();
+    
   const handleBackToCampus = () => {
     navigate("/auth/input-campus");
     };
@@ -77,13 +69,17 @@ export default function CustomizeSchoolName() {
         activatedStages.push({
           type: "early" as const,
           name: selectedEarlyName,
+          start: earlyStartLevel,
+          end: earlyEndLevel,
         });
       }
 
-      if (isPrimaryActive && selectedPrimayName) {
+      if (isPrimaryActive && selectedPrimaryName) {
         activatedStages.push({
           type: "primary" as const,
-          name: selectedPrimayName,
+          name: selectedPrimaryName,
+          start: primaryStartLevel,
+          end: primaryEndLevel,
         });
       }
 
@@ -91,6 +87,8 @@ export default function CustomizeSchoolName() {
         activatedStages.push({
           type: "junior" as const,
           name: selectedJuniorSecondaryName,
+          start: juniorStartLevel,
+          end: juniorEndLevel,
         });
       }
 
@@ -98,6 +96,8 @@ export default function CustomizeSchoolName() {
         activatedStages.push({
           type: "senior" as const,
           name: selectedSeniorSecondaryName,
+          start: seniorStartLevel,
+          end: seniorEndLevel,
         });
       }
 
@@ -106,7 +106,7 @@ export default function CustomizeSchoolName() {
     };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-15 py-10">
+    <div className="min-h-screen bg-gray-50 md:px-15 md:py-10 py-5 px-5">
       <div className="">
         {/* Back to campus link */}
         <button
@@ -124,7 +124,7 @@ export default function CustomizeSchoolName() {
           </h1>
 
           {/* Description */}
-          <p className="text-gray-600 text-sm mb-8 leading-relaxed">
+          <p className="text-gray-600 md:text-sm text-[12px] mb-8 leading-relaxed">
             Please configure how your school names and structures its class
             levels. You can customize each section to match your school's naming
             pattern
@@ -218,6 +218,8 @@ export default function CustomizeSchoolName() {
                 </label>
                 <input
                   type="text"
+                  value={earlyStartLevel}
+                  onChange={(e) => setEarlyStartLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
                 />
@@ -228,6 +230,8 @@ export default function CustomizeSchoolName() {
                 </label>
                 <input
                   type="text"
+                  value={earlyEndLevel}
+                  onChange={(e) => setEarlyEndLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
                 />
@@ -272,10 +276,10 @@ export default function CustomizeSchoolName() {
                 >
                   <span
                     className={
-                      selectedPrimayName ? "text-gray-700" : "text-gray-500"
+                      selectedPrimaryName ? "text-gray-700" : "text-gray-500"
                     }
                   >
-                    {selectedPrimayName || "Select naming style"}
+                    {selectedPrimaryName || "Select naming style"}
                   </span>
                   <BsChevronExpand size={20} className="text-gray-400" />
                 </button>
@@ -287,7 +291,7 @@ export default function CustomizeSchoolName() {
                           key={option}
                           className="w-full flex justify-between items-center px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => {
-                            setSelectedPrimayName(option);
+                            setSelectedPrimaryName(option);
                             setIsPrimaryDropdownOpen(false);
                           }}
                         >
@@ -296,12 +300,12 @@ export default function CustomizeSchoolName() {
                           {/* Selection indicator */}
                           <div
                             className={`w-4 h-4 rounded-full border mr-3 flex items-center justify-center ${
-                              selectedPrimayName === option
+                              selectedPrimaryName === option
                                 ? "border-[#8000BD] bg-[#8000BD]"
                                 : "border-gray-300"
                             }`}
                           >
-                            {selectedPrimayName === option && (
+                            {selectedPrimaryName === option && (
                               <div className="w-2 h-2 rounded-full bg-white"></div>
                             )}
                           </div>
@@ -321,6 +325,8 @@ export default function CustomizeSchoolName() {
                 </label>
                 <input
                   type="text"
+                  value={primaryStartLevel}
+                  onChange={(e) => setPrimaryStartLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
                 />
@@ -331,6 +337,8 @@ export default function CustomizeSchoolName() {
                 </label>
                 <input
                   type="text"
+                  value={primaryEndLevel}
+                  onChange={(e) => setPrimaryEndLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
                 />
@@ -434,6 +442,8 @@ export default function CustomizeSchoolName() {
                 </label>
                 <input
                   type="text"
+                  value={juniorStartLevel}
+                  onChange={(e) => setJuniorStartLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
                 />
@@ -444,6 +454,8 @@ export default function CustomizeSchoolName() {
                 </label>
                 <input
                   type="text"
+                  value={juniorEndLevel}
+                  onChange={(e) => setJuniorEndLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
                 />
@@ -547,6 +559,8 @@ export default function CustomizeSchoolName() {
                 </label>
                 <input
                   type="text"
+                  value={seniorStartLevel}
+                  onChange={(e) => setSeniorStartLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
                 />
@@ -557,6 +571,8 @@ export default function CustomizeSchoolName() {
                 </label>
                 <input
                   type="text"
+                  value={seniorEndLevel}
+                  onChange={(e) => setSeniorEndLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
                 />
@@ -568,16 +584,13 @@ export default function CustomizeSchoolName() {
         <div className="mt-5 text-[#120D1C]">
           <p className="font-semibold">Preview</p>
           <p className="text-sm">
-            Creche 1, Creche 2, Basic 1, Basic 2, Basic 3, Basic 4, Basic 5,
-            Basic 6, JSS 1, JSS 2, JSS 3, SS 1, SS 2, SS 3
+            {/* Creche 1-2, Basic 1-6, JSS 1-3, SS 1-3 */}
+            {generatePreviewText()}
           </p>
         </div>
 
-        <div
-          onClick={handleNextToCCA}
-          className="flex justify-center mt-10"
-        >
-          <button className="w-1/3 py-3.5 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors cursor-pointer">
+        <div onClick={handleNextToCCA} className="flex justify-center mt-10">
+          <button className="md:w-1/3 w-1/2 py-3.5 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors cursor-pointer">
             Next
           </button>
         </div>

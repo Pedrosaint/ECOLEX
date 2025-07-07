@@ -36,6 +36,7 @@ export default function SchoolSetup() {
     setValue,
     control,
   } = useForm<FormValues>({
+    mode: "onChange",
     resolver: yupResolver(schoolSetupSchema) as Resolver<FormValues>,
     defaultValues: {
       email: "",
@@ -137,7 +138,7 @@ export default function SchoolSetup() {
   };
 
   return (
-    <div className="rounded-r-2xl backdrop-blur-md px-2">
+    <div className="md:rounded-r-2xl backdrop-blur-md px-2 pb-1 md:pb-0 pt-1 md:pt-0 rounded-xl">
       {/* Stepper */}
       <div className="mt-5">
         <Stepper steps={steps} currentStep={currentStep} />
@@ -166,6 +167,7 @@ export default function SchoolSetup() {
         onSubmit={handleSubmit(onSubmit, (errors) =>
           console.error("Validation errors:", errors)
         )}
+        noValidate
       >
         {/* School Email ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/}
         <div className="">
@@ -246,11 +248,7 @@ export default function SchoolSetup() {
                 peer-focus:px-2
                 peer-focus:backdrop-blur-4xl"
             >
-              {errors.number ? (
-                <span className="text-[#FF8682]">School Phone Number</span>
-              ) : (
-                <span className="text-gray-400">School Phone Number</span>
-              )}
+              School Phone Number
             </label>
             {errors.number && (
               <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
