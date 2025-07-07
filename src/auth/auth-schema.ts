@@ -5,7 +5,7 @@ export const registerSchema = Yup.object().shape({
   email: Yup.string()
   .required("School email is required"),
 
-  name: Yup.string()
+  schoolName: Yup.string()
     .required("School name is required"),
  
 });
@@ -54,7 +54,7 @@ export const schoolSetupSchema = Yup.object().shape({
 
   number: Yup.string().required("Phone number is required"),
 
-  token: Yup.string().required("Address is required"),
+  address: Yup.string().required("Address is required"),
   
   prefix: Yup.string().required("Prefix is required"),
 

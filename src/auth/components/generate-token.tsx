@@ -4,27 +4,28 @@ import { useFormik } from "formik";
 import Logo from "../../assets/logo/logo.png";
 import AuthModal from "../modal/auth-modal";
 import { registerSchema } from "../auth-schema";
+import { useGenerateTokenMutation } from "../redux/auth-api";
 
 const GenerateToken = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [generateToken] = useGenerateTokenMutation();
 
   const formik = useFormik({
     initialValues: {
       email: "",
-      name: "",
+      schoolName: "",
     },
     validationSchema: registerSchema,
     onSubmit: async (values) => {
+      console.log("Submitting:", values); // Should show { email: "...", schoolName: "..." }
       setIsLoading(true);
       try {
-        // Simulate API call and token generation using form values
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log("Submitted values:", values);
-        const generatedToken = "ECLX-4021-ZA76";
-        setToken(generatedToken);
-        toast.success("Token generated successfully!");
+        const response = await generateToken(values).unwrap();
+        setToken(response.token);
+        toast.success(response.message || "Token generated successfully!");
       } catch (error) {
+        console.error("API Error:", error); // Log full error details
         toast.error("Failed to generate token");
       } finally {
         setIsLoading(false);
@@ -33,7 +34,7 @@ const GenerateToken = () => {
   });
 
   const handleCloseModal = () => {
-    setToken(null); // Close the modal
+    setToken(null);
   };
 
   return (
@@ -93,15 +94,15 @@ const GenerateToken = () => {
               <div className="flex items-center relative">
                 <input
                   type="text"
-                  name="name"
-                  id="name"
-                  value={formik.values.name}
+                  name="schoolName"
+                  id="schoolName"
+                  value={formik.values.schoolName}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   required
                   placeholder=""
                   className={`${
-                    formik.touched.name && formik.errors.name
+                    formik.touched.schoolName && formik.errors.schoolName
                       ? "border-red-500"
                       : ""
                   }`}
@@ -110,9 +111,9 @@ const GenerateToken = () => {
                   School Name
                 </label>
               </div>
-              {formik.touched.name && formik.errors.name && (
+              {formik.touched.schoolName && formik.errors.schoolName && (
                 <div className="text-red-500 flex justify-end text-xs mt-1">
-                  {formik.errors.name}
+                  {formik.errors.schoolName}
                 </div>
               )}
             </div>

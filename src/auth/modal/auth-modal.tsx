@@ -44,7 +44,7 @@ const AuthModal = ({ token, onClose }: AuthModalProps) => {
         {/* Token Box */}
         <div className="relative bg-white border border-gray-300 rounded-md px-4 py-3 mb-6">
           {/* Centered Token Text */}
-          <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 font-medium text-[13px] md:text-lg  text-gray-800">
+          <span className="absolute left-34 top-1/2 transform -translate-x-1/2 -translate-y-1/2 font-medium text-[13px] md:text-lg  text-gray-800">
             {token}
           </span>
 

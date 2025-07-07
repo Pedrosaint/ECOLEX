@@ -16,7 +16,7 @@ import { Upload, X, ImageIcon } from "lucide-react";
 type FormValues = {
   email: string;
   number: string;
-  token: string;
+  address: string;
   prefix: string;
   logo?: FileList | null;
   stamp?: FileList | null;
@@ -41,7 +41,7 @@ export default function SchoolSetup() {
     defaultValues: {
       email: "",
       number: "",
-      token: "",
+      address: "",
       prefix: "",
       logo: null,
       stamp: null,
@@ -58,7 +58,7 @@ export default function SchoolSetup() {
 
   useEffect(() => {
     if (formValues?.number && currentStep < 2) setCurrentStep(2);
-    if (formValues?.token && currentStep < 3) setCurrentStep(3);
+    if (formValues?.address && currentStep < 3) setCurrentStep(3);
     if (formValues?.prefix && currentStep < 4) setCurrentStep(4);
     if (formValues?.logo && currentStep < 5) setCurrentStep(5);
     if (formValues?.stamp && currentStep < 6) setCurrentStep(6);
@@ -68,7 +68,7 @@ export default function SchoolSetup() {
     // Update current step based on filled fields
     if (!formValues?.number) {
       setCurrentStep(1);
-    } else if (!formValues?.token) {
+    } else if (!formValues?.address) {
       setCurrentStep(2);
     } else if (!formValues?.prefix) {
       setCurrentStep(3);
@@ -262,16 +262,16 @@ export default function SchoolSetup() {
         <div className="">
           <div className="input-group relative">
             <input
-              {...register("token")}
+              {...register("address")}
               type="text"
-              name="token"
-              id="token"
+              name="address"
+              id="address"
               required
               className="w-full px-3 py-2 text-white border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-200 peer"
               placeholder=" "
             />
             <label
-              htmlFor="token"
+              htmlFor="address"
               className="absolute left-3 top-2 text-white text-sm transition-all 
                 peer-placeholder-shown:text-base 
                 peer-placeholder-shown:text-gray-300 
@@ -288,9 +288,9 @@ export default function SchoolSetup() {
             >
               School Address
             </label>
-            {errors.token && (
+            {errors.address && (
               <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
-                {errors.token.message}
+                {errors.address.message}
               </p>
             )}
           </div>
