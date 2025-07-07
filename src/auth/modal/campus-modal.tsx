@@ -141,7 +141,7 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
           <div>
             <h2 className="text-3xl font-semibold text-gray-800">Campus</h2>
             <p className="text-sm text-gray-500">
-              ({campusCount}) Number of
+              ({campusCount}) Number of {" "}
               {campusCount === 1 ? "campus" : "campuses"} inputted
             </p>
           </div>
