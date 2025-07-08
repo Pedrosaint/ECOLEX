@@ -21,9 +21,10 @@ export const SuperAdminForm = () => {
   });
 
   interface SuperAdminFormData {
+    role?: string;
     name: string;
     email: string;
-    token: string;
+    uniqueKey: string;
     password: string;
   }
 
@@ -55,7 +56,11 @@ export const SuperAdminForm = () => {
       </div>
 
       <div className="mt-6">
-        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form
+          className="space-y-5"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
           {/* Name */}
           <div className="">
             <div className="input-group relative my-4">
@@ -152,16 +157,16 @@ export const SuperAdminForm = () => {
           <div className="">
             <div className="input-group relative">
               <input
-                {...register("token")}
+                {...register("uniqueKey")}
                 type="text"
-                name="token"
-                id="token"
+                name="uniqueKey"
+                id="uniqueKey"
                 required
                 className="w-full px-3 py-2 text-white border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-200 peer"
                 placeholder=" "
               />
               <label
-                htmlFor="token"
+                htmlFor="uniqueKey"
                 className="absolute left-3 top-2 text-white text-sm transition-all 
                       peer-placeholder-shown:text-base 
                       peer-placeholder-shown:text-gray-300 
@@ -178,9 +183,9 @@ export const SuperAdminForm = () => {
               >
                 Token
               </label>
-              {errors.token && (
+              {errors.uniqueKey && (
                 <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
-                  {errors.token.message}
+                  {errors.uniqueKey.message}
                 </p>
               )}
             </div>
@@ -261,6 +266,11 @@ export const SuperAdminForm = () => {
               {isLoading ? "Creating..." : "Create Account"}
             </button>
           </div>
+          {/* Login Link */}
+          <p className="text-center text-gray-300 text-[13px] mt-5">
+            Already have an account?{" "}
+            <button className="text-[#C48ADF] cursor-pointer">Login</button>
+          </p>
         </form>
       </div>
     </div>

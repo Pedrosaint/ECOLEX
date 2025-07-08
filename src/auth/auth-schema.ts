@@ -35,7 +35,7 @@ export const superAdminSchema = Yup.object().shape({
       "Email must be different from the registered one"
     ),
 
-  token: Yup.string()
+  uniqueKey: Yup.string()
     .required("Token is required")
     .test("Token can only be used once", (value) => {
       return !usedTokens.includes(value); // Assume `usedTokens` is an array of spent tokens

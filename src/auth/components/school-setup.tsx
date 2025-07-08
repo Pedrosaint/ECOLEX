@@ -492,12 +492,6 @@ export default function SchoolSetup() {
         >
           {isLoading ? "Creating Account..." : "Create Account"}
         </button>
-
-        {/* Login Link */}
-        <p className="text-center text-gray-300 text-[13px] -mt-5 mb-4">
-          Already have an account?{" "}
-          <button className="text-[#C48ADF] cursor-pointer">Login</button>
-        </p>
       </form>
     </div>
   );
