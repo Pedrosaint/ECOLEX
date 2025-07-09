@@ -6,6 +6,11 @@ export interface TokenResponse {
 
 export interface AdminResponse {
   message: string;
+  data: Data;
+}
+
+export interface Data {
+  token: string;
   admin: Admin;
 }
 
@@ -42,10 +47,10 @@ export interface School {
 
 export interface AdminLoginResponse {
   message: string;
-  data: Data;
+  data: AdminLogin;
 }
 
-export interface Data {
+export interface AdminLogin {
   token: string;
   admin: Admin;
 }
@@ -62,3 +67,7 @@ export interface Admin {
   createdAt: string;
 }
   
+export interface CampusSetupResponse {
+  message: string;
+  campus: number;
+}

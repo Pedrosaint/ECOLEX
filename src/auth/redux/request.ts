@@ -18,3 +18,15 @@ export interface AdminLoginRequest {
   email: string;
   password: string;
 }
+
+export interface CampusSetupRequest {
+  school_id: number;
+  campuses: Campuse[];
+}
+
+export interface Campuse {
+  email: string;
+  name: string;
+  address: string;
+  phoneNumber: string;
+}

@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import schoolReducer from "../auth/redux/school-slice";
-import { authApi } from "../auth/redux/auth-api";
-import authRegistrationReducer  from "../auth/redux/auth-slice";
+import { authApi } from "../auth/api/auth-api";
+import authRegistrationReducer from "../auth/redux/auth-slice";
 
 export const store = configureStore({
   reducer: {
@@ -9,7 +9,7 @@ export const store = configureStore({
     authRegistration: authRegistrationReducer,
     [authApi.reducerPath]: authApi.reducer,
   },
-  
+
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(authApi.middleware),
 });

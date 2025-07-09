@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import Logo from "../../assets/logo/logo.png";
 import AuthModal from "../modal/auth-modal";
 import { registerSchema } from "../auth-schema";
-import { useGenerateTokenMutation } from "../redux/auth-api";
+import { useGenerateTokenMutation } from "../api/auth-api";
 // import { useAppDispatch } from "../../hooks/typed.hooks";
 // import { setRegistrationData } from "../redux/auth-slice";
 

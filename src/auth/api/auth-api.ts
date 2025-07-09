@@ -1,6 +1,17 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { AdminLoginResponse, AdminResponse, SchoolSetupResponse, TokenResponse } from "./response";
-import type { AdminLoginRequest, AdminRequest, TokenRequest } from "./request";
+import type {
+  AdminLoginResponse,
+  AdminResponse,
+  CampusSetupResponse,
+  SchoolSetupResponse,
+  TokenResponse,
+} from "../redux/response";
+import type {
+  AdminLoginRequest,
+  AdminRequest,
+  CampusSetupRequest,
+  TokenRequest,
+} from "../redux/request";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -23,14 +34,17 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
-    schoolSetup: builder.mutation<SchoolSetupResponse, FormData>({
-      query: (formData) => ({
+    schoolSetup: builder.mutation<
+      SchoolSetupResponse,
+      { formData: FormData; token: string }
+    >({
+      query: ({ formData, token }) => ({
         url: "school/setup",
         method: "POST",
         body: formData,
-        // headers: {
-        //   Authorization: `Bearer ${getToken()}`,
-        // },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }),
     }),
 
@@ -41,13 +55,26 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
+
+    setupCampus: builder.mutation<CampusSetupResponse, { credentials: CampusSetupRequest, token: string }>({
+      query: ({ credentials, token }) => ({
+        url: "setup/campus",
+        method: "POST",
+        body: credentials,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
+
+
   }),
 });
 
-export const { 
-    useGenerateTokenMutation, 
-    useCreateAdminMutation,
-    useSchoolSetupMutation,
-    useAdminLoginMutation,
-
+export const {
+  useGenerateTokenMutation,
+  useCreateAdminMutation,
+  useSchoolSetupMutation,
+  useAdminLoginMutation,
+  useSetupCampusMutation,
 } = authApi;

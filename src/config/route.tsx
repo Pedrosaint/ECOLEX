@@ -12,77 +12,77 @@ import { AdminLogin } from "../auth/components/admin-login";
 import { TeachersLogin } from "../auth/components/teachers-login";
 import { StudentLogin } from "../auth/components/student-login";
 import AdminLayout from "../layouts/admin-layout/admin-layout";
-
+import Overview from "../domain/admin-domain/view/overview";
 
 export default function appRouter(): RouteObject[] {
-    return [
+  return [
     // {
     //     path: "",
     //     // element: <Navigate to="/auth/generate-token" replace />,
     //     element: <Navigate to="/" replace />,
     // },
-    // {
-    //     path: "",
-    //     element: <UsersLogin />,
-    // },
-    {
-        path: "auth",
-        element: <AuthLayout />,
-        children: [
-          {
-            path: "generate-token",
-            element: <GenerateToken />,
-          },
-          {
-            path: "auth-layout",
-            element: <SharedLayout/>,
-            children: [
-              {
-                path: "super-admin",
-                element: <SuperAdminForm />,
-              },
-              {
-                path: "school-setup",
-                element: <SchoolSetup />,
-              },
-              {
-                path: "admin-login",
-                element: <AdminLogin />
-              },
-              {
-                path: "teachers-login",
-                element: <TeachersLogin />
-              },
-              {
-                path: "student-login",
-                element: <StudentLogin />
-              },
-            ],
-          },
-          {
-            path: "input-campus",
-            element: <InputCampus />,
-          },
-          {
-            path: "customize-school-name",
-            element: <CustomizeSchoolName />,
-          },
-          {
-            path: "cca-setup",
-            element: <CCASetup />
-          }
-        ],
-    },
-
     {
         path: "/",
-        element: <AdminLayout />,
-        children: [
-          {
-            path: "dashboard",
-            // element: <DashboardLayout />,
-          },
-        ],
-    }
-    ]
+        element: <UsersLogin />,
+    },
+    {
+      path: "auth",
+      element: <AuthLayout />,
+      children: [
+        {
+          path: "generate-token",
+          element: <GenerateToken />,
+        },
+        {
+          path: "auth-layout",
+          element: <SharedLayout />,
+          children: [
+            {
+              path: "super-admin",
+              element: <SuperAdminForm />,
+            },
+            {
+              path: "school-setup",
+              element: <SchoolSetup />,
+            },
+            {
+              path: "admin-login",
+              element: <AdminLogin />,
+            },
+            {
+              path: "teachers-login",
+              element: <TeachersLogin />,
+            },
+            {
+              path: "student-login",
+              element: <StudentLogin />,
+            },
+          ],
+        },
+        {
+          path: "input-campus",
+          element: <InputCampus />,
+        },
+        {
+          path: "customize-school-name",
+          element: <CustomizeSchoolName />,
+        },
+        {
+          path: "cca-setup",
+          element: <CCASetup />,
+        },
+      ],
+    },
+
+    // {
+    //   path: "/",
+    //   element: <AdminLayout />,
+    //   children: [
+    //     {
+    //       path: "dashboard",
+    //       element: <Overview />,
+    //     },
+    //   ],
+    // },
+  ];
 }

@@ -83,6 +83,9 @@ const InputCampus = () => {
     setCampusCount(isNaN(value) ? 0 : value);
   };
 
+  // const { school_id } = useAppSelector((state) => state.school);
+  const school_id = Number(localStorage.getItem("school_id") || "");
+
   return (
     <section className="h-screen bg-gray-100 relative">
       {/* Auth Modal */}
@@ -137,6 +140,7 @@ const InputCampus = () => {
           <CampusModal
             campusCount={campusCount}
             onClose={() => setIsModal(false)}
+            school_id={school_id}
           />
         </div>
       )}

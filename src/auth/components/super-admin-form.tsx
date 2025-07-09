@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { superAdminSchema } from "../auth-schema";
 import { useNavigate } from "react-router-dom";
-import { useCreateAdminMutation } from "../redux/auth-api";
+import { useCreateAdminMutation } from "../api/auth-api";
 import { toast } from "sonner";
 import { useAppDispatch } from "../../hooks/typed.hooks";
 import { markTokenAsUsed } from "../redux/auth-slice";
@@ -15,7 +15,6 @@ export const SuperAdminForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [createAdmin] = useCreateAdminMutation();
-
 
   const {
     register,
@@ -76,8 +75,11 @@ export const SuperAdminForm = () => {
       localStorage.setItem("registeredEmail", data.email);
 
       const response = await createAdmin(formData).unwrap();
+      const token = response.data.token;
       dispatch(markTokenAsUsed(data.uniqueKey));
+      localStorage.setItem("token", token);
 
+      console.log('token:,', token)
       console.log("Response:", response);
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -314,9 +316,12 @@ export const SuperAdminForm = () => {
           {/* Login Link */}
           <p className="text-center text-gray-300 text-[13px] mt-5">
             Already have an account?{" "}
-            <button 
-            onClick={() => navigate("/auth/auth-layout/admin-login")}
-            className="text-[#C48ADF] cursor-pointer">Login</button>
+            <button
+              onClick={() => navigate("/auth/auth-layout/admin-login")}
+              className="text-[#C48ADF] cursor-pointer"
+            >
+              Login
+            </button>
           </p>
         </form>
       </div>

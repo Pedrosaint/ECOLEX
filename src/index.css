@@ -1,228 +1,218 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
-
-
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap");
 
 body {
-  font-family: 'Inter Tight', sans-serif;
+  font-family: "Inter Tight", sans-serif;
 }
 
 .main {
-    position: relative;
-    width: 100%;
-  }
-  
-  
-  .main input {
-    width: 100%;
-    height: 50px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-indent: 15px;
-    font-size: 16px;
-    outline: none;
-  }
-  
-  .main input::placeholder {
-    color: transparent;
-  }
-  
-  .main label {
-    position: absolute;
-    left: 15px;
-    top: 49%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: #aaa;
-    background: white;
-    border-radius: 5px;
-    padding: 0 5px;
-    pointer-events: none;
-    transition: all 0.3s ease-out;
-  }
-  
-  .main input:focus + label,
-  .main input:not(:placeholder-shown) + label {
-    top: -2px;
-    font-size: 15px;
-    color: #000000B0;
-    /* border: 1px solid #aaaaaa; */
-  }
-  
-  .main input:focus{
-      border-color: #000000B0;
-  }
-  
- 
-  /*------------------Password css --------------------*/
-  .password-field label {
-    position: absolute;
-    left: 30px;
-    top: 49%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: #aaa;
-    background: white;
-    border-radius: 5px;
-    padding: 0 5px;
-    pointer-events: none;
-    transition: all 0.3s ease-out;
-  }
-  
-  .password-field input:focus + label,
-  .password-field input:not(:placeholder-shown) + label {
-      top: -2px !important;
-      font-size: 15px !important;
-      color: #000000B0 !important;
-  }
-  
-  .relative input:focus{
-      border-color: #000000B0;
-  }
-  
-  /*++++++++++++ Last Name +++++++++++++++*/
-  .lname{
-      position: relative;
-      width: 100%;
-  }
-  .lname input{
-      width: 100%;
-    height: 50px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-indent: 30px; /* Space for text */
-    font-size: 16px;
-    outline: none;
-  }
-  
-  .lname input::placeholder{
-      color: transparent;
-  }
-  
-  .lname span{
-      position: absolute;
-    left: 10px;
-    top: 49%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: #aaa;
-    background: white;
-    border-radius: 5px;
-    padding: 0 5px;
-    pointer-events: none;
-    transition: all 0.3s ease-out;
-  }
-  .lname  input:focus + span,
-  .lname input:not(:placeholder-shown) + span {
-      top: -2px !important;
-      font-size: 15px !important;
-      color: #000000B0 !important;
-  }
-  .lname input:focus{
-      border-color: #000000B0;
-  }
-  
-  
-  /*++++++++++++ First Name +++++++++++++++*/
-  .fname{
-      position: relative;
-      width: 100%;
-  }
-  .fname input{
-      width: 100%;
-    height: 50px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-indent: 30px; /* Space for text */
-    font-size: 16px;
-    outline: none;
-  }
-  
-  .fname input::placeholder{
-      color: transparent;
-  }
-  
-  .fname span{
-      position: absolute;
-    left: 10px;
-    top: 49%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: #aaa;
-    background: white;
-    border-radius: 5px;
-    padding: 0 5px;
-    pointer-events: none;
-    transition: all 0.3s ease-out;
-  }
-  .fname  input:focus + span,
-  .fname input:not(:placeholder-shown) + span {
-      top: -2px !important;
-      font-size: 15px !important;
-      color: #000000B0 !important;
-  }
-  .fname input:focus{
-      border-color: #000000B0;
-  }
-  
-  
-  /*============ Forgot Password ==============*/
-  .form{
-      position: relative;
-      width: 100%;
-  }
-  .form input{
-      width: 100%;
-    height: 50px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-indent: 30px; /* Space for text */
-    font-size: 16px;
-    outline: none;
-  }
-  
-  .form input::placeholder{
-      color: transparent;
-  }
-  
-  .form label{
-      position: absolute;
-    left: 10px;
-    top: 18%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: #aaa;
-    background: white;
-    border-radius: 5px;
-    padding: 0 5px;
-    pointer-events: none;
-    transition: all 0.3s ease-out;
-  }
-  .form  input:focus + label,
-  .form input:not(:placeholder-shown) + label {
-      top: -2px !important;
-      font-size: 15px !important;
-      color: #000000B0 !important;
-  }
-  .form input:focus{
-      border-color: #000000B0;
-  }
-  
-  
-  
-  .custom-phone-dropdown .country:hover {
-    background-color: #374151; 
-    color: #090909;
-  }
-  
-  .custom-phone-dropdown .country {
-    padding: 10px;
-    transition: background-color 0.2s ease;
-  }
+  position: relative;
+  width: 100%;
+}
 
+.main input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-indent: 15px;
+  font-size: 16px;
+  outline: none;
+}
 
+.main input::placeholder {
+  color: transparent;
+}
 
-  /* index.css */
+.main label {
+  position: absolute;
+  left: 15px;
+  top: 49%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  background: white;
+  border-radius: 5px;
+  padding: 0 5px;
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+}
+
+.main input:focus + label,
+.main input:not(:placeholder-shown) + label {
+  top: -2px;
+  font-size: 15px;
+  color: #000000b0;
+  /* border: 1px solid #aaaaaa; */
+}
+
+.main input:focus {
+  border-color: #000000b0;
+}
+
+/*------------------Password css --------------------*/
+.password-field label {
+  position: absolute;
+  left: 30px;
+  top: 49%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  background: white;
+  border-radius: 5px;
+  padding: 0 5px;
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+}
+
+.password-field input:focus + label,
+.password-field input:not(:placeholder-shown) + label {
+  top: -2px !important;
+  font-size: 15px !important;
+  color: #000000b0 !important;
+}
+
+.relative input:focus {
+  border-color: #000000b0;
+}
+
+/*++++++++++++ Last Name +++++++++++++++*/
+.lname {
+  position: relative;
+  width: 100%;
+}
+.lname input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-indent: 30px; /* Space for text */
+  font-size: 16px;
+  outline: none;
+}
+
+.lname input::placeholder {
+  color: transparent;
+}
+
+.lname span {
+  position: absolute;
+  left: 10px;
+  top: 49%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  background: white;
+  border-radius: 5px;
+  padding: 0 5px;
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+}
+.lname input:focus + span,
+.lname input:not(:placeholder-shown) + span {
+  top: -2px !important;
+  font-size: 15px !important;
+  color: #000000b0 !important;
+}
+.lname input:focus {
+  border-color: #000000b0;
+}
+
+/*++++++++++++ First Name +++++++++++++++*/
+.fname {
+  position: relative;
+  width: 100%;
+}
+.fname input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-indent: 30px; /* Space for text */
+  font-size: 16px;
+  outline: none;
+}
+
+.fname input::placeholder {
+  color: transparent;
+}
+
+.fname span {
+  position: absolute;
+  left: 10px;
+  top: 49%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  background: white;
+  border-radius: 5px;
+  padding: 0 5px;
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+}
+.fname input:focus + span,
+.fname input:not(:placeholder-shown) + span {
+  top: -2px !important;
+  font-size: 15px !important;
+  color: #000000b0 !important;
+}
+.fname input:focus {
+  border-color: #000000b0;
+}
+
+/*============ Forgot Password ==============*/
+.form {
+  position: relative;
+  width: 100%;
+}
+.form input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-indent: 30px; /* Space for text */
+  font-size: 16px;
+  outline: none;
+}
+
+.form input::placeholder {
+  color: transparent;
+}
+
+.form label {
+  position: absolute;
+  left: 10px;
+  top: 18%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  background: white;
+  border-radius: 5px;
+  padding: 0 5px;
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+}
+.form input:focus + label,
+.form input:not(:placeholder-shown) + label {
+  top: -2px !important;
+  font-size: 15px !important;
+  color: #000000b0 !important;
+}
+.form input:focus {
+  border-color: #000000b0;
+}
+
+.custom-phone-dropdown .country:hover {
+  background-color: #374151;
+  color: #090909;
+}
+
+.custom-phone-dropdown .country {
+  padding: 10px;
+  transition: background-color 0.2s ease;
+}
+
+/* index.css */
 
 /* Custom Purple Checkbox Styles */
 .custom-checkbox {
@@ -241,8 +231,8 @@ body {
 }
 
 .custom-checkbox:checked {
-  background-color: #8000BD; /* Your purple color */
-  border-color: #8000BD;
+  background-color: #8000bd; /* Your purple color */
+  border-color: #8000bd;
 }
 
 .custom-checkbox:focus {

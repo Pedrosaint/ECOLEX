@@ -3,15 +3,13 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { superAdminSchema } from "../auth-schema";
 import { useNavigate } from "react-router-dom";
-import { useAdminLoginMutation } from "../redux/auth-api";
+import { useAdminLoginMutation } from "../api/auth-api";
 import { toast } from "sonner";
-
 
 export const StudentLogin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [adminLogin] = useAdminLoginMutation(); //change later
-
 
   const {
     register,

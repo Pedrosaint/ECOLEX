@@ -12,8 +12,9 @@ import {
 } from "react-hook-form";
 import upload from "../../assets/image/upload.png";
 import { Upload, X, ImageIcon } from "lucide-react";
-import { useSchoolSetupMutation } from "../redux/auth-api";
+import { useCreateAdminMutation, useSchoolSetupMutation } from "../api/auth-api";
 import { toast } from "sonner";
+
 
 type FormValues = {
   name: string;
@@ -125,6 +126,7 @@ export default function SchoolSetup() {
     setIsLoading(true);
 
     try {
+      const token = localStorage.getItem("token") || "";
       const formData = new FormData();
 
       // Append all fields
@@ -143,7 +145,10 @@ export default function SchoolSetup() {
       }
 
       // Send as multipart/form-data
-      const response = await SchoolSetup(formData).unwrap();
+      const response = await SchoolSetup({
+        formData,
+        token
+      }).unwrap();
       console.log("Response:", response);
       toast.success("School setup successful");
       navigate("/auth/input-campus");
