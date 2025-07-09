@@ -4,12 +4,18 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { superAdminSchema } from "../auth-schema";
 import { useNavigate } from "react-router-dom";
+import { useCreateAdminMutation } from "../redux/auth-api";
+import { toast } from "sonner";
+import { useAppDispatch } from "../../hooks/typed.hooks";
+import { markTokenAsUsed } from "../redux/auth-slice";
 
 export const SuperAdminForm = () => {
-    console.log("Component rendering....");
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [createAdmin] = useCreateAdminMutation();
+
 
   const {
     register,
@@ -17,7 +23,7 @@ export const SuperAdminForm = () => {
     formState: { errors },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(superAdminSchema),
+    resolver: yupResolver(superAdminSchema()),
   });
 
   interface SuperAdminFormData {
@@ -28,19 +34,58 @@ export const SuperAdminForm = () => {
     password: string;
   }
 
+  // const onSubmit = async (data: SuperAdminFormData) => {
+  //   console.log("Form submission started with data:", data);
+  //   setIsLoading(true);
+
+  //   try {
+  //     const formData = {
+  //       ...data,
+  //       role: "super_admin",
+  //     };
+  //     const response = await createAdmin(formData).unwrap();
+  //     dispatch(markTokenAsUsed(data.uniqueKey));
+  //     console.log("Response:", response);
+  //     await new Promise((resolve) => {
+  //       setTimeout(() => {
+  //         resolve(null);
+  //       }, 1000);
+  //     });
+  //     navigate("/auth/auth-layout/school-setup");
+  //     toast.success("Super admin created successfully");
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     toast.error("Failed to create admin");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const onSubmit = async (data: SuperAdminFormData) => {
     console.log("Form submission started with data:", data);
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(null);
-        }, 1000);
-      });
+      const formData = {
+        ...data,
+        role: "super_admin",
+      };
+
+      // Save to localStorage before submission
+      localStorage.setItem("registeredName", data.name);
+      localStorage.setItem("registeredEmail", data.email);
+
+      const response = await createAdmin(formData).unwrap();
+      dispatch(markTokenAsUsed(data.uniqueKey));
+
+      console.log("Response:", response);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       navigate("/auth/auth-layout/school-setup");
+      toast.success("Super admin created successfully");
     } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to create admin");
     } finally {
       setIsLoading(false);
     }
@@ -184,7 +229,7 @@ export const SuperAdminForm = () => {
                 Token
               </label>
               {errors.uniqueKey && (
-                <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
+                <p className="text-[#C48ADF] text-xs mt-1 flex justify-end">
                   {errors.uniqueKey.message}
                 </p>
               )}
@@ -269,7 +314,9 @@ export const SuperAdminForm = () => {
           {/* Login Link */}
           <p className="text-center text-gray-300 text-[13px] mt-5">
             Already have an account?{" "}
-            <button className="text-[#C48ADF] cursor-pointer">Login</button>
+            <button 
+            onClick={() => navigate("/auth/auth-layout/admin-login")}
+            className="text-[#C48ADF] cursor-pointer">Login</button>
           </p>
         </form>
       </div>

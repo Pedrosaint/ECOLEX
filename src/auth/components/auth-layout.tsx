@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import signUpImage from "../../assets/image/signup-image.png";
 import backgroundImage from "../../assets/image/bg-image.png";
+import Logo from "../../assets/logo/logo.png";
 
 const SharedLayout = () => {
   return (
@@ -13,6 +14,14 @@ const SharedLayout = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
+          <div className="">
+                <div className="relative p-2 animate-bounce">
+                  <img src={Logo} alt=" " />
+                  <p className="absolute top-5 left-22 text-[#f0eeee] text-3xl font-semibold">
+                    COLEX
+                  </p>
+                </div>
+              </div>
       <div className="md:flex border-5 border-gray-500 rounded-2xl">
         {/* Shared left image */}
         <div className="w-1/2 relative rounded-l-xl overflow-hidden hidden md:block">

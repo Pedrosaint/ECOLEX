@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import Mark from "../../assets/image/mark.png";
-import { useNavigate } from "react-router-dom";
+
 
 interface AuthModalProps {
   token: string;
@@ -10,7 +10,6 @@ interface AuthModalProps {
 
 const AuthModal = ({ token, onClose }: AuthModalProps) => {
   const [copied, setCopied] = useState(false);
-    const navigate = useNavigate();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(token);
@@ -61,7 +60,7 @@ const AuthModal = ({ token, onClose }: AuthModalProps) => {
 
         {/* Close Button */}
         <button
-          onClick={()=> navigate("/auth/auth-layout/super-admin")}
+          onClick={onClose}
           className="bg-[#8000BD] text-white font-semibold py-3 px-20 rounded-md hover:bg-[#6e00a3] transition cursor-pointer"
         >
           Close

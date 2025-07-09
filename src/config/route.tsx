@@ -7,15 +7,26 @@ import SchoolSetup from "../auth/components/school-setup";
 import InputCampus from "../auth/components/input-campus";
 import CustomizeSchoolName from "../auth/components/customize-school-name";
 import CCASetup from "../auth/components/cca-setup";
+import UsersLogin from "../auth/components/users-login";
+import { AdminLogin } from "../auth/components/admin-login";
+import { TeachersLogin } from "../auth/components/teachers-login";
+import { StudentLogin } from "../auth/components/student-login";
+import AdminLayout from "../layouts/admin-layout/admin-layout";
+
 
 export default function appRouter(): RouteObject[] {
     return [
+    // {
+    //     path: "",
+    //     // element: <Navigate to="/auth/generate-token" replace />,
+    //     element: <Navigate to="/" replace />,
+    // },
+    // {
+    //     path: "",
+    //     element: <UsersLogin />,
+    // },
     {
-        path: "",
-        element: <Navigate to="/auth/generate-token" replace />,
-    },
-    {
-        path: "/auth",
+        path: "auth",
         element: <AuthLayout />,
         children: [
           {
@@ -34,6 +45,18 @@ export default function appRouter(): RouteObject[] {
                 path: "school-setup",
                 element: <SchoolSetup />,
               },
+              {
+                path: "admin-login",
+                element: <AdminLogin />
+              },
+              {
+                path: "teachers-login",
+                element: <TeachersLogin />
+              },
+              {
+                path: "student-login",
+                element: <StudentLogin />
+              },
             ],
           },
           {
@@ -50,5 +73,16 @@ export default function appRouter(): RouteObject[] {
           }
         ],
     },
+
+    {
+        path: "/",
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "dashboard",
+            // element: <DashboardLayout />,
+          },
+        ],
+    }
     ]
 }

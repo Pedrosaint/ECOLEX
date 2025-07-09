@@ -5,8 +5,11 @@ import Logo from "../../assets/logo/logo.png";
 import AuthModal from "../modal/auth-modal";
 import { registerSchema } from "../auth-schema";
 import { useGenerateTokenMutation } from "../redux/auth-api";
+// import { useAppDispatch } from "../../hooks/typed.hooks";
+// import { setRegistrationData } from "../redux/auth-slice";
 
 const GenerateToken = () => {
+  // const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [generateToken] = useGenerateTokenMutation();
@@ -18,11 +21,18 @@ const GenerateToken = () => {
     },
     validationSchema: registerSchema,
     onSubmit: async (values) => {
-      console.log("Submitting:", values); // Should show { email: "...", schoolName: "..." }
+      console.log("Submitting:", values);
       setIsLoading(true);
       try {
         const response = await generateToken(values).unwrap();
         setToken(response.token);
+        // dispatch(
+        //   setRegistrationData({
+        //     email: values.email,
+        //     name: values.schoolName,
+        //     token: response.token,
+        //   })
+        // );
         toast.success(response.message || "Token generated successfully!");
       } catch (error) {
         console.error("API Error:", error); // Log full error details
@@ -42,11 +52,15 @@ const GenerateToken = () => {
       {/* Auth Modal */}
       {token && <AuthModal token={token} onClose={handleCloseModal} />}
 
-      <div className="relative p-2 animate-bounce pt-6">
-        <img src={Logo} alt=" " />
-        <p className="absolute top-5 left-22 text-[#313131] text-3xl font-semibold">
-          COLEX
-        </p>
+      <div className="">
+        <div className="">
+          <div className="relative p-2 animate-bounce">
+            <img src={Logo} alt=" " />
+            <p className="absolute top-5 left-22 text-[#313131] text-3xl font-semibold">
+              COLEX
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="py-20">
