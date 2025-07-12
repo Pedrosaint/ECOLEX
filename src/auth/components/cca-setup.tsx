@@ -247,9 +247,10 @@
 
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useAppSelector } from "../../hooks/typed.hooks";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks/typed.hooks";
 import ContinuousAssessmentModal from "../modal/continous-access.modal";
+import { setSchoolStages } from "../redux/school-slice";
 
 interface SchoolStage {
   type: "early" | "primary" | "junior" | "senior";
@@ -260,8 +261,10 @@ interface SchoolStage {
 
 const CCASetup = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
   const [examMaxScore, setExamMaxScore] = useState("");
+  const [examName, setExamName] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [currentClasses, setCurrentClasses] = useState<string[]>([]); // Track classes being configured
   const activatedStages = useAppSelector((state) => state.school.stages);
@@ -281,6 +284,18 @@ const CCASetup = () => {
     return classNames;
   };
 
+  const handleSubmit = () => {
+    console.log("Submitting...");
+    navigate("/auth/customize-school-n");
+  };
+
+  useEffect(() => {
+    const savedStages = localStorage.getItem("schoolStages");
+    if (savedStages) {
+      dispatch(setSchoolStages(JSON.parse(savedStages)));
+    }
+  }, [dispatch]);
+  
   const handleClassToggle = (className: string) => {
     const wasSelected = selectedClasses.includes(className);
     const newSelection = wasSelected
@@ -441,16 +456,25 @@ const CCASetup = () => {
               </label>
               <input
                 type="text"
+                value={examName}
+                onChange={(e) => setExamName(e.target.value)}
+                placeholder="e.g., final exam"
+                className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none"
+              />
+              <input
+                type="text"
                 value={examMaxScore}
                 onChange={(e) => setExamMaxScore(e.target.value)}
-                placeholder="e.g., 50"
-                className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8000BD] focus:border-[#8000BD]"
+                placeholder="e.g., 100"
+                className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none mt-4"
               />
             </div>
           </div>
 
           <div className="flex justify-center mt-10">
-            <button className="md:w-1/3 w-1/2 py-2 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors cursor-pointer hover:bg-[#6a00a3]">
+            <button 
+            onClick={handleSubmit}
+            className="md:w-1/3 w-1/2 py-2 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors cursor-pointer">
               Submit
             </button>
           </div>

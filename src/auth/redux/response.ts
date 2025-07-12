@@ -70,4 +70,42 @@ export interface Admin {
 export interface CampusSetupResponse {
   message: string;
   campus: number;
+  date: Date;
+}
+
+export interface Date {
+  savedCampus: SavedCampus[];
+}
+
+export interface SavedCampus {
+  id: number;
+  schoolId: number;
+  name: string;
+  address: string;
+  phoneNumber: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface ClassSetupResponse {
+  message: string;
+  count: number;
+  data: Data;
+}
+
+export interface Data {
+  savedClasses: SavedClass[];
+}
+
+export interface SavedClass {
+  id: number;
+  schoolId: number;
+  campusId: number;
+  name: string;
+  teacherId: any;
+  createdAt: string;
+}
+
+export interface CCAResponse {
+  message: string;
 }

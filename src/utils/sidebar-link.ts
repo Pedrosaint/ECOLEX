@@ -15,13 +15,13 @@ interface NavLink {
 }
 
 export const navLinks: NavLink[] = [
-  { path: "/dashboard", icon: GoHomeFill , label: "Overview" },
-  { path: "/dashboard/students", icon: Users, label: "Students" },
-  { path: "/dashboard/staff", icon: UserCheck, label: "Staff" },
-  { path: "/dashboard/classes", icon: BookOpen, label: "Classes" },
-  { path: "/dashboard/campuses", icon: Building, label: "Campuses" },
-  { path: "/dashboard/reports", icon: FileText, label: "View Report" },
-  { path: "/dashboard/subjects", icon: BookOpen, label: "Manage Subject" },
-  { path: "/dashboard/broadsheet", icon: FileText, label: "Broadsheet" },
-  { path: "/dashboard/settings", icon: Settings, label: "Settings" },
+  { path: "/admin/dashboard", icon: GoHomeFill , label: "Overview" },
+  { path: "/admin/students", icon: Users, label: "Students" },
+  { path: "/admin/staff", icon: UserCheck, label: "Staff" },
+  { path: "/admin/classes", icon: BookOpen, label: "Classes" },
+  { path: "/admin/campuses", icon: Building, label: "Campuses" },
+  { path: "/admin/reports", icon: FileText, label: "View Report" },
+  { path: "/admin/subjects", icon: BookOpen, label: "Manage Subject" },
+  { path: "/admin/broadsheet", icon: FileText, label: "Broadsheet" },
+  { path: "/admin/settings", icon: Settings, label: "Settings" },
 ];

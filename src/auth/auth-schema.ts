@@ -41,14 +41,17 @@ export const schoolSetupSchema = Yup.object().shape({
   phoneNumber: Yup.string().required("Phone number is required"),
 
   address: Yup.string().required("Address is required"),
-  
+
   prefix: Yup.string().required("Prefix is required"),
 
   logoUrl: Yup.mixed()
     .required("Logo is required")
     .nullable()
     .notRequired()
-    .test("fileType", "Only images are accepted", (value) => {
+    .test("required", "Logo is required", (value) => {
+      return value instanceof FileList && value.length > 0;
+    })
+    .test("fileType", "only images are accepted", (value) => {
       if (!value || !(value instanceof FileList) || value.length === 0)
         return false;
       const file = value[0];
@@ -61,12 +64,14 @@ export const schoolSetupSchema = Yup.object().shape({
       );
     }),
 
-
   stampUrl: Yup.mixed()
     .required("stamp is required")
     .nullable()
     .notRequired()
-    .test("fileType", "Only images are accepted", (value) => {
+    .test("required", "Stamp is required", (value) => {
+      return value instanceof FileList && value.length > 0;
+    })
+    .test("fileType", "only images are accepted", (value) => {
       if (!value || !(value instanceof FileList) || value.length === 0)
         return false;
       const file = value[0];

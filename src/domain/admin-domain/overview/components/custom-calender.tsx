@@ -37,12 +37,12 @@ const CustomCalendar = () => {
         prev2Label={null}
         className="!border-0"
         formatShortWeekday={(locale, date) =>
-          ["S", "M", "T", "W", "T", "F", "S"][date.getDay()]
+          ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][date.getDay()]
         }
         tileClassName={({ date }) => {
           const today = new Date();
           const isToday = date.toDateString() === today.toDateString();
-          return isToday ? "!bg-red-500 !text-white rounded-full" : "";
+          return isToday ? "!bg-[#F04D23] !text-white rounded-full" : "rounded-full";
         }}
       />
       <div className="flex items-start">

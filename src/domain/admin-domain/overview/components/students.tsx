@@ -1,6 +1,6 @@
 import { MoreHorizontal } from "lucide-react";
-import male from "../../../assets/image/male.png";
-import female from "../../../assets/image/female.png";
+import male from "../../../../assets/image/male.png";
+import female from "../../../../assets/image/female.png";
 
 export default function StudentsChart() {
   // Chart data
@@ -24,7 +24,7 @@ export default function StudentsChart() {
 
   return (
     <div className="">
-      <div className="bg-white rounded-4xl shadow-sm border border-gray-200  px-4 py-6 w-80">
+      <div className="bg-white rounded-4xl shadow-sm border border-gray-200  px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xl font-semibold text-gray-900 font-sans">Students</h2>

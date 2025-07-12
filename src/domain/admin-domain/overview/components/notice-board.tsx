@@ -57,7 +57,7 @@ export default function NoticeBoard() {
 
   return (
     <div className="">
-      <div className="bg-white rounded-4xl shadow-sm border border-gray-200 py-2 px-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 py-1 px-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-2 mt-2">
           <h2 className="text-lg font-semibold text-gray-900 font-sans">Notice Board</h2>
@@ -100,11 +100,11 @@ export default function NoticeBoard() {
 
         {/* Footer Actions */}
         <div className="flex items-center space-x-2 text-gray-500 font-sans ml-1">
-          <span className="text-sm p-1 bg-gray-100 rounded-md">Add New</span>
-          <button className="p-1 rounded transition-colors bg-gray-100">
+          <button className="text-sm px-2 py-1 bg-gray-100 rounded-md cursor-pointer">Add New</button>
+          <button className="p-1 rounded transition-colors bg-gray-100 cursor-pointer">
             <Edit className="w-4 h-4" />
           </button>
-          <button className="p-1 bg-gray-100 rounded transition-colors">
+          <button className="p-1 bg-gray-100 rounded transition-colors cursor-pointer hover:text-red-600">
             <Trash2 className="w-4 h-4" />
           </button>
         </div>

@@ -12,7 +12,9 @@ import { AdminLogin } from "../auth/components/admin-login";
 import { TeachersLogin } from "../auth/components/teachers-login";
 import { StudentLogin } from "../auth/components/student-login";
 import AdminLayout from "../layouts/admin-layout/admin-layout";
-import Overview from "../domain/admin-domain/view/overview";
+import Overview from "../domain/admin-domain/overview/view/overview";
+import StudentView from "../domain/admin-domain/students/view/student.view";
+import Congratulation from "../auth/components/congratulation";
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -22,8 +24,8 @@ export default function appRouter(): RouteObject[] {
     //     element: <Navigate to="/" replace />,
     // },
     {
-        path: "/",
-        element: <UsersLogin />,
+      path: "/",
+      element: <UsersLogin />,
     },
     {
       path: "auth",
@@ -71,18 +73,27 @@ export default function appRouter(): RouteObject[] {
           path: "cca-setup",
           element: <CCASetup />,
         },
+        {
+          path: "congratulation",
+          element: <Congratulation />,
+        },
       ],
     },
 
-    // {
-    //   path: "/",
-    //   element: <AdminLayout />,
-    //   children: [
-    //     {
-    //       path: "dashboard",
-    //       element: <Overview />,
-    //     },
-    //   ],
-    // },
+    // Super_admin portal++++++++++++++++++++++++++++++
+    {
+      path: "admin",
+      element: <AdminLayout />,
+      children: [
+        {
+          path: "dashboard",
+          element: <Overview />,
+        },
+        {
+          path: "students",
+          element: <StudentView />,
+        },
+      ],
+    },
   ];
 }

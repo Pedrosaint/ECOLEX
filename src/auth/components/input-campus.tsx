@@ -66,7 +66,6 @@
 
 
 
-
 import {  useState } from "react";
 import Logo from "../../assets/logo/logo.png";
 import { IoIosArrowBack } from "react-icons/io";
@@ -84,7 +83,7 @@ const InputCampus = () => {
   };
 
   // const { school_id } = useAppSelector((state) => state.school);
-  const school_id = Number(localStorage.getItem("school_id") || "");
+  
 
   return (
     <section className="h-screen bg-gray-100 relative">
@@ -140,7 +139,6 @@ const InputCampus = () => {
           <CampusModal
             campusCount={campusCount}
             onClose={() => setIsModal(false)}
-            school_id={school_id}
           />
         </div>
       )}

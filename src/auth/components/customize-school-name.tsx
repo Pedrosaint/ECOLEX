@@ -6,15 +6,25 @@ import { useAppDispatch } from "../../hooks/typed.hooks";
 import { setSchoolStages } from "../../auth/redux/school-slice";
 import { EearlyEducationDropdown, PrimaryDropdown, JuniorSecondaryDropdown, SeniorSecondaryDropdown } from "../dropdown-data";
 import { usePreviewText } from "../hooks/auth.hook";
+import { toast } from "sonner";
+import { useClassSetupMutation } from "../api/auth-api";
 
+interface Class {
+  name: string;
+}
 
 export default function CustomizeSchoolName() {
     const navigate = useNavigate();
-
+    const [loading, setLoading] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isPrimaryDropdownOpen, setIsPrimaryDropdownOpen] = useState(false);
     const [isJuniorSecondaryDropdownOpen, setIsJuniorSecondaryDropdownOpen] = useState(false);
     const [isSeniorSecondaryDropdownOpen, setIsSeniorSecondaryDropdownOpen] = useState(false);
+
+    const [classSetup] = useClassSetupMutation();
+    const token = localStorage.getItem("token") || "";
+    const school_id = Number(localStorage.getItem("schoolId")) || 0;
+   
 
     const {
       isEarlyEducationActive,
@@ -62,8 +72,9 @@ export default function CustomizeSchoolName() {
     
     const dispatch = useAppDispatch();
 
-    const handleNextToCCA = () => {
+    const handleNextToCCA = async() => {
       const activatedStages = [];
+      const classes: Class[] = [];
 
       if (isEarlyEducationActive && selectedEarlyName) {
         activatedStages.push({
@@ -72,6 +83,13 @@ export default function CustomizeSchoolName() {
           start: earlyStartLevel,
           end: earlyEndLevel,
         });
+
+        // Generate class names for early education
+        for (let i = Number(earlyStartLevel); i <= Number(earlyEndLevel); i++) {
+          classes.push({
+            name: `${selectedEarlyName} ${i}`,
+          });
+        }
       }
 
       if (isPrimaryActive && selectedPrimaryName) {
@@ -81,6 +99,16 @@ export default function CustomizeSchoolName() {
           start: primaryStartLevel,
           end: primaryEndLevel,
         });
+
+        for (
+          let i = Number(primaryStartLevel);
+          i <= Number(primaryEndLevel);
+          i++
+        ) {
+          classes.push({
+            name: `${selectedPrimaryName} ${i}`,
+          });
+        }
       }
 
       if (isJuniorSecondaryActive && selectedJuniorSecondaryName) {
@@ -90,6 +118,16 @@ export default function CustomizeSchoolName() {
           start: juniorStartLevel,
           end: juniorEndLevel,
         });
+
+        for (
+          let i = Number(juniorStartLevel);
+          i <= Number(juniorEndLevel);
+          i++
+        ) {
+          classes.push({
+            name: `${selectedJuniorSecondaryName} ${i}`,
+          });
+        }
       }
 
       if (isSeniorSecondaryActive && selectedSeniorSecondaryName) {
@@ -99,10 +137,51 @@ export default function CustomizeSchoolName() {
           start: seniorStartLevel,
           end: seniorEndLevel,
         });
+
+        for (
+          let i = Number(seniorStartLevel);
+          i <= Number(seniorEndLevel);
+          i++
+        ) {
+          classes.push({
+            name: `${selectedSeniorSecondaryName} ${i}`,
+          });
+        }
       }
 
       dispatch(setSchoolStages(activatedStages));
-      navigate("/auth/cca-setup");
+      localStorage.setItem("schoolStages", JSON.stringify(activatedStages));
+      setLoading(true);
+      try {
+        if (classes.length > 0) {
+          const response = await classSetup({
+            credentials: {
+              school_id,
+              classes,
+            },
+            token,
+          }).unwrap();
+
+          console.log("Class setup successful:", response);
+
+          // Extract class IDs from response
+          const classIds = response.data.savedClasses.map(
+            (classItem: { id: number }) => classItem.id
+          );
+
+          // Save to localStorage
+          localStorage.setItem("class_ids", JSON.stringify(classIds));
+          toast.success("Class setup completed");
+        }
+
+        // Navigate to next page
+        navigate("/auth/cca-setup");
+      } catch (error) {
+        console.error("Failed to setup classes:", error);
+        toast.error("Failed to setup classes");
+      } finally {
+        setLoading(false);
+      }
     };
 
   return (
@@ -590,8 +669,10 @@ export default function CustomizeSchoolName() {
         </div>
 
         <div onClick={handleNextToCCA} className="flex justify-center mt-10">
-          <button className="md:w-1/3 w-1/2 py-3.5 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors cursor-pointer">
-            Next
+          <button 
+          disabled={loading}
+          className={`md:w-1/3 w-1/2 py-3.5 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors cursor-pointer ${loading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"}`}>
+           {loading ? "Loading..." : "Next"}
           </button>
         </div>
       </div>

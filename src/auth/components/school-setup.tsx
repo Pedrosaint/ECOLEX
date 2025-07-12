@@ -12,7 +12,7 @@ import {
 } from "react-hook-form";
 import upload from "../../assets/image/upload.png";
 import { Upload, X, ImageIcon } from "lucide-react";
-import { useCreateAdminMutation, useSchoolSetupMutation } from "../api/auth-api";
+import { useSchoolSetupMutation } from "../api/auth-api";
 import { toast } from "sonner";
 
 
@@ -147,9 +147,11 @@ export default function SchoolSetup() {
       // Send as multipart/form-data
       const response = await SchoolSetup({
         formData,
-        token
+        token,
       }).unwrap();
       console.log("Response:", response);
+      // Store the school ID in localStorage
+      localStorage.setItem("schoolId", response.school.id.toString());
       toast.success("School setup successful");
       navigate("/auth/input-campus");
     } catch (error) {
@@ -482,6 +484,11 @@ export default function SchoolSetup() {
               }
             }}
           />
+          {errors.logoUrl && (
+            <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
+              {errors.logoUrl.message}
+            </p>
+          )}
         </div>
 
         {/* Upload School Stamp +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/}
@@ -562,6 +569,12 @@ export default function SchoolSetup() {
               }
             }}
           />
+
+          {errors.stampUrl && (
+            <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
+              {errors.stampUrl.message}
+            </p>
+          )}
         </div>
 
         {/* Create Account Button +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/}

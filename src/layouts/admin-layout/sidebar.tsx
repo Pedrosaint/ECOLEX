@@ -9,7 +9,7 @@ interface NavLink {
 
 export default function Sidebar({ navLinks }: { navLinks: NavLink[] }) {
   return (
-    <div className="w-64 bg-[#8000BD] text-white flex flex-col rounded-3xl my-5 mx-2">
+    <div className="w-64 bg-[#8000BD] text-white md:flex flex-col rounded-3xl my-5 mx-2 hidden">
       {/* Logo */}
       <div className="p-4">
         <div className="flex items-center space-x-3">

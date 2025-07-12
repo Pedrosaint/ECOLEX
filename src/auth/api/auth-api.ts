@@ -3,6 +3,8 @@ import type {
   AdminLoginResponse,
   AdminResponse,
   CampusSetupResponse,
+  CCAResponse,
+  ClassSetupResponse,
   SchoolSetupResponse,
   TokenResponse,
 } from "../redux/response";
@@ -10,6 +12,8 @@ import type {
   AdminLoginRequest,
   AdminRequest,
   CampusSetupRequest,
+  CCARequest,
+  ClassSetupRequest,
   TokenRequest,
 } from "../redux/request";
 
@@ -56,7 +60,10 @@ export const authApi = createApi({
       }),
     }),
 
-    setupCampus: builder.mutation<CampusSetupResponse, { credentials: CampusSetupRequest, token: string }>({
+    setupCampus: builder.mutation<
+      CampusSetupResponse,
+      { credentials: CampusSetupRequest; token: string }
+    >({
       query: ({ credentials, token }) => ({
         url: "setup/campus",
         method: "POST",
@@ -67,6 +74,30 @@ export const authApi = createApi({
       }),
     }),
 
+    classSetup: builder.mutation<
+      ClassSetupResponse,
+      { credentials: ClassSetupRequest; token: string }
+    >({
+      query: ({ credentials, token }) => ({
+        url: "setup/class",
+        method: "POST",
+        body: credentials,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
+
+    cca: builder.mutation<CCAResponse, { credentials: CCARequest; token: string }>({
+      query: ({ credentials, token }) => ({
+        url: "setup/cca",
+        method: "POST",
+        body: credentials,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
 
   }),
 });
@@ -77,4 +108,6 @@ export const {
   useSchoolSetupMutation,
   useAdminLoginMutation,
   useSetupCampusMutation,
+  useClassSetupMutation,
+  useCcaMutation,
 } = authApi;

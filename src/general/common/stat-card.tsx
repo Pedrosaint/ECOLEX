@@ -1,25 +1,24 @@
-import { MoreHorizontal } from "lucide-react";
+import Icon from "../../assets/icon/icon";
+import type { svgIcons } from "../../assets/icon/svg";
 
 interface StatsCardProps {
   title: string;
   value: string;
-  color?: string;
   isPrimary?: boolean;
   badge?: string;
+  icon?: keyof typeof svgIcons;
 }
 
 export default function StatsCard({
   title,
   value,
-  color = "",
   isPrimary = false,
+  icon,
 }: StatsCardProps) {
   return (
     <div
-      className={`rounded-3xl p-4 relative font-sans ${
-        isPrimary
-          ? `bg-gradient-to-r ${color} text-white`
-          : "bg-[#F5F1FF] text-gray-600"
+      className={`rounded-3xl py-5 px-3 relative font-sans ${
+        isPrimary ? `bg-[#8000BD] text-white` : "bg-[#E2D8FC] text-gray-600"
       }`}
     >
       <div className="flex items-center justify-between mb-2">
@@ -28,9 +27,7 @@ export default function StatsCard({
         >
           {title}
         </span>
-        <MoreHorizontal
-          className={`w-4 h-4 ${isPrimary ? "" : "text-gray-400"}`}
-        />
+        {icon && <Icon name={icon} size={20} />}
       </div>
       <div className="text-2xl font-medium">{value}</div>
     </div>
