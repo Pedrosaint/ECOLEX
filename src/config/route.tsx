@@ -15,6 +15,10 @@ import AdminLayout from "../layouts/admin-layout/admin-layout";
 import Overview from "../domain/admin-domain/overview/view/overview";
 import StudentView from "../domain/admin-domain/students/view/student.view";
 import Congratulation from "../auth/components/congratulation";
+import Staffs from "../domain/admin-domain/staff/view/staffs";
+import ClassesView from "../domain/admin-domain/classes/view/classes.view";
+import CampusView from "../domain/admin-domain/campus/view/campus.view";
+import ReportsView from "../domain/admin-domain/reports/view/reports.view";
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -92,6 +96,22 @@ export default function appRouter(): RouteObject[] {
         {
           path: "students",
           element: <StudentView />,
+        },
+        {
+          path: "staff",
+          element: <Staffs />,
+        },
+        {
+          path: "classes",
+          element: <ClassesView />,
+        },
+        {
+          path: "campuses",
+          element: <CampusView />,
+        },
+        {
+          path: "reports",
+          element: <ReportsView />,
         },
       ],
     },

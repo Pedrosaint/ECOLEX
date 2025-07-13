@@ -7,9 +7,9 @@ interface NavLink {
   label: string;
 }
 
-export default function Sidebar({ navLinks }: { navLinks: NavLink[] }) {
+export default function Sidebar({ navLinks, onClick }: { navLinks: NavLink[]; onClick?: () => void }) {
   return (
-    <div className="w-64 bg-[#8000BD] text-white md:flex flex-col rounded-3xl my-5 mx-2 hidden">
+    <div className="w-64 bg-[#8000BD] text-white md:flex flex-col rounded-3xl my-5 mx-2 h-[95%]">
       {/* Logo */}
       <div className="p-4">
         <div className="flex items-center space-x-3">
@@ -26,6 +26,11 @@ export default function Sidebar({ navLinks }: { navLinks: NavLink[] }) {
           <NavLink
             to={link.path}
             end={link.path === "/dashboard"}
+            onClick={() => {
+              if (window.innerWidth < 768 && onClick) {
+                onClick();
+              }
+            }}
             className={({ isActive }) =>
               `flex items-center space-x-2 p-2 rounded ${
                 isActive
