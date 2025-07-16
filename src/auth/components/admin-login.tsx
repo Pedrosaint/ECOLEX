@@ -2,9 +2,9 @@ import { useState } from "react";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { superAdminSchema } from "../auth-schema";
 import { useNavigate } from "react-router-dom";
 import { useAdminLoginMutation } from "../api/auth-api";
+import { superAdminLoginSchema } from "../auth-schema";
 import { toast } from "sonner";
 
 export const AdminLogin = () => {
@@ -19,7 +19,7 @@ export const AdminLogin = () => {
     formState: { errors },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(superAdminSchema()),
+    resolver: yupResolver(superAdminLoginSchema),
   });
 
   interface SuperAdminLogin {
@@ -42,7 +42,8 @@ export const AdminLogin = () => {
           resolve(null);
         }, 1000);
       });
-      navigate("/auth/auth-layout/school-setup");
+      navigate("/admin/dashboard");
+      console.log("Response:", response);
       toast.success("Super admin created successfully");
     } catch (error) {
       console.error("Error:", error);

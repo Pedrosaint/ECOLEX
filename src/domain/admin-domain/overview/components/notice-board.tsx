@@ -99,7 +99,7 @@ export default function NoticeBoard() {
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center space-x-2 text-gray-500 font-sans ml-1">
+        <div className="flex items-center space-x-2 text-gray-500 font-sans ml-1 py-2">
           <button className="text-sm px-2 py-1 bg-gray-100 rounded-md cursor-pointer">Add New</button>
           <button className="p-1 rounded transition-colors bg-gray-100 cursor-pointer">
             <Edit className="w-4 h-4" />

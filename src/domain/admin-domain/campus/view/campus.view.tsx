@@ -9,7 +9,7 @@ const CampusView = () => {
         <ListOfCampus />
       </div>
     </div>
-  )
+  );
 }
 
 export default CampusView

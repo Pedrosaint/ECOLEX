@@ -5,11 +5,11 @@ const Staffs = () => {
   return (
     <div>
       <SearchStaffComp />
-      <div className='mt-5'>
+      <div className="mt-5">
         <ListOfStaff />
       </div>
     </div>
-  )
+  );
 }
 
 export default Staffs

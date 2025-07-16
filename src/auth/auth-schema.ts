@@ -31,6 +31,15 @@ return Yup.object().shape({
 }
 
 
+//superAdmin Login+++++++++++++++++++++++++++++++++++++++++++++
+
+export const superAdminLoginSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+
+  password: Yup.string().required("Password is required"),
+});
+
+
 // Schema for school setup form++++++++++++++++++++++++++++
 
 export const schoolSetupSchema = Yup.object().shape({

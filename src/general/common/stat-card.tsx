@@ -23,7 +23,7 @@ export default function StatsCard({
     >
       <div className="flex items-center justify-between mb-2">
         <span
-          className={`text-sm ${isPrimary ? "opacity-90" : "text-gray-600"}`}
+          className={`text-lg ${isPrimary ? "opacity-90" : "text-gray-600"}`}
         >
           {title}
         </span>

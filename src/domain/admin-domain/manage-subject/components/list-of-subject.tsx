@@ -7,24 +7,29 @@ import {
   Edit,
   Search,
 } from "lucide-react";
-import { FaSearchPlus } from "react-icons/fa";
 import { useState } from "react";
 
-export default function ListOfClasses() {
+export default function ListOfSubject() {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Sample student data matching the image
-  const students = Array.from({ length: 9 }, (_, index) => ({
-    id: index + 1,
-    no: index + 1,
-    campusName: "Class A",
-    address: "N0 5 adama street, fct.",
-    principal : "Mrs Uzoechi",
-    number: "09044523114",
-    email: "admin@gmail.com",
-    noOfStudent: "23",
-    noOfStaff: "23",
-  }));
+  // Sample subject data matching the image
+ const subject = [
+    {
+        subjectName: "English",
+        subjectCode: "ENG345",
+        dateAdded: "12/3/25"
+    },
+    {
+        subjectName: "Mathematics",
+        subjectCode: "MTH345",
+        dateAdded: "12/3/25"
+    },
+    {
+        subjectName: "Verbal Reasoning",
+        subjectCode: "VRN345",
+        dateAdded: "12/3/25"
+    }
+ ]
 
   const totalStudents = 223;
   const studentsPerPage = 9;
@@ -33,14 +38,14 @@ export default function ListOfClasses() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Orange Header */}
-      <div className="bg-[#F4A300] px-6 py-3">
+      {/* <div className="bg-[#F4A300] px-6 py-3">
         <div className="flex items-center justify-center text-white font-semibold">
           <Search className="w-5 h-5 mr-2" />
           DISPLAY STUDENTS
         </div>
-      </div>
+      </div> */}
 
-      <div className="flex justify-end mt-10">
+      <div className="flex justify-end">
         <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
           <Printer size={20} />
           <span>PRINT RECORD</span>
@@ -52,12 +57,12 @@ export default function ListOfClasses() {
         <div className="flex items-center justify-between mb-2">
           <div>
             <h1 className="text-4xl font-meduim text-gray-900 mb-1 font-inter">
-              Campuses
+              Subjects
             </h1>
           </div>
           <div className="flex items-center">
             <div className=" text-[#000000] px-2 py-2 rounded-lg text-lg font-medium font-inter transition-colors">
-              <span>Add New Campus</span>
+              <span>Add Subject</span>
             </div>
             <div className="bg-white shadow-2xl p-2 rounded-lg flex items-center justify-center cursor-pointer">
               <Plus size={20} />
@@ -66,9 +71,9 @@ export default function ListOfClasses() {
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-">
           <h1 className="text-xl text-gray-900 mb-2 font-inter">
-            All Campuses List
+            All Subjects List
           </h1>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="overflow-x-auto">
@@ -76,28 +81,13 @@ export default function ListOfClasses() {
                 <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
                   <tr>
                     <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      No
+                      Subject Name
                     </th>
                     <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      Campus Name
+                      Subject Code
                     </th>
                     <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      Address
-                    </th>
-                    <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      Principal
-                    </th>
-                    <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      Number
-                    </th>
-                    <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      Email
-                    </th>
-                    <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      No of Students
-                    </th>
-                    <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      No of Staff
+                      Date Added
                     </th>
                     <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Action
@@ -105,37 +95,19 @@ export default function ListOfClasses() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {students.map((student, index) => (
+                  {subject.map((subject, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
-                        {student.no}
+                        {subject.subjectName}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.campusName}
+                        {subject.subjectCode}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.address}
-                      </td>
-                      <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.principal}
-                      </td>
-                      <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.number}
-                      </td>
-                      <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.email}
-                      </td>
-                      <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.noOfStudent}
-                      </td>
-                      <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.noOfStaff}
+                        {subject.dateAdded}
                       </td>
                       <td className="py-3 px-5">
                         <div className="flex items-center justify-center space-x-1">
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                            <FaSearchPlus size={20} className="text-gray-400" />
-                          </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors">
                             <Edit size={20} className="text-gray-400" />
                           </button>

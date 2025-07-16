@@ -112,10 +112,11 @@ export default function StudentsList() {
                     <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                       Class
                     </th>
-                    <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                      Pass <br /> port
+                    <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200 text-">
+                      <span>Pass</span>
+                      <span className="">port</span>
                     </th>
-                    <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                    <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Action
                     </th>
                   </tr>
@@ -167,10 +168,7 @@ export default function StudentsList() {
                       <td className="py-3 px-5">
                         <div className="flex items-center space-x-1">
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                            <FaSearchPlus
-                              size={20}
-                              className="text-gray-400"
-                            />
+                            <FaSearchPlus size={20} className="text-gray-400" />
                           </button>
                           <button className="p-1 hover:bg-gray-100 rounded transition-colors">
                             <CompareIcon size={20} className="text-gray-400" />

@@ -68,6 +68,9 @@ const UpcomingExams = () => {
             </div>
           ))}
         </div>
+        <div className="py-2 px-3">
+          <button className="text-[#777777] text-sm p-2 rounded-md bg-gray-100 cursor-pointer">Add New</button>
+        </div>
       </div>
     </>
   );

@@ -43,8 +43,8 @@ const grade = [
       </div>
 
       {/* Table Container */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-">
-        <h1 className="text-xl text-gray-900 mb-2 font-inter">Grading Setup</h1>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5">
+        <h1 className="text-xl text-gray-700 mb-2 font-inter">Grading Setup</h1>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">

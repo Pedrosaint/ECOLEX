@@ -1,4 +1,4 @@
-import { Navigate, type RouteObject } from "react-router-dom";
+import { type RouteObject } from "react-router-dom";
 import AuthLayout from "../auth/layout/auth-layout";
 import GenerateToken from "../auth/components/generate-token";
 import SharedLayout from "../auth/components/auth-layout";
@@ -18,7 +18,9 @@ import Congratulation from "../auth/components/congratulation";
 import Staffs from "../domain/admin-domain/staff/view/staffs";
 import ClassesView from "../domain/admin-domain/classes/view/classes.view";
 import CampusView from "../domain/admin-domain/campus/view/campus.view";
-import ReportsView from "../domain/admin-domain/reports/view/reports.view";
+import ManageSubjectView from "../domain/admin-domain/manage-subject/view/manage-subject.view";
+import ResultView from "../domain/admin-domain/result/view/result.view";
+import BroadsheetView from "../domain/admin-domain/broadcast/view/broadsheet.view";
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -94,7 +96,7 @@ export default function appRouter(): RouteObject[] {
           element: <Overview />,
         },
         {
-          path: "students",
+          path: "student's",
           element: <StudentView />,
         },
         {
@@ -110,8 +112,17 @@ export default function appRouter(): RouteObject[] {
           element: <CampusView />,
         },
         {
-          path: "reports",
-          element: <ReportsView />,
+          path: "result",
+          element: <ResultView />,
+          // element: <ReportsView />,
+        },
+        {
+          path: "subjects",
+          element: <ManageSubjectView />,
+        },
+        {
+          path: "broadsheet",
+          element: <BroadsheetView />,
         },
       ],
     },

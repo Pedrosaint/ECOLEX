@@ -50,10 +50,10 @@ export default function ListOfStaff() {
         <div className="flex items-center justify-between mb-2">
           <div></div>
           <div className="flex items-center">
-            <button className="bg-[#E8EDF5] text-[#6E6D71] font-inter px-4 py-3 rounded-lg border border-gray-300 shadow-md text-sm font-semibold">
+            <button className="bg-[#E8EDF5] text-[#6E6D71] font-inter px-4 py-3 rounded-lg border border-gray-300 shadow-md text-[10px] md:text-sm font-semibold">
               <h1>Assign Teacher to Class</h1>
             </button>
-            <div className=" text-[#000000] px-2 py-2 rounded-lg text-lg font-medium font-inter transition-colors">
+            <div className=" text-[#000000] px-2 py-2 rounded-lg text-[15px] md:text-lg font-medium font-inter transition-colors">
               <span>Register New Staff</span>
             </div>
             <div className="bg-white shadow-2xl p-2 rounded-lg flex items-center justify-center cursor-pointer">
@@ -63,7 +63,7 @@ export default function ListOfStaff() {
         </div>
 
         <div className="p-5">
-          <div className="flex items-center space-x-8 border-b border-gray-200 relative">
+          <div className="flex items-center space-x-6 md:space-x-8 border-b border-gray-200 relative">
             {tabs.map((tab) => (
               <button
                 key={tab}
@@ -193,12 +193,12 @@ export default function ListOfStaff() {
             </div>
 
             {/* Pagination */}
-            <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
+            <div className="p-2 md:px-6 py-2 border-t border-gray-200 bg-gray-50">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-600">
+                <div className="text-[12px] md:text-sm text-gray-600">
                   Showing 1-9 of {totalStudents}
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center">
                   <button
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
@@ -207,7 +207,7 @@ export default function ListOfStaff() {
                     <ChevronLeft size={20} />
                   </button>
 
-                  <div className="flex items-center space-x-1 font-space">
+                  <div className="flex items-center font-space">
                     {[1, 2, 3].map((page) => (
                       <button
                         key={page}

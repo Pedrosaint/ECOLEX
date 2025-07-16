@@ -1,3 +1,4 @@
+
 import ListOfClasses from "../components/list-of-classes"
 import SearchClassComp from "../components/search-class-comp"
 
@@ -10,7 +11,7 @@ const ClassesView = () => {
         <ListOfClasses />
       </div>
     </div>
-  )
+  );
 }
 
 export default ClassesView

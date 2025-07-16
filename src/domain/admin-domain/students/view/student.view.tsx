@@ -5,8 +5,7 @@ const StudentView = () => {
   return (
     <div>
       <SearchComp />
-      <div className='mt-5'>
-        {" "}
+      <div className="mt-5">
         <ListOfStudent />
       </div>
     </div>

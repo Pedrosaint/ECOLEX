@@ -50,7 +50,7 @@ const Congratulation = () => {
             <img src={congratulation} alt="" className="w-[672px] h-[522px]" />
           </div>
           <div className="md:w-1/2 space-y-10 my-40 md:my-0">
-            <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <Confetti
                 width={width}
                 height={height}
@@ -68,7 +68,10 @@ const Congratulation = () => {
               </p>
             </div>
             <button
-              onClick={() => navigate("/auth/auth-layout/admin-login")}
+              onClick={() => {
+                navigate("/auth/auth-layout/admin-login");
+                console.log("clicked");
+              }}
               className="bg-[#8000BD] w-full text-white font-medium py-2 px-4 rounded-sm text-base transition-colors cursor-pointer"
             >
               Proceed to Login

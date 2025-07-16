@@ -11,19 +11,9 @@ export default function Overview() {
       <div className="">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard
-            title="Students"
-            value="5,909"
-            isPrimary
-            icon="user"
-          />
+          <StatsCard title="Students" value="5,909" isPrimary icon="user" />
           <StatsCard title="Staff" value="60" icon="staff" />
-          <StatsCard
-            title="Campuses"
-            value="100"
-            icon="campus"
-            isPrimary
-          />
+          <StatsCard title="Campuses" value="100" icon="campus" isPrimary />
           <StatsCard title="Current bill" value="N60,000" icon="bill" />
         </div>
 

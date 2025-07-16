@@ -35,7 +35,7 @@ export default function Sidebar({ navLinks, onClick }: { navLinks: NavLink[]; on
               `flex items-center space-x-2 p-2 rounded ${
                 isActive
                   ? "text-[#8000BD] bg-gray-50 rounded-4xl"
-                  : "hover:text-[#c1cebd]"
+                  : "hover:text-[#dfcfe6]"
               }`
             }
           >

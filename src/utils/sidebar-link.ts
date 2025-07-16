@@ -16,11 +16,11 @@ interface NavLink {
 
 export const navLinks: NavLink[] = [
   { path: "/admin/dashboard", icon: GoHomeFill , label: "Overview" },
-  { path: "/admin/students", icon: Users, label: "Students" },
-  { path: "/admin/staff", icon: UserCheck, label: "Staff" },
-  { path: "/admin/classes", icon: BookOpen, label: "Classes" },
+  { path: "/admin/student's", icon: Users, label: "Manage Students" },
+  { path: "/admin/staff", icon: UserCheck, label: "Manage Staff" },
+  { path: "/admin/classes", icon: BookOpen, label: "Manage Classes" },
   { path: "/admin/campuses", icon: Building, label: "Campuses" },
-  { path: "/admin/reports", icon: FileText, label: "View Report" },
+  { path: "/admin/result", icon: FileText, label: "Manage Result" },
   { path: "/admin/subjects", icon: BookOpen, label: "Manage Subject" },
   { path: "/admin/broadsheet", icon: FileText, label: "Broadsheet" },
   { path: "/admin/settings", icon: Settings, label: "Settings" },
