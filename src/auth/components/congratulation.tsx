@@ -55,7 +55,7 @@ const Congratulation = () => {
                 width={width}
                 height={height}
                 recycle={false}
-                numberOfPieces={200}
+                numberOfPieces={800}
                 style={{ position: "absolute" }}
               />
             </div>

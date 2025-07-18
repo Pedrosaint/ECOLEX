@@ -72,7 +72,113 @@ export default function CustomizeSchoolName() {
     
     const dispatch = useAppDispatch();
 
+     const hasValidConfiguration = () => {
+        return (
+          (isEarlyEducationActive &&
+            selectedEarlyName &&
+            earlyStartLevel &&
+            earlyEndLevel) ||
+          (isPrimaryActive &&
+            selectedPrimaryName &&
+            primaryStartLevel &&
+            primaryEndLevel) ||
+          (isJuniorSecondaryActive &&
+            selectedJuniorSecondaryName &&
+            juniorStartLevel &&
+            juniorEndLevel) ||
+          (isSeniorSecondaryActive &&
+            selectedSeniorSecondaryName &&
+            seniorStartLevel &&
+            seniorEndLevel)
+        );
+      };
+      
+
     const handleNextToCCA = async() => {
+      // Validate at least one education level is active and configured
+      const isEarlyValid =
+        isEarlyEducationActive &&
+        selectedEarlyName &&
+        earlyStartLevel &&
+        earlyEndLevel;
+      const isPrimaryValid =
+        isPrimaryActive &&
+        selectedPrimaryName &&
+        primaryStartLevel &&
+        primaryEndLevel;
+      const isJuniorValid =
+        isJuniorSecondaryActive &&
+        selectedJuniorSecondaryName &&
+        juniorStartLevel &&
+        juniorEndLevel;
+      const isSeniorValid =
+        isSeniorSecondaryActive &&
+        selectedSeniorSecondaryName &&
+        seniorStartLevel &&
+        seniorEndLevel;
+
+      if (
+        !isEarlyValid &&
+        !isPrimaryValid &&
+        !isJuniorValid &&
+        !isSeniorValid
+      ) {
+        toast.error("Please configure at least one education level");
+        return;
+      }
+
+      // Validate start/end levels for active sections
+      if (isEarlyEducationActive) {
+        if (!selectedEarlyName || !earlyStartLevel || !earlyEndLevel) {
+          toast.error("Please complete Early Education configuration");
+          return;
+        }
+        if (Number(earlyStartLevel) > Number(earlyEndLevel)) {
+          toast.error("Start level cannot be greater than end level");
+          return;
+        }
+      }
+
+      if (isPrimaryActive) {
+        if (!selectedPrimaryName || !primaryStartLevel || !primaryEndLevel) {
+          toast.error("Please complete Primary configuration");
+          return;
+        }
+        if (Number(primaryStartLevel) > Number(primaryEndLevel)) {
+          toast.error("Start level cannot be greater than end level");
+          return;
+        }
+      }
+
+      if (isJuniorSecondaryActive) {
+        if (
+          !selectedJuniorSecondaryName ||
+          !juniorStartLevel ||
+          !juniorEndLevel
+        ) {
+          toast.error("Please complete Junior Secondary configuration");
+          return;
+        }
+        if (Number(juniorStartLevel) > Number(juniorEndLevel)) {
+          toast.error("Start level cannot be greater than end level");
+          return;
+        }
+      }
+
+      if (isSeniorSecondaryActive) {
+        if (
+          !selectedSeniorSecondaryName ||
+          !seniorStartLevel ||
+          !seniorEndLevel
+        ) {
+          toast.error("Please complete Senior Secondary configuration");
+          return;
+        }
+        if (Number(seniorStartLevel) > Number(seniorEndLevel)) {
+          toast.error("Start level cannot be greater than end level");
+          return;
+        }
+      }
       const activatedStages = [];
       const classes: Class[] = [];
 
@@ -149,6 +255,7 @@ export default function CustomizeSchoolName() {
         }
       }
 
+     
       dispatch(setSchoolStages(activatedStages));
       localStorage.setItem("schoolStages", JSON.stringify(activatedStages));
       setLoading(true);
@@ -301,6 +408,8 @@ export default function CustomizeSchoolName() {
                   onChange={(e) => setEarlyStartLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
+                  required
+                  min="1"
                 />
               </div>
               <div>
@@ -313,6 +422,8 @@ export default function CustomizeSchoolName() {
                   onChange={(e) => setEarlyEndLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
+                  required
+                  min="1"
                 />
               </div>
             </div>
@@ -408,6 +519,8 @@ export default function CustomizeSchoolName() {
                   onChange={(e) => setPrimaryStartLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
+                  required
+                  min="1"
                 />
               </div>
               <div>
@@ -420,6 +533,8 @@ export default function CustomizeSchoolName() {
                   onChange={(e) => setPrimaryEndLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
+                  required
+                  min="1"
                 />
               </div>
             </div>
@@ -525,6 +640,8 @@ export default function CustomizeSchoolName() {
                   onChange={(e) => setJuniorStartLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
+                  required
+                  min="1"
                 />
               </div>
               <div>
@@ -537,6 +654,8 @@ export default function CustomizeSchoolName() {
                   onChange={(e) => setJuniorEndLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
+                  required
+                  min="1"
                 />
               </div>
             </div>
@@ -642,6 +761,8 @@ export default function CustomizeSchoolName() {
                   onChange={(e) => setSeniorStartLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
+                  required
+                  min="1"
                 />
               </div>
               <div>
@@ -654,6 +775,8 @@ export default function CustomizeSchoolName() {
                   onChange={(e) => setSeniorEndLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
                   placeholder=""
+                  required
+                  min="1"
                 />
               </div>
             </div>
@@ -669,10 +792,20 @@ export default function CustomizeSchoolName() {
         </div>
 
         <div onClick={handleNextToCCA} className="flex justify-center mt-10">
-          <button 
+          {/* <button 
           disabled={loading}
           className={`md:w-1/3 w-1/2 py-3.5 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors cursor-pointer ${loading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"}`}>
            {loading ? "Loading..." : "Next"}
+          </button> */}
+          <button
+            disabled={loading || !hasValidConfiguration()}
+            className={`md:w-1/3 w-1/2 py-3.5 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors ${
+              loading || !hasValidConfiguration()
+                ? "opacity-70 cursor-not-allowed"
+                : "cursor-pointer hover:bg-[#6a00a3]"
+            }`}
+          >
+            {loading ? "Loading..." : "Next"}
           </button>
         </div>
       </div>

@@ -74,7 +74,7 @@ export interface CampusSetupResponse {
 }
 
 export interface Date {
-  savedCampus: SavedCampus[];
+  savedCampuses: SavedCampus[];
 }
 
 export interface SavedCampus {

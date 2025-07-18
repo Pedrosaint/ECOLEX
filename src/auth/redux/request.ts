@@ -29,12 +29,12 @@ export interface Campuse {
   phoneNumber: string;
 }
 
-export interface Campuse {
-  email: string;
-  name: string;
-  address: string;
-  phoneNumber: string;
-}
+// export interface Campuse {
+//   email: string;
+//   name: string;
+//   address: string;
+//   phoneNumber: string;
+// }
 
 export interface ClassSetupRequest {
   school_id: number;
@@ -53,14 +53,14 @@ export interface CCARequest {
 export interface Assessment {
   class_id: number;
   name: string;
-  weightage?: number;
+  weightage: number;
   max_score: number;
 }
 
 export interface Exam {
   class_id: number;
   name: string;
-  weightage?: number;
+  weightage: number;
   max_score: number;
 }
 

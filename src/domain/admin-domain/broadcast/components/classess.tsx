@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { ChevronLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+// import { ChevronLeft } from "lucide-react";
+// import { useNavigate } from "react-router-dom";
 import { BsChevronExpand } from "react-icons/bs";
-import { useAppDispatch } from "../../../../hooks/typed.hooks";
-import { setSchoolStages } from "../../../../auth/redux/school-slice";
+// import { useAppDispatch } from "../../../../hooks/typed.hooks";
+// import { setSchoolStages } from "../../../../auth/redux/school-slice";
 import {
   EearlyEducationDropdown,
   PrimaryDropdown,
@@ -11,15 +11,15 @@ import {
   SeniorSecondaryDropdown,
 } from "../../../../auth/dropdown-data";
 import { usePreviewText } from "../../../../auth/hooks/auth.hook";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
-interface Class {
-  name: string;
-}
+// interface Class {
+//   name: string;
+// }
 
 export default function ClassView() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  // const navigate = useNavigate();
+  // const [, setLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isPrimaryDropdownOpen, setIsPrimaryDropdownOpen] = useState(false);
   const [isJuniorSecondaryDropdownOpen, setIsJuniorSecondaryDropdownOpen] =
@@ -68,88 +68,88 @@ export default function ClassView() {
     generatePreviewText,
   } = usePreviewText();
 
-  const handleBackToCampus = () => {
-    navigate("/auth/input-campus");
-  };
+  // const handleBackToCampus = () => {
+  //   navigate("/auth/input-campus");
+  // };
 
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
-  const handleNextToCCA = async () => {
-    const activatedStages = [];
-    const classes: Class[] = [];
+//   const handleNextToCCA = async () => {
+//     const activatedStages = [];
+//     const classes: Class[] = [];
 
-    if (isEarlyEducationActive && selectedEarlyName) {
-      activatedStages.push({
-        type: "early" as const,
-        name: selectedEarlyName,
-        start: earlyStartLevel,
-        end: earlyEndLevel,
-      });
+//     if (isEarlyEducationActive && selectedEarlyName) {
+//       activatedStages.push({
+//         type: "early" as const,
+//         name: selectedEarlyName,
+//         start: earlyStartLevel,
+//         end: earlyEndLevel,
+//       });
 
-      // Generate class names for early education
-      for (let i = Number(earlyStartLevel); i <= Number(earlyEndLevel); i++) {
-        classes.push({
-          name: `${selectedEarlyName} ${i}`,
-        });
-      }
-    }
+//       // Generate class names for early education
+//       for (let i = Number(earlyStartLevel); i <= Number(earlyEndLevel); i++) {
+//         classes.push({
+//           name: `${selectedEarlyName} ${i}`,
+//         });
+//       }
+//     }
 
-    if (isPrimaryActive && selectedPrimaryName) {
-      activatedStages.push({
-        type: "primary" as const,
-        name: selectedPrimaryName,
-        start: primaryStartLevel,
-        end: primaryEndLevel,
-      });
+//     if (isPrimaryActive && selectedPrimaryName) {
+//       activatedStages.push({
+//         type: "primary" as const,
+//         name: selectedPrimaryName,
+//         start: primaryStartLevel,
+//         end: primaryEndLevel,
+//       });
 
-      for (
-        let i = Number(primaryStartLevel);
-        i <= Number(primaryEndLevel);
-        i++
-      ) {
-        classes.push({
-          name: `${selectedPrimaryName} ${i}`,
-        });
-      }
-    }
+//       for (
+//         let i = Number(primaryStartLevel);
+//         i <= Number(primaryEndLevel);
+//         i++
+//       ) {
+//         classes.push({
+//           name: `${selectedPrimaryName} ${i}`,
+//         });
+//       }
+//     }
 
-    if (isJuniorSecondaryActive && selectedJuniorSecondaryName) {
-      activatedStages.push({
-        type: "junior" as const,
-        name: selectedJuniorSecondaryName,
-        start: juniorStartLevel,
-        end: juniorEndLevel,
-      });
+//     if (isJuniorSecondaryActive && selectedJuniorSecondaryName) {
+//       activatedStages.push({
+//         type: "junior" as const,
+//         name: selectedJuniorSecondaryName,
+//         start: juniorStartLevel,
+//         end: juniorEndLevel,
+//       });
 
-      for (let i = Number(juniorStartLevel); i <= Number(juniorEndLevel); i++) {
-        classes.push({
-          name: `${selectedJuniorSecondaryName} ${i}`,
-        });
-      }
-    }
+//       for (let i = Number(juniorStartLevel); i <= Number(juniorEndLevel); i++) {
+//         classes.push({
+//           name: `${selectedJuniorSecondaryName} ${i}`,
+//         });
+//       }
+//     }
 
-    if (isSeniorSecondaryActive && selectedSeniorSecondaryName) {
-      activatedStages.push({
-        type: "senior" as const,
-        name: selectedSeniorSecondaryName,
-        start: seniorStartLevel,
-        end: seniorEndLevel,
-      });
+//     if (isSeniorSecondaryActive && selectedSeniorSecondaryName) {
+//       activatedStages.push({
+//         type: "senior" as const,
+//         name: selectedSeniorSecondaryName,
+//         start: seniorStartLevel,
+//         end: seniorEndLevel,
+//       });
 
-      for (let i = Number(seniorStartLevel); i <= Number(seniorEndLevel); i++) {
-        classes.push({
-          name: `${selectedSeniorSecondaryName} ${i}`,
-        });
-      }
-    }
+//       for (let i = Number(seniorStartLevel); i <= Number(seniorEndLevel); i++) {
+//         classes.push({
+//           name: `${selectedSeniorSecondaryName} ${i}`,
+//         });
+//       }
+//     }
 
-    dispatch(setSchoolStages(activatedStages));
-    localStorage.setItem("schoolStages", JSON.stringify(activatedStages));
-    setLoading(true);
-}
+//     dispatch(setSchoolStages(activatedStages));
+//     localStorage.setItem("schoolStages", JSON.stringify(activatedStages));
+//     setLoading(true);
+// }
 
   return (
-    <div className="bg-gray-50 md:px-15 md:py-10 py-5 px-5">
+    <div className="bg-gray-50 lg:px-15 md:py-10 py-5 px-5">
       <div className="">
         {/* Early Education Section */}
         <div className="">

@@ -1,7 +1,7 @@
 export default function ViewApprovedResult() {
   return (
     <>
-      <h2 className="text-lg md:text-3xl font-medium text-gray-900 mb-2 font-inter">
+      <h2 className="text-lg lg:text-3xl font-medium text-gray-900 mb-2 font-inter">
         Approved Result
       </h2>
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">

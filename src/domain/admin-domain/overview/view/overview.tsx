@@ -17,7 +17,7 @@ export default function Overview() {
           <StatsCard title="Current bill" value="N60,000" icon="bill" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5">
           <div className="w-full">
             <StudentsChart />
           </div>
@@ -32,8 +32,8 @@ export default function Overview() {
         </div>
 
         {/* Upcoming Exams */}
-        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          <div className="md:col-span-2">
+        <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="lg:col-span-2">
             <UpcomingExams />
           </div>
           <NoticeBoard />

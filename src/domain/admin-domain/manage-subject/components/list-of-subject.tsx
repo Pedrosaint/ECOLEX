@@ -5,7 +5,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Edit,
-  Search,
 } from "lucide-react";
 import { useState } from "react";
 

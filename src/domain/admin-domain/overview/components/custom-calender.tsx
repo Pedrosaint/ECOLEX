@@ -4,17 +4,17 @@ import "react-calendar/dist/Calendar.css";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 
 const CustomCalendar = () => {
-  const [value, setValue] = useState<Date | null>(new Date());
+  const [value] = useState<Date | null>(new Date());
 
-  const handleDateChange = (val: Date | [Date, Date] | null) => {
-    if (val instanceof Date) {
-      setValue(val);
-    } else if (Array.isArray(val) && val[0] instanceof Date) {
-      setValue(val[0]); // or handle range logic if you want
-    } else {
-      setValue(null);
-    }
-  };
+  // const handleDateChange = (val: Date | [Date, Date] | null) => {
+  //   if (val instanceof Date) {
+  //     setValue(val);
+  //   } else if (Array.isArray(val) && val[0] instanceof Date) {
+  //     setValue(val[0]); // or handle range logic if you want
+  //   } else {
+  //     setValue(null);
+  //   }
+  // };
 
   return (
     <div className="bg-white rounded-4xl p-4 shadow-md text-center">
@@ -36,7 +36,7 @@ const CustomCalendar = () => {
         next2Label={null}
         prev2Label={null}
         className="!border-0"
-        formatShortWeekday={(locale, date) =>
+        formatShortWeekday={(_locale, date) =>
           ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][date.getDay()]
         }
         tileClassName={({ date }) => {

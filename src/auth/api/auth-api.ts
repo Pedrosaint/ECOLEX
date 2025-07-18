@@ -90,7 +90,7 @@ export const authApi = createApi({
 
     cca: builder.mutation<CCAResponse, { credentials: CCARequest; token: string }>({
       query: ({ credentials, token }) => ({
-        url: "setup/cca",
+        url: "setup/ca",
         method: "POST",
         body: credentials,
         headers: {

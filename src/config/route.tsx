@@ -1,4 +1,4 @@
-import { type RouteObject } from "react-router-dom";
+import { Navigate, type RouteObject } from "react-router-dom";
 import AuthLayout from "../auth/layout/auth-layout";
 import GenerateToken from "../auth/components/generate-token";
 import SharedLayout from "../auth/components/auth-layout";
@@ -7,7 +7,7 @@ import SchoolSetup from "../auth/components/school-setup";
 import InputCampus from "../auth/components/input-campus";
 import CustomizeSchoolName from "../auth/components/customize-school-name";
 import CCASetup from "../auth/components/cca-setup";
-import UsersLogin from "../auth/components/users-login";
+// import UsersLogin from "../auth/components/users-login";
 import { AdminLogin } from "../auth/components/admin-login";
 import { TeachersLogin } from "../auth/components/teachers-login";
 import { StudentLogin } from "../auth/components/student-login";
@@ -24,15 +24,15 @@ import BroadsheetView from "../domain/admin-domain/broadcast/view/broadsheet.vie
 
 export default function appRouter(): RouteObject[] {
   return [
-    // {
-    //     path: "",
-    //     // element: <Navigate to="/auth/generate-token" replace />,
-    //     element: <Navigate to="/" replace />,
-    // },
     {
-      path: "/",
-      element: <UsersLogin />,
+        path: "/",
+        // element: <Navigate to="/auth/generate-token" replace />,
+        element: <Navigate to="/" replace />,
     },
+    // {
+    //   path: "/",
+    //   element: <UsersLogin />,
+    // },
     {
       path: "auth",
       element: <AuthLayout />,
