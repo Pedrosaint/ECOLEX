@@ -95,6 +95,7 @@ import ViewApprovedResult from "./view-approved-result";
 import ViewPromotion from "./view-promotion";
 import ViewRepeatStudents from "./view-repeat-students";
 import CustomizeCANaming from "./customize-ca-naming";
+import ViewClassTeacherRemark from "./view-class-teacher-remark";
 
 export default function ManageBroadSheet() {
   const [activeTab, setActiveTab] = useState("View Broadsheet");
@@ -125,6 +126,8 @@ export default function ManageBroadSheet() {
         return <ViewRepeatStudents />;
       case "Customize CA Naming":
         return <CustomizeCANaming />;
+        case "Class Teacher Remark Access":
+        return <ViewClassTeacherRemark />;
       default:
         return null;
     }
@@ -139,7 +142,7 @@ export default function ManageBroadSheet() {
           className="flex items-center justify-between w-full bg-[#8000BD] text-white px-4 py-2 rounded-md"
         >
           {activeTab}
-         <SlArrowDown  size={18} />
+          <SlArrowDown size={18} />
         </button>
 
         {showDropdown && (
@@ -164,8 +167,11 @@ export default function ManageBroadSheet() {
         )}
       </div>
 
+      <h2 className="text-lg lg:text-3xl font-medium text-gray-900 mb-2 font-inter hidden lg:block">
+        Broadsheet
+      </h2>
       {/* Desktop tabs */}
-      <div className="hidden lg:flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 relative mb-6">
+      <div className="hidden lg:flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 relative mb-6 mt-5">
         {tabs.map((tab) => (
           <button
             key={tab}

@@ -44,7 +44,7 @@ export const AdminLogin = () => {
       });
       navigate("/admin/dashboard");
       console.log("Response:", response);
-      toast.success("Super admin created successfully");
+      toast.success("Super admin login successfully");
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to create admin");

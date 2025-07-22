@@ -1,6 +1,12 @@
 import { Bell, Edit, Trash2 } from "lucide-react";
+import { useState } from "react";
+import AddEventModal from "../modal/add-new-notice.modal";
+import AddNewNoticeModal from "../modal/add-new-notice.modal";
+import EditNoticeModal from "../modal/edit-notice.modal";
 
 export default function NoticeBoard() {
+   const [isnoticesModal, setIsNoticesModal] = useState(false);
+   const [isEditModal, setIsEditModal] = useState(false);
   const notices = [
     {
       id: 1,
@@ -53,14 +59,16 @@ export default function NoticeBoard() {
       iconColor: "bg-[#D6DAFF]",
       iconTextColor: "text-[#696FC1]",
     },
-  ];
+];
 
   return (
     <div className="">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 py-1 px-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-2 mt-2">
-          <h2 className="text-lg font-semibold text-gray-900 font-sans">Notice Board</h2>
+          <h2 className="text-lg font-semibold text-gray-900 font-sans">
+            Notice Board
+          </h2>
           <button className="text-sm text-gray-400 font-sans transition-colors underline cursor-pointer">
             view all
           </button>
@@ -100,8 +108,15 @@ export default function NoticeBoard() {
 
         {/* Footer Actions */}
         <div className="flex items-center space-x-2 text-gray-500 font-sans ml-1 py-2">
-          <button className="text-sm px-2 py-1 bg-gray-100 rounded-md cursor-pointer">Add New</button>
-          <button className="p-1 rounded transition-colors bg-gray-100 cursor-pointer">
+          <button
+            onClick={() => setIsNoticesModal(true)}
+            className="text-sm px-2 py-1 bg-gray-100 rounded-md cursor-pointer border border-gray-300 shadow-md"
+          >
+            Add New
+          </button>
+          <button 
+          onClick={() => setIsEditModal(true)}
+          className="p-1 rounded transition-colors bg-gray-100 cursor-pointer">
             <Edit className="w-4 h-4" />
           </button>
           <button className="p-1 bg-gray-100 rounded transition-colors cursor-pointer hover:text-red-600">
@@ -109,6 +124,14 @@ export default function NoticeBoard() {
           </button>
         </div>
       </div>
+
+      {isnoticesModal && (
+        <AddNewNoticeModal onClose={() => setIsNoticesModal(false)} />
+      )}
+
+      {isEditModal && (
+        <EditNoticeModal onClose={() => setIsEditModal(false)} />
+      )}
     </div>
   );
 }

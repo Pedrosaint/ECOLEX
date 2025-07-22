@@ -1,6 +1,7 @@
 import Icon from "../../assets/icon/icon";
 import type { svgIcons } from "../../assets/icon/svg";
 
+
 interface StatsCardProps {
   title: string;
   value: string;

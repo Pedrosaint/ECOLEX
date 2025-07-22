@@ -6,9 +6,6 @@ import ClassView from "./classess";
 export default function CustomizeCANaming() {
   return (
     <>
-      <h2 className="text-lg lg:text-3xl font-medium text-gray-900 mb-2 font-inter">
-        Customize CA Naming
-      </h2>
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div>

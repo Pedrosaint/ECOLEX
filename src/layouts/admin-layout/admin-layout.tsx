@@ -4,24 +4,11 @@ import Header from "../admin-layout/header";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
 
-// export default function DashboardLayout() {
-//   return (
-//     <div className="flex h-screen bg-gray-500 ">
-//       <Sidebar navLinks={navLinks} />
-//       <div className="flex-1 flex flex-col">
-//         <Header />
-//         <main className="flex-1 py-3 px-3 overflow-auto">
-//           <Outlet />
-//         </main>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showSensitiveData, setShowSensitiveData] = useState(false);
+
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -31,10 +18,7 @@ export default function DashboardLayout() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}
       >
-        <Sidebar
-          navLinks={navLinks}
-          onClick={() => setSidebarOpen(false)}
-        />
+        <Sidebar navLinks={navLinks} onClick={() => setSidebarOpen(false)} />
       </div>
 
       {/* Overlay for mobile */}
@@ -48,9 +32,13 @@ export default function DashboardLayout() {
       )}
 
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        <Header
+          showSensitiveData={showSensitiveData}
+          setShowSensitiveData={setShowSensitiveData}
+          toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        />
         <main className="flex-1 overflow-auto p-4">
-          <Outlet />
+          <Outlet context={{ showSensitiveData }} />
         </main>
       </div>
     </div>

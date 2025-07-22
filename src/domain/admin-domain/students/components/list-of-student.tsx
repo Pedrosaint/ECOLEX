@@ -8,10 +8,16 @@ import {
 } from "lucide-react";
 import { FaSearchPlus } from "react-icons/fa";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import CompareIcon from "../../../../assets/icon/change-icon";
+
+type ContextType = {
+  showSensitiveData: boolean;
+};
 
 export default function StudentsList() {
   const [currentPage, setCurrentPage] = useState(1);
+  const { showSensitiveData } = useOutletContext<ContextType>();
 
   // Sample student data matching the image
   const students = Array.from({ length: 9 }, (_, index) => ({
@@ -128,34 +134,34 @@ export default function StudentsList() {
                         {student.no}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.campus}
+                        {showSensitiveData ? student.campus : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.regNo}
+                        {showSensitiveData ? student.regNo : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200">
-                        {student.surname}
+                        {showSensitiveData ? student.surname : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.otherName}
+                        {showSensitiveData ? student.otherName : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.gender}
+                        {showSensitiveData ? student.gender : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.dob}
+                        {showSensitiveData ? student.dob : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.guardianName}
+                        {showSensitiveData ? student.guardianName : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.guardianNo}
+                        {showSensitiveData ? student.guardianNo : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.lifestyle}
+                        {showSensitiveData ? student.lifestyle : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.class}
+                        {showSensitiveData ? student.class : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm border-r border-gray-200">
                         <div className="">

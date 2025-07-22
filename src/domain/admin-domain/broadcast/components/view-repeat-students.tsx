@@ -1,8 +1,8 @@
 export default function ViewRepeatStudents() {
   return (
     <>
-      <h2 className="text-lg lg:text-3xl font-medium text-gray-900 mb-2 font-inter">
-        Repeat Students
+      <h2 className="text-md font-medium text-[#F4A300] mb-2 font-inter">
+        Repeat student’s by average
       </h2>
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">

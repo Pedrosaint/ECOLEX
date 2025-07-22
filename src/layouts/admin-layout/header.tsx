@@ -174,14 +174,17 @@
 
 
 import { ArrowLeft, Search, Bell, ChevronDown, Menu } from "lucide-react";
-import { FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 
 interface HeaderProps {
   toggleSidebar: () => void;
+  showSensitiveData: boolean;
+  setShowSensitiveData: React.Dispatch<React.SetStateAction<boolean>>;
+  // setShowSensitiveData: (value: boolean) => void;
 }
 
-export default function Header({ toggleSidebar }: HeaderProps) {
+export default function Header({ toggleSidebar, showSensitiveData, setShowSensitiveData }: HeaderProps) {
   const location = useLocation();
 
   // Get current module name from URL path
@@ -217,7 +220,13 @@ export default function Header({ toggleSidebar }: HeaderProps) {
             <h1 className="text-lg font-medium font-inter">
               View All {moduleName} Records
             </h1>
-            <FaRegEyeSlash size={20}/>
+            <button onClick={() => setShowSensitiveData((prev) => !prev)}>
+              {showSensitiveData ? (
+                <FaRegEye size={20} className="text-gray-700" />
+              ) : (
+                <FaRegEyeSlash size={20} className="text-gray-700" />
+              )}
+            </button>
           </div>
         )}
 

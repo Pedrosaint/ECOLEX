@@ -26,8 +26,7 @@ export default function appRouter(): RouteObject[] {
   return [
     {
         path: "/",
-        // element: <Navigate to="/auth/generate-token" replace />,
-        element: <Navigate to="/" replace />,
+        element: <Navigate to="/auth/auth-layout/super-admin" replace />,
     },
     // {
     //   path: "/",

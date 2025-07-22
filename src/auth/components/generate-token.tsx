@@ -36,7 +36,7 @@ const GenerateToken = () => {
         toast.success(response.message || "Token generated successfully!");
       } catch (error) {
         console.error("API Error:", error); // Log full error details
-        toast.error("Failed to generate token");
+        toast.error("sorry email have been used");
       } finally {
         setIsLoading(false);
       }
