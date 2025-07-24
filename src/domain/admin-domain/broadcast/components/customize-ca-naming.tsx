@@ -1,4 +1,5 @@
 
+import { motion } from "framer-motion";
 import ClassView from "./classess";
 
 
@@ -6,7 +7,12 @@ import ClassView from "./classess";
 export default function CustomizeCANaming() {
   return (
     <>
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div>
             <label
@@ -43,7 +49,7 @@ export default function CustomizeCANaming() {
             Update Customize CA
           </button>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

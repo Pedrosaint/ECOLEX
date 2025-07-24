@@ -8,13 +8,19 @@ import {
 } from "lucide-react";
 import { FaSearchPlus } from "react-icons/fa";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { motion } from "framer-motion";
 
+type ContextType = {
+  showSensitiveData: boolean;
+};
 
 export default function ListOfStaff() {
-   const [activeTab, setActiveTab] = useState("All")
+  const [activeTab, setActiveTab] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const { showSensitiveData } = useOutletContext<ContextType>();
 
-   const tabs = ["All", "Teaching", "Security", "Cleaners", "HR"]
+  const tabs = ["All", "Teaching", "Security", "Cleaners", "HR"];
 
   // Sample student data matching the image
   const students = Array.from({ length: 9 }, (_, index) => ({
@@ -50,13 +56,13 @@ export default function ListOfStaff() {
         <div className="flex items-center justify-between mb-2">
           <div></div>
           <div className="flex items-center">
-            <button className="bg-[#E8EDF5] text-[#6E6D71] font-inter px-4 py-3 rounded-lg border border-gray-300 shadow-md text-[10px] md:text-sm font-semibold">
+            <button className="bg-[#E8EDF5] text-[#6E6D71] font-inter px-3 py-2 rounded-lg border border-gray-300 shadow-md text-[10px] md:text-sm font-semibold">
               <h1>Assign Teacher to Class</h1>
             </button>
             <div className=" text-[#000000] px-2 py-2 rounded-lg text-[15px] md:text-lg font-medium font-inter transition-colors">
               <span>Register New Staff</span>
             </div>
-            <div className="bg-white shadow-2xl p-2 rounded-lg flex items-center justify-center cursor-pointer">
+            <div className="bg-white shadow-2xl p-1 rounded-lg flex items-center border border-gray-300 justify-center cursor-pointer">
               <Plus size={20} />
             </div>
           </div>
@@ -87,7 +93,12 @@ export default function ListOfStaff() {
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-"
+        >
           <h1 className="text-xl text-gray-900 mb-2 font-inter">
             All Staff List
           </h1>
@@ -141,34 +152,34 @@ export default function ListOfStaff() {
                         {student.no}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.name}
+                        {showSensitiveData ? student.name : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.subject}
+                        {showSensitiveData ? student.subject : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200">
-                        {student.class}
+                        {showSensitiveData ? student.class : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.address}
+                        {showSensitiveData ? student.address : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.number}
+                        {showSensitiveData ? student.number : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.regNo}
+                        {showSensitiveData ? student.regNo : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.dateEmpoyed}
+                        {showSensitiveData ? student.dateEmpoyed : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.payroll}
+                        {showSensitiveData ? student.payroll : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.campus}
+                        {showSensitiveData ? student.campus : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                        {student.duty} 
+                        {showSensitiveData ? student.duty : "*********"}
                       </td>
                       <td className="py-3 px-5">
                         <div className="flex items-center space-x-1">
@@ -243,7 +254,7 @@ export default function ListOfStaff() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

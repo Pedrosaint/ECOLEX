@@ -8,7 +8,7 @@ const CurrentAcademyInfo = () => {
   const [isSessionOpen, setIsSessionOpen] = useState(false);
   const [isTermOpen, setIsTermOpen] = useState(false);
 
-  const sessions = ["2023-2024", "2024-2025", "2025-2026"];
+  const sessions = ["2024-2025", "2023-2024", "2022-2023","2021-2022"];
   const terms = ["First Term", "Second Term", "Third Term"];
 
   const handleUpdate = () => {

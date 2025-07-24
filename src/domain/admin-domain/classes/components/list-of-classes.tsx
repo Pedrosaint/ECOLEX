@@ -7,9 +7,16 @@ import {
 } from "lucide-react";
 import { FaSearchPlus } from "react-icons/fa";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { motion } from "framer-motion";
+
+type ContextType = {
+  showSensitiveData: boolean;
+};
 
 export default function ListOfClasses() {
   const [currentPage, setCurrentPage] = useState(1);
+  const { showSensitiveData } = useOutletContext<ContextType>();
 
   // Sample student data matching the image
   const students = Array.from({ length: 9 }, (_, index) => ({
@@ -43,20 +50,25 @@ export default function ListOfClasses() {
             </h1>
           </div>
           <div className="flex items-center">
-            <button className="bg-[#E8EDF5] text-[#6E6D71] font-inter px-4 py-3 rounded-lg border border-gray-300 shadow-md text-sm font-semibold">
+            <button className="bg-[#E8EDF5] text-[#6E6D71] font-inter px-3 py-2 rounded-lg border border-gray-300 shadow-md text-sm font-semibold">
               <h1>Add Group</h1>
             </button>
             <div className=" text-[#000000] px-2 py-2 rounded-lg text-lg font-medium font-inter transition-colors">
               <span>Add Class</span>
             </div>
-            <div className="bg-white shadow-2xl p-2 rounded-lg flex items-center justify-center cursor-pointer">
+            <div className="bg-white shadow-2xl p-1 rounded-lg border border-gray-300 flex items-center justify-center cursor-pointer">
               <Plus size={20} />
             </div>
           </div>
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-"
+        >
           <h1 className="text-xl text-gray-900 mb-2 font-inter">
             All Classes List
           </h1>
@@ -92,16 +104,16 @@ export default function ListOfClasses() {
                         {student.no}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.className}
+                        {showSensitiveData ? student.className : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.group}
+                        {showSensitiveData ? student.group : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.campus}
+                        {showSensitiveData ? student.campus : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.noOfStudent}
+                        {showSensitiveData ? student.noOfStudent : "*********"}
                       </td>
                       <td className="py-3 px-5">
                         <div className="flex items-center justify-center space-x-1">
@@ -176,7 +188,7 @@ export default function ListOfClasses() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

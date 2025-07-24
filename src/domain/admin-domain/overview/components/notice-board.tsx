@@ -1,6 +1,5 @@
 import { Bell, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
-import AddEventModal from "../modal/add-new-notice.modal";
 import AddNewNoticeModal from "../modal/add-new-notice.modal";
 import EditNoticeModal from "../modal/edit-notice.modal";
 

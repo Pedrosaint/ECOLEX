@@ -1,5 +1,6 @@
 import { RxCross2 } from "react-icons/rx";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function ViewClassTeacherRemarkTab() {
   const [grades, setGrades] = useState([
@@ -63,7 +64,12 @@ export default function ViewClassTeacherRemarkTab() {
   };
 
   return (
-    <div className="">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className=""
+    >
       {/* Warning Banner */}
       <div className="bg-[#F4A300] text-white p-3 rounded mb-6 text-sm text-center">
         Kindly remove any grade not applicable using the close button or modify
@@ -134,6 +140,6 @@ export default function ViewClassTeacherRemarkTab() {
           Add Another Grade
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

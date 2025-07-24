@@ -244,7 +244,18 @@
 
 
 
-import { X } from "lucide-react";
+
+
+
+
+
+
+
+
+
+
+
+import { X, File } from "lucide-react";
 import { useState, useMemo } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -286,10 +297,21 @@ export default function AddNewNoticeModal({
     "image",
   ];
 
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setFile(e.target.files[0]);
+  //   }
+  // };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
     }
+  };
+
+  const removeFile = () => {
+    setFile(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -305,7 +327,7 @@ export default function AddNewNoticeModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-md bg-opacity-50 z-50 flex items-center justify-center p-3"
+        className="fixed inset-0 bg-black/50 backdrop-blur-md bg-opacity-50 z-50 flex items-start md:items-center justify-center p-3 overflow-y-auto"
       >
         {/* Modal container with spring animation */}
         <motion.div
@@ -408,9 +430,7 @@ export default function AddNewNoticeModal({
               <label className="text-sm font-medium text-gray-700 mb-1">
                 Event Description
               </label>
-              <motion.div
-                className="rounded-md border border-gray-300 overflow-hidden"
-              >
+              <motion.div className="rounded-md border border-gray-300 overflow-hidden">
                 <ReactQuill
                   theme="snow"
                   value={content}
@@ -430,7 +450,7 @@ export default function AddNewNoticeModal({
               transition={{ delay: 0.4 }}
               className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8"
             >
-              <div className="flex items-center gap-2">
+              {/* <div className="">
                 <motion.label
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
@@ -445,13 +465,54 @@ export default function AddNewNoticeModal({
                   className="sr-only"
                   onChange={handleFileChange}
                 />
-                <motion.span
+                <motion.p
                   animate={file ? { x: [0, -5, 5, 0] } : {}}
                   transition={{ duration: 0.3 }}
-                  className="text-sm text-gray-500"
+                  className="text-sm text-gray-500 mt-2 border border-gray-300 rounded-md p-2"
                 >
                   {file ? file.name : "No File Chosen"}
-                </motion.span>
+                </motion.p>
+              </div> */}
+
+              <div className="space-y-3">
+                <motion.label
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  htmlFor="file-upload"
+                  className="inline-flex items-center justify-center rounded-2xl text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none border border-[#6E6D71] bg-white hover:bg-gray-100 h-9 px-4 py-2 cursor-pointer"
+                >
+                  Choose File
+                </motion.label>
+
+                <input
+                  id="file-upload"
+                  type="file"
+                  className="sr-only"
+                  onChange={handleFileChange}
+                />
+
+                {file ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="relative flex gap-2 items-center border border-blue-300 rounded-md bg-blue-50 p-2 text-[10px] text-gray-700 shadow-sm"
+                  >
+                    <div className="p-2 bg-blue-100 rounded-md flex items-center justify-center">
+                      <File className="w-4 h-4 text-blue-500" />
+                    </div>
+                    <span className="truncate">{file.name}</span>
+                    <button
+                      onClick={removeFile}
+                      className="ml-3 text-gray-400 hover:text-red-500 transition cursor-pointer"
+                    >
+                      <X size={18} />
+                    </button>
+                  </motion.div>
+                ) : (
+                  <p className="text-sm text-gray-500 italic">
+                    No file chosen yet.
+                  </p>
+                )}
               </div>
 
               <motion.div
@@ -471,7 +532,7 @@ export default function AddNewNoticeModal({
                     value="approved"
                     checked={status === "approved"}
                     onChange={() => setStatus("approved")}
-                    className="h-4 w-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                    className=""
                   />
                   <label
                     htmlFor="status-approved"
@@ -488,7 +549,7 @@ export default function AddNewNoticeModal({
                     value="unapproved"
                     checked={status === "unapproved"}
                     onChange={() => setStatus("unapproved")}
-                    className="h-4 w-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                    className=""
                   />
                   <label
                     htmlFor="status-unapproved"
@@ -516,6 +577,11 @@ export default function AddNewNoticeModal({
                 Add More
               </motion.button>
               <motion.button
+                onClick={() => {
+                  console.log("====================================");
+                  console.log(JSON.stringify(content));
+                  console.log("====================================");
+                }}
                 whileTap={{ scale: 0.97 }}
                 type="submit"
                 className="w-full rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none bg-[#4B0082] text-white h-9 px-4 py-2 cursor-pointer"

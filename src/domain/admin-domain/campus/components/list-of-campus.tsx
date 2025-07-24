@@ -9,9 +9,16 @@ import {
 } from "lucide-react";
 import { FaSearchPlus } from "react-icons/fa";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { motion } from "framer-motion";
+
+type ContextType = {
+  showSensitiveData: boolean;
+};
 
 export default function ListOfClasses() {
   const [currentPage, setCurrentPage] = useState(1);
+  const { showSensitiveData } = useOutletContext<ContextType>();
 
   // Sample student data matching the image
   const students = Array.from({ length: 9 }, (_, index) => ({
@@ -59,14 +66,19 @@ export default function ListOfClasses() {
             <div className=" text-[#000000] px-2 py-2 rounded-lg text-lg font-medium font-inter transition-colors">
               <span>Add New Campus</span>
             </div>
-            <div className="bg-white shadow-2xl p-2 rounded-lg flex items-center justify-center cursor-pointer">
+            <div className="bg-white shadow-2xl p-2 border border-gray-300 rounded-lg flex items-center justify-center cursor-pointer">
               <Plus size={20} />
             </div>
           </div>
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
+        >
           <h1 className="text-xl text-gray-900 mb-2 font-inter">
             All Campuses List
           </h1>
@@ -111,25 +123,25 @@ export default function ListOfClasses() {
                         {student.no}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.campusName}
+                        {showSensitiveData ? student.campusName : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.address}
+                        {showSensitiveData ? student.address : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.principal}
+                        {showSensitiveData ? student.principal : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.number}
+                        {showSensitiveData ? student.number : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.email}
+                        {showSensitiveData ? student.email : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.noOfStudent}
+                        {showSensitiveData ? student.noOfStudent : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {student.noOfStaff}
+                        {showSensitiveData ? student.noOfStaff : "*********"}
                       </td>
                       <td className="py-3 px-5">
                         <div className="flex items-center justify-center space-x-1">
@@ -204,7 +216,7 @@ export default function ListOfClasses() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

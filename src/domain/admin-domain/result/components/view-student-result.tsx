@@ -1,6 +1,12 @@
+import { motion } from "framer-motion";
+
 export default function ViewStudentResultTab() {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+    <motion.div 
+      initial={{ opacity: 0, y: 30 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, ease: "easeOut" }}
+    className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
       <h2 className="text-lg text-gray-900 mb-6 font-inter">Student Result</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div>
@@ -91,6 +97,6 @@ export default function ViewStudentResultTab() {
           Display Result
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

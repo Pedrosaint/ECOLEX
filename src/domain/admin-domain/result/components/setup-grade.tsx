@@ -1,8 +1,15 @@
 
 import { RxCross2 } from "react-icons/rx";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { motion } from "framer-motion";
+
+type ContextType = {
+  showSensitiveData: boolean;
+};
 
 export default function SetupGradesTab() {
+  const { showSensitiveData } = useOutletContext<ContextType>();
   const [grades, setGrades] = useState([
     { min: "0", max: "39", grade: "F", remarks: "Fail" },
     { min: "55", max: "64", grade: "D", remarks: "Pass" },
@@ -56,7 +63,12 @@ const grade = [
         to get your grading.
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
+      >
         <h2 className="text-lg  text-gray-900 mb-2 font-inter">
           Grading Setup
         </h2>
@@ -86,22 +98,22 @@ const grade = [
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="py-3 text-center text-sm text-gray-600 border-r bg border-gray-200">
                     <div className="border border-gray-300 p-3 mx-auto w-30">
-                      {grade.minimumScore}
+                      {showSensitiveData ? grade.minimumScore : "*********"}
                     </div>
                   </td>
                   <td className="py-3 text-center text-sm text-gray-600 border-r border-gray-200">
                     <div className="border border-gray-300 p-3 mx-auto w-30">
-                      {grade.maximumScore}
+                      {showSensitiveData ? grade.maximumScore : "*********"}
                     </div>
                   </td>
                   <td className="py-3 text-center text-sm text-gray-600 border-r border-gray-200">
                     <div className="border border-gray-300 p-3 mx-auto w-30">
-                      {grade.grades}
+                      {showSensitiveData ? grade.grades : "*********"}
                     </div>
                   </td>
                   <td className="py-3 text-center text-sm text-gray-600 border-r border-gray-200">
                     <div className="border border-gray-300 p-3 mx-auto w-30">
-                      {grade.remarks}
+                      {showSensitiveData ? grade.remarks : "*********"}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-center text-sm text-gray-600 border-r border-gray-200">
@@ -177,7 +189,7 @@ const grade = [
             Submit
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

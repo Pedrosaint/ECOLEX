@@ -6,18 +6,66 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { FaSearchPlus } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import CompareIcon from "../../../../assets/icon/change-icon";
+import { motion } from "framer-motion";
+import AddStudentFormModal from "../modal/add-student.modal";
+import { IoEyeOutline } from "react-icons/io5";
+import DeleteStudentModal from "../modal/delete-student.modal";
+import ViewStudentFormModal from "../modal/view-student.modal";
 
 type ContextType = {
   showSensitiveData: boolean;
 };
 
+type Student = {
+  id: number;
+  no: number;
+  campus: string;
+  regNo: string;
+  surname: string;
+  otherName: string;
+  gender: string;
+  dob: string;
+  guardianName: string;
+  guardianNo: string;
+  lifestyle: string;
+  class: string;
+  passport: string;
+};
+
 export default function StudentsList() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
+  const [isEditStudentModalOpen, setIsEditStudentModalOpen] = useState(false);
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    student: null as Student | null,
+    isLoading: false,
+  });
   const { showSensitiveData } = useOutletContext<ContextType>();
+
+  const handleDeleteConfirm = () => {
+    setDeleteModal(prev => ({ ...prev, isLoading: true }));
+    // Simulate API call
+    setTimeout(() => {
+      setDeleteModal({
+        isOpen: false,
+        student: null,
+        isLoading: false,
+      });
+    }, 1500);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModal({
+      isOpen: false,
+      student: null,
+      isLoading: false,
+    });
+  };
 
   // Sample student data matching the image
   const students = Array.from({ length: 9 }, (_, index) => ({
@@ -49,14 +97,12 @@ export default function StudentsList() {
           DISPLAY STUDENTS
         </div>
       </div>
-
       <div className="flex justify-end mt-10">
         <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
           <Printer size={20} />
           <span>PRINT RECORD</span>
         </button>
       </div>
-
       <div className="mt-10">
         {/* Top Section */}
         <div className="flex items-center justify-between mb-2">
@@ -69,14 +115,22 @@ export default function StudentsList() {
             <div className=" text-[#000000] px-2 py-2 rounded-lg text-lg font-semibold transition-colors">
               <span>Add New Student</span>
             </div>
-            <div className="bg-white shadow-2xl p-2 rounded-lg flex items-center justify-center cursor-pointer">
+            <div
+              onClick={() => setIsAddStudentModalOpen(true)}
+              className="bg-white shadow-2xl p-1 rounded-lg border border-gray-300 flex items-center justify-center cursor-pointer hover:bg-[#4b0082] hover:text-white"
+            >
               <Plus size={20} />
             </div>
           </div>
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
+        >
           <h1 className="text-xl text-gray-900 mb-2 font-inter">
             All Students List
           </h1>
@@ -164,22 +218,40 @@ export default function StudentsList() {
                         {showSensitiveData ? student.class : "*********"}
                       </td>
                       <td className="py-3 px-2 text-sm border-r border-gray-200">
-                        <div className="">
-                          <div className="rounded flex items-center justify-center">
-                            <img src="images/passport.png" alt="passport" />
+                        {showSensitiveData ? (
+                          <div className="">
+                            <div className="rounded flex items-center justify-center">
+                              <img src="images/passport.png" alt="passport" />
+                            </div>
+                            <p className="ml-1 text-xs text-gray-600">
+                              Passport
+                            </p>
                           </div>
-                          <p className="ml-1 text-xs text-gray-600">Passport</p>
-                        </div>
+                        ) : (
+                          <div className="flex justify-center">
+                            <FaUserCircle size={20} />
+                          </div>
+                        )}
                       </td>
                       <td className="py-3 px-5">
                         <div className="flex items-center space-x-1">
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                            <FaSearchPlus size={20} className="text-gray-400" />
+                          <button
+                            onClick={() => setIsEditStudentModalOpen(true)}
+                            className="p-1 transition-colors cursor-pointer"
+                          >
+                            <IoEyeOutline size={20} className="text-gray-400" />
                           </button>
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                            <CompareIcon size={20} className="text-gray-400" />
+                          <button className="p-1 transition-colors">
+                            <CompareIcon size={20} className="text-gray-400 cursor-pointer" />
                           </button>
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
+                          <button
+                            onClick={() => setDeleteModal({
+                              isOpen: true,
+                              student: student,
+                              isLoading: false
+                            })}
+                            className="p-1 transition-colors cursor-pointer"
+                          >
                             <Trash2
                               size={20}
                               className="text-gray-400 hover:text-red-600"
@@ -244,8 +316,25 @@ export default function StudentsList() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
+      {isAddStudentModalOpen && (
+        <AddStudentFormModal onClose={() => setIsAddStudentModalOpen(false)} />
+      )}
+
+      {isEditStudentModalOpen && (
+        <ViewStudentFormModal
+          onClose={() => setIsEditStudentModalOpen(false)}
+        />
+      )}
+
+      <DeleteStudentModal
+        isOpen={deleteModal.isOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        studentName={deleteModal.student?.surname}
+        isLoading={deleteModal.isLoading}
+      />
     </div>
   );
 }

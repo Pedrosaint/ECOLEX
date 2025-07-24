@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import {
   Plus,
   Printer,
@@ -7,9 +8,15 @@ import {
   Edit,
 } from "lucide-react";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+
+type ContextType = {
+  showSensitiveData: boolean;
+};
 
 export default function ListOfSubject() {
   const [currentPage, setCurrentPage] = useState(1);
+  const { showSensitiveData } = useOutletContext<ContextType>();
 
   // Sample subject data matching the image
  const subject = [
@@ -45,7 +52,7 @@ export default function ListOfSubject() {
       </div> */}
 
       <div className="flex justify-end">
-        <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
+        <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center cursor-pointer space-x-2 text-sm font-semibold transition-colors">
           <Printer size={20} />
           <span>PRINT RECORD</span>
         </button>
@@ -63,14 +70,19 @@ export default function ListOfSubject() {
             <div className=" text-[#000000] px-2 py-2 rounded-lg text-lg font-medium font-inter transition-colors">
               <span>Add Subject</span>
             </div>
-            <div className="bg-white shadow-2xl p-2 rounded-lg flex items-center justify-center cursor-pointer">
+            <div className="bg-white shadow-2xl p-2 border border-gray-300 rounded-lg flex items-center justify-center cursor-pointer">
               <Plus size={20} />
             </div>
           </div>
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-"
+        >
           <h1 className="text-xl text-gray-900 mb-2 font-inter">
             All Subjects List
           </h1>
@@ -97,13 +109,13 @@ export default function ListOfSubject() {
                   {subject.map((subject, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
-                        {subject.subjectName}
+                        {showSensitiveData ? subject.subjectName : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {subject.subjectCode}
+                        {showSensitiveData ? subject.subjectCode : "*********"}
                       </td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                        {subject.dateAdded}
+                        {showSensitiveData ? subject.dateAdded : "*********"}
                       </td>
                       <td className="py-3 px-5">
                         <div className="flex items-center justify-center space-x-1">
@@ -175,7 +187,7 @@ export default function ListOfSubject() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
