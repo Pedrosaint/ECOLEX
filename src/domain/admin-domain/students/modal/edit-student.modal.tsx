@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { X, Check, ChevronDown } from "lucide-react";
 import { useState, useRef } from "react";
 
-export default function AddStudentFormModal({
+export default function EditStudentModal({
   onClose,
 }: {
   onClose: () => void;
@@ -38,10 +38,7 @@ export default function AddStudentFormModal({
       <div className="flex justify-center items-center min-h-full">
         <div className="relative w-full max-w-3xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-8 my-8">
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
-            <h2 className="text-2xl font-medium font-inter text-gray-900">
-              Add New Student
-            </h2>
+          <div className="flex items-center justify-end pb-4 border-b border-gray-200 mb-6">
             <button
               className="p-2 cursor-pointer transition-colors"
               onClick={onClose}
@@ -54,21 +51,21 @@ export default function AddStudentFormModal({
           </div>
 
           {/* Profile Upload Section */}
-          <div className="flex gap-6 mb-8">
-            <div className="">
+          <div className="flex justify-between md:items-center gap-6 mb-8">
+            <div>
               <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                 {selectedImage ? (
                   <img
                     src={selectedImage}
                     alt="Passport"
-                    className="w-full h-full object-cover border-2 border-gray-300"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <span className="text-gray-500 text-sm">No image</span>
                 )}
               </div>
-              <div className="flex flex-col items-start mt-3">
-                <span className="text-gray-700 font-medium mb-2">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-3 mt-4">
+                <span className="text-gray-700 font-medium">
                   Upload Passport
                 </span>
                 <input
@@ -80,17 +77,20 @@ export default function AddStudentFormModal({
                 />
                 <button
                   onClick={triggerFileInput}
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-100 h-9 px-4 py-2"
+                  className="inline-flex items-center justify-center rounded-full text-sm font-medium focus-visible:outline-none  border border-gray-300 bg-white hover:bg-gray-100 h-9 px-4 py-2"
                 >
                   Choose Media
                 </button>
               </div>
             </div>
-            {/* Save Button */}
-            <button className="ml-auto inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none bg-[#4B0082] text-white cursor-pointer h-9 px-4 py-2">
-              <Check className="h-4 w-4 mr-2" />
-              Save
-            </button>
+
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mt-4">
+              {/* Save Button */}
+              <button className="ml-auto inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none bg-[#4B0082] text-white cursor-pointer h-9 px-4 py-2">
+                <Check className="h-4 w-4 mr-2" />
+                Save
+              </button>
+            </div>
           </div>
 
           {/* Form Grid */}

@@ -1,11 +1,20 @@
 import { Bell, Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddNewNoticeModal from "../modal/add-new-notice.modal";
 import EditNoticeModal from "../modal/edit-notice.modal";
+import { ClipLoader } from "react-spinners";
 
 export default function NoticeBoard() {
    const [isnoticesModal, setIsNoticesModal] = useState(false);
    const [isEditModal, setIsEditModal] = useState(false);
+   const [isLoading, setIsLoading] = useState(true);
+
+   useEffect(() => {
+     const timer = setTimeout(() => {
+       setIsLoading(false);
+     }, 2000);
+     return () => clearTimeout(timer);
+   }, []);
   const notices = [
     {
       id: 1,
@@ -74,36 +83,43 @@ export default function NoticeBoard() {
         </div>
 
         {/* Notices */}
-        <div className="space-y-3 mb-4 font-sans max-h-64 overflow-y-auto pr-2">
-          {notices.map((notice) => {
-            const IconComponent = notice.icon;
-            return (
-              <div
-                key={notice.id}
-                className={`rounded-lg p-3 flex items-center space-x-3 border border-gray-300 hover:bg-gray-50 transition-colors`}
-              >
-                {/* Icon */}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-[230px] mb-8">
+            <ClipLoader color="#8B5CF6" loading={isLoading} size={50} />
+            <div className="mt-4 text-gray-500">Loading chart data...</div>
+          </div>
+        ) : (
+          <div className="space-y-3 mb-4 font-sans max-h-64 overflow-y-auto pr-2">
+            {notices.map((notice) => {
+              const IconComponent = notice.icon;
+              return (
                 <div
-                  className={`${notice.iconColor} rounded-lg w-11 h-13 flex items-center justify-center`}
+                  key={notice.id}
+                  className={`rounded-lg p-3 flex items-center space-x-3 border border-gray-300 hover:bg-gray-50 transition-colors`}
                 >
-                  <IconComponent
-                    className={`w-7 h-7 ${notice.iconTextColor}`}
-                  />
-                </div>
+                  {/* Icon */}
+                  <div
+                    className={`${notice.iconColor} rounded-lg w-11 h-13 flex items-center justify-center`}
+                  >
+                    <IconComponent
+                      className={`w-7 h-7 ${notice.iconTextColor}`}
+                    />
+                  </div>
 
-                {/* Content */}
-                <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900 mb-1">
-                    {notice.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    {notice.message}
-                  </p>
+                  {/* Content */}
+                  <div className="flex-1">
+                    <h3 className="text-sm font-medium text-gray-900 mb-1">
+                      {notice.title}
+                    </h3>
+                    <p className="text-xs text-gray-600 leading-relaxed">
+                      {notice.message}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Footer Actions */}
         <div className="flex items-center space-x-2 text-gray-500 font-sans ml-1 py-2">
@@ -113,9 +129,10 @@ export default function NoticeBoard() {
           >
             Add New
           </button>
-          <button 
-          onClick={() => setIsEditModal(true)}
-          className="p-1 rounded transition-colors bg-gray-100 cursor-pointer">
+          <button
+            onClick={() => setIsEditModal(true)}
+            className="p-1 rounded transition-colors bg-gray-100 cursor-pointer"
+          >
             <Edit className="w-4 h-4" />
           </button>
           <button className="p-1 bg-gray-100 rounded transition-colors cursor-pointer hover:text-red-600">
@@ -128,9 +145,7 @@ export default function NoticeBoard() {
         <AddNewNoticeModal onClose={() => setIsNoticesModal(false)} />
       )}
 
-      {isEditModal && (
-        <EditNoticeModal onClose={() => setIsEditModal(false)} />
-      )}
+      {isEditModal && <EditNoticeModal onClose={() => setIsEditModal(false)} />}
     </div>
   );
 }

@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { IoReload } from "react-icons/io5";
+import { ClipLoader } from "react-spinners";
 
 const CurrentAcademyInfo = () => {
   const [selectedSession, setSelectedSession] = useState("2024-2025");
   const [selectedTerm, setSelectedTerm] = useState("Second Term");
   const [isSessionOpen, setIsSessionOpen] = useState(false);
   const [isTermOpen, setIsTermOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const sessions = ["2024-2025", "2023-2024", "2022-2023","2021-2022"];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const sessions = ["2024-2025", "2023-2024", "2022-2023", "2021-2022"];
   const terms = ["First Term", "Second Term", "Third Term"];
 
   const handleUpdate = () => {
@@ -23,96 +32,105 @@ const CurrentAcademyInfo = () => {
         Current Academy Info
       </h2>
 
-      {/* Warning Banner */}
-      <div className="bg-[#F4A300] text-white text-[13px] px-4 py-2 rounded-sm mb-3">
-        Always ensure your current session & term is updated
-      </div>
-
-      {/* Academic Session Dropdown */}
-      <div className="mb-6">
-        <label className="flex items-center text-gray-700 text-sm font-medium mb-2">
-          <IoReload size={20} className="mr-2 cursor-pointer" />
-          Update Academic Session
-        </label>
-        <div className="relative ml-6">
-          <button
-            onClick={() => setIsSessionOpen(!isSessionOpen)}
-            className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 text-left text-gray-700 flex items-center justify-between hover:border-gray-400 focus:outline-none"
-          >
-            <span>{selectedSession}</span>
-            <ChevronDown
-              className={`w-4 h-4 transition-transform ${
-                isSessionOpen ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-
-          {isSessionOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-              {sessions.map((session) => (
-                <button
-                  key={session}
-                  onClick={() => {
-                    setSelectedSession(session);
-                    setIsSessionOpen(false);
-                  }}
-                  className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md"
-                >
-                  {session}
-                </button>
-              ))}
-            </div>
-          )}
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center h-[230px] mb-8">
+          <ClipLoader color="#8B5CF6" loading={isLoading} size={50} />
+          <div className="mt-4 text-gray-500">Loading chart data...</div>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* Warning Banner */}
+          <div className="bg-[#F4A300] text-white text-[13px] px-4 py-2 rounded-sm mb-3">
+            Always ensure your current session & term is updated
+          </div>
 
-      {/* Academic Term Dropdown */}
-      <div className="mb-4">
-        <label className="flex items-center text-gray-700 text-sm font-medium mb-2">
-          <IoReload size={20} className="mr-2 cursor-pointer" />
-          Update Academic Term
-        </label>
-        <div className="relative ml-6">
-          <button
-            onClick={() => setIsTermOpen(!isTermOpen)}
-            className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 text-left text-gray-700 flex items-center justify-between hover:border-gray-400 focus:outline-none"
-          >
-            <span>{selectedTerm}</span>
-            <ChevronDown
-              className={`w-4 h-4 transition-transform ${
-                isTermOpen ? "rotate-180" : ""
-              }`}
-            />
-          </button>
+          {/* Academic Session Dropdown */}
+          <div className="mb-6">
+            <label className="flex items-center text-gray-700 text-sm font-medium mb-2">
+              <IoReload size={20} className="mr-2 cursor-pointer" />
+              Update Academic Session
+            </label>
+            <div className="relative ml-6">
+              <button
+                onClick={() => setIsSessionOpen(!isSessionOpen)}
+                className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 text-left text-gray-700 flex items-center justify-between hover:border-gray-400 focus:outline-none"
+              >
+                <span>{selectedSession}</span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${
+                    isSessionOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
 
-          {isTermOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-              {terms.map((term) => (
-                <button
-                  key={term}
-                  onClick={() => {
-                    setSelectedTerm(term);
-                    setIsTermOpen(false);
-                  }}
-                  className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md"
-                >
-                  {term}
-                </button>
-              ))}
+              {isSessionOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                  {sessions.map((session) => (
+                    <button
+                      key={session}
+                      onClick={() => {
+                        setSelectedSession(session);
+                        setIsSessionOpen(false);
+                      }}
+                      className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md"
+                    >
+                      {session}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      {/* Update Button */}
-      <div className="ml-6">
-        <button
-          onClick={handleUpdate}
-          className="w-full bg-[#8000BD] text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none"
-        >
-          Update
-        </button>
-      </div>
+          {/* Academic Term Dropdown */}
+          <div className="mb-4">
+            <label className="flex items-center text-gray-700 text-sm font-medium mb-2">
+              <IoReload size={20} className="mr-2 cursor-pointer" />
+              Update Academic Term
+            </label>
+            <div className="relative ml-6">
+              <button
+                onClick={() => setIsTermOpen(!isTermOpen)}
+                className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 text-left text-gray-700 flex items-center justify-between hover:border-gray-400 focus:outline-none"
+              >
+                <span>{selectedTerm}</span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${
+                    isTermOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isTermOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                  {terms.map((term) => (
+                    <button
+                      key={term}
+                      onClick={() => {
+                        setSelectedTerm(term);
+                        setIsTermOpen(false);
+                      }}
+                      className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md"
+                    >
+                      {term}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Update Button */}
+          <div className="ml-6">
+            <button
+              onClick={handleUpdate}
+              className="w-full bg-[#8000BD] text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none"
+            >
+              Update
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

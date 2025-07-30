@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { X, Check, ChevronDown } from "lucide-react";
 import { useState, useRef } from "react";
 
-export default function AddStudentFormModal({
+export default function AssignStaffModal({
   onClose,
 }: {
   onClose: () => void;
@@ -40,7 +40,7 @@ export default function AddStudentFormModal({
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
             <h2 className="text-2xl font-medium font-inter text-gray-900">
-              Add New Student
+              Assign Teacher to a Class
             </h2>
             <button
               className="p-2 cursor-pointer transition-colors"
@@ -97,31 +97,13 @@ export default function AddStudentFormModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             {/* Student's Name */}
             <div className="flex flex-col">
-              <label
-                htmlFor="student-name"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Student's Name
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Staff's Name
               </label>
               <input
                 id="student-name"
                 type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-
-            {/* Surname */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="surname"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Surname
-              </label>
-              <input
-                id="surname"
-                type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 
@@ -136,7 +118,7 @@ export default function AddStudentFormModal({
               <div className="relative">
                 <select
                   id="campus"
-                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
+                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"
                 >
                   <option value="">Select Campus</option>
                   <option value="main">Main Campus</option>
@@ -146,143 +128,97 @@ export default function AddStudentFormModal({
               </div>
             </div>
 
-            {/* Other names */}
+            {/* Date */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Date Employed
+              </label>
+              <input
+                id="date"
+                type="date"
+                className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            {/* Payroll */}
             <div className="flex flex-col">
               <label
                 htmlFor="other-names"
                 className="text-sm font-medium text-gray-700 mb-1"
               >
-                Other names
+                Payroll
               </label>
               <input
                 id="other-names"
                 type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
-            </div>
-
-            {/* Reg. No */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="reg-no"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Reg. No
-              </label>
-              <input
-                id="reg-no"
-                type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-
-            {/* Gender */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="gender"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Gender
-              </label>
-              <div className="relative">
-                <select
-                  id="gender"
-                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Date of Birth */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="date-of-birth"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Date of Birth
-              </label>
-              <div className="">
-                <input
-                  id="date-of-birth"
-                  type="date"
-                  className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Guardian Name */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="guardian-name"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Guardian Name
-              </label>
-              <input
-                id="guardian-name"
-                type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
-              />
-            </div>
-
-            {/* Guardian Number */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="guardian-number"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Guardian Number
-              </label>
-              <input
-                id="guardian-number"
-                type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-
-            {/* Lifestyle */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="lifestyle"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Lifestyle
-              </label>
-              <div className="relative">
-                <select
-                  id="lifestyle"
-                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
-                >
-                  <option value="">Select Lifestyle</option>
-                  <option value="active">Active</option>
-                  <option value="sedentary">Sedentary</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-              </div>
             </div>
 
             {/* Class */}
             <div className="flex flex-col">
               <label
-                htmlFor="class"
+                htmlFor="campus"
                 className="text-sm font-medium text-gray-700 mb-1"
               >
                 Class
               </label>
               <div className="relative">
                 <select
-                  id="class"
+                  id="campus"
                   className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
                 >
                   <option value="">Select Class</option>
-                  <option value="grade1">Grade 1</option>
-                  <option value="grade2">Grade 2</option>
                 </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Subject */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Subject
+              </label>
+              <input
+                id="subject"
+                type="text"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            {/* Address */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Address
+              </label>
+              <div className="">
+                <input
+                  id="address"
+                  type="text"
+                  className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Number */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Number
+              </label>
+              <input
+                id="number"
+                type="text"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
+              />
+            </div>
+
+            {/* Duty */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Duty
+              </label>
+              <div className="relative">
+                <select className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"></select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
               </div>
             </div>
