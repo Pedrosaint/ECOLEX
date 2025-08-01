@@ -1,51 +1,36 @@
-import { motion } from "framer-motion";
 import {
-  Plus,
   Printer,
-  Trash2,
   ChevronLeft,
   ChevronRight,
   Edit,
-  Search,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 
-type ContextType = {
-  showSensitiveData: boolean;
-};
 
-export default function ListOfSubject() {
+export default function ViewClass() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const { showSensitiveData } = useOutletContext<ContextType>();
+
 
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
+    return () => clearTimeout(timer);
   }, []);
 
-  // Sample subject data matching the image
- const subject = [
-    {
-        subjectName: "English",
-        subjectCode: "ENG345",
-        dateAdded: "12/3/25"
-    },
-    {
-        subjectName: "Mathematics",
-        subjectCode: "MTH345",
-        dateAdded: "12/3/25"
-    },
-    {
-        subjectName: "Verbal Reasoning",
-        subjectCode: "VRN345",
-        dateAdded: "12/3/25"
-    }
- ]
+
+  // Sample student data matching the image
+  const students = Array.from({ length: 9 }, (_, index) => ({
+    id: index + 1,
+    no: index + 1,
+    classCategory: "junior secondary school",
+    claaName: "JSS 1",
+    addedBy: "Admin",
+
+  }));
 
   const totalStudents = 223;
   const studentsPerPage = 9;
@@ -57,100 +42,68 @@ export default function ListOfSubject() {
         <TableSkeleton />
       ) : (
         <div className="min-h-screen bg-gray-50">
-          {/* Orange Header */}
-          <div className="bg-[#8000BD] px-6 py-3">
-            <div className="flex items-center justify-center">
-              <Search className="w-5 h-5 mr-2 text-white" />
-              <button
-                type="button"
-                className="bg-transparent text-white font-semibold outline-none placeholder-white"
-              >
-                DISPLAY SUBJECTS
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-end mt-5">
-            <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center cursor-pointer space-x-2 text-sm font-semibold transition-colors">
+          <div className="flex justify-end mt-10">
+            <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
           </div>
-
-          <div className="mt-9">
-            {/* Top Section */}
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h1 className="text-4xl font-meduim text-gray-900 mb-1 font-inter">
-                  Subjects
-                </h1>
-              </div>
-              <div className="flex items-center">
-                <div className=" text-[#000000] px-2 py-2 rounded-lg text-lg font-medium font-inter transition-colors">
-                  <span>Add Subject</span>
-                </div>
-                <div className="bg-white shadow-2xl p-2 border border-gray-300 rounded-lg flex items-center justify-center cursor-pointer">
-                  <Plus size={20} />
-                </div>
-              </div>
-            </div>
-
+          <div className="mt-7">
             {/* Table Container */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-"
+              className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-17 py-10"
             >
-              <h1 className="text-xl text-gray-900 mb-2 font-inter">
-                All Subjects List
-              </h1>
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="text-xl text-gray-900 mb-2 font-inter">
+                  All Classes List
+                </h1>
+              </div>
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
                       <tr>
                         <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Subject Name
+                          No
                         </th>
                         <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Subject Code
+                          Class Category
                         </th>
                         <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Date Added
+                          Class Name
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                          Action
+                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                          Added By
+                        </th>
+                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                          Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {subject.map((subject, index) => (
+                      {students.map((student, index) => (
                         <tr key={index} className="hover:bg-gray-50">
-                          <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
-                            {showSensitiveData
-                              ? subject.subjectName
-                              : "*********"}
+                          <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200 text-center">
+                            {student.no}
                           </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? subject.subjectCode
-                              : "*********"}
+                          <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                            {student.classCategory}
                           </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? subject.dateAdded
-                              : "*********"}
+                          <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                            {student.claaName}
+                          </td>
+                          <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200 text-center">
+                            {student.addedBy}
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center justify-center space-x-1">
-                              <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                                <Edit size={20} className="text-gray-400" />
-                              </button>
-                              <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                                <Trash2
+                              <button className="p-1 transition-colors">
+                                <Edit
                                   size={20}
-                                  className="text-gray-400 hover:text-red-600"
+                                  className="text-gray-400 hover:text-gray-600"
                                 />
                               </button>
                             </div>

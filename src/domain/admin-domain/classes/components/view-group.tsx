@@ -1,26 +1,18 @@
 import {
-  Plus,
   Printer,
-  Trash2,
   ChevronLeft,
   ChevronRight,
   Edit,
-  Search,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
-import { IoEyeOutline } from "react-icons/io5";
 
-type ContextType = {
-  showSensitiveData: boolean;
-};
 
-export default function ListOfClasses() {
-  const [currentPage, setCurrentPage] = useState(1);
+export default function ViewGroup() {
   const [isLoading, setIsLoading] = useState(true);
-  const { showSensitiveData } = useOutletContext<ContextType>();
+  const [currentPage, setCurrentPage] = useState(1);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,17 +21,16 @@ export default function ListOfClasses() {
     return () => clearTimeout(timer);
   }, []);
 
+
   // Sample student data matching the image
   const students = Array.from({ length: 9 }, (_, index) => ({
     id: index + 1,
     no: index + 1,
-    campusName: "Class A",
-    address: "N0 5 adama street, fct.",
-    principal : "Mrs Uzoechi",
-    number: "09044523114",
-    email: "admin@gmail.com",
-    noOfStudent: "23",
-    noOfStaff: "23",
+    campus: "Campus 1",
+    claaName: "JSS 1",
+    addedBy: "Admin",
+    group: "Group 1",
+
   }));
 
   const totalStudents = 223;
@@ -52,53 +43,25 @@ export default function ListOfClasses() {
         <TableSkeleton />
       ) : (
         <div className="min-h-screen bg-gray-50">
-          {/* Orange Header */}
-          <div className="bg-[#F4A300] px-6 py-3">
-            <div className="flex items-center justify-center">
-              <Search className="w-5 h-5 mr-2 text-white" />
-              <input
-                type="text"
-                placeholder="DISPLAY CAMPUS"
-                className="bg-transparent placeholder-white text-white font-semibold outline-none"
-              />
-            </div>
-          </div>
-
           <div className="flex justify-end mt-10">
-            <button className="bg-[#4B0082] text-white cursor-pointer px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
+            <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
           </div>
-
-          <div className="mt-9">
-            {/* Top Section */}
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h1 className="text-4xl font-meduim text-gray-900 mb-1 font-inter">
-                  Campuses
-                </h1>
-              </div>
-              <div className="flex items-center">
-                <div className=" text-[#000000] px-2 py-2 rounded-lg text-lg font-medium font-inter transition-colors">
-                  <span>Add New Campus</span>
-                </div>
-                <div className="bg-white shadow-2xl p-1 border border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-[#4b0082] hover:text-white">
-                  <Plus size={20} />
-                </div>
-              </div>
-            </div>
-
+          <div className="mt-7">
             {/* Table Container */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
+              className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-17 py-10"
             >
-              <h1 className="text-xl text-gray-900 mb-2 font-inter">
-                All Campuses List
-              </h1>
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="text-xl text-gray-900 mb-2 font-inter">
+                  All Group List
+                </h1>
+              </div>
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
@@ -108,81 +71,46 @@ export default function ListOfClasses() {
                           No
                         </th>
                         <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Campus Name
+                          Campus
                         </th>
                         <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Address
+                          Class Name
                         </th>
                         <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Principal
+                          Added By
                         </th>
                         <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Number
+                          Group
                         </th>
                         <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Email
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          No of Students
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          No of Staff
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                          Action
+                          Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {students.map((student, index) => (
                         <tr key={index} className="hover:bg-gray-50">
-                          <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
+                          <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200 text-center">
                             {student.no}
                           </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? student.campusName
-                              : "*********"}
+                          <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                            {student.campus}
                           </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData ? student.address : "*********"}
+                          <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                            {student.claaName}
                           </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? student.principal
-                              : "*********"}
+                          <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200 text-center">
+                            {student.addedBy}
                           </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData ? student.number : "*********"}
-                          </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData ? student.email : "*********"}
-                          </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? student.noOfStudent
-                              : "*********"}
-                          </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? student.noOfStaff
-                              : "*********"}
+                          <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200 text-center">
+                            {student.group}
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center justify-center space-x-1">
-                              <button className="p-1 cursor-pointer">
-                                <IoEyeOutline
+                              <button className="p-1 transition-colors">
+                                <Edit
                                   size={20}
-                                  className="text-gray-400"
-                                />
-                              </button>
-                              <button className="p-1 cursor-pointer">
-                                <Edit size={20} className="text-gray-400" />
-                              </button>
-                              <button className="p-1 cursor-pointer">
-                                <Trash2
-                                  size={20}
-                                  className="text-gray-400 hover:text-red-600"
+                                  className="text-gray-400 hover:text-gray-600"
                                 />
                               </button>
                             </div>

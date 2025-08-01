@@ -1,44 +1,26 @@
 import { useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
-import ViewBroadsheet from "./view-broadsheet";
-import ViewPendingResult from "./view-pending-result";
-import ViewApprovedResult from "./view-approved-result";
-import ViewPromotion from "./view-promotion";
-import ViewRepeatStudents from "./view-repeat-students";
-import CustomizeCANaming from "./customize-ca-naming";
-import ViewClassTeacherRemark from "./view-class-teacher-remark";
+import ViewCampuses from "./view-campuses";
+import AddCampuses from "./add-campuses";
 
-export default function ManageBroadSheet() {
-  const [activeTab, setActiveTab] = useState("View Broadsheet");
+
+
+export default function ManageCampuses() {
+  const [activeTab, setActiveTab] = useState("Add Campuses");
   const [showDropdown, setShowDropdown] = useState(false);
 
   const tabs = [
-    "View Broadsheet",
-    "Pending Result",
-    "Approved Result",
-    "Promotion",
-    "Repeat Students",
-    "Customize CA Naming",
-    // "Update CA Setup",
-    "Class Teacher Remark Access",
+    "Add Campuses",
+    "View Campuses",
+
   ];
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "View Broadsheet":
-        return <ViewBroadsheet />;
-      case "Pending Result":
-        return <ViewPendingResult />;
-      case "Approved Result":
-        return <ViewApprovedResult />;
-      case "Promotion":
-        return <ViewPromotion />;
-      case "Repeat Students":
-        return <ViewRepeatStudents />;
-      case "Customize CA Naming":
-        return <CustomizeCANaming />;
-        case "Class Teacher Remark Access":
-        return <ViewClassTeacherRemark />;
+      case "Add Campuses":
+        return <AddCampuses />;
+        case "View Campuses":
+        return <ViewCampuses />;
       default:
         return null;
     }
@@ -78,11 +60,8 @@ export default function ManageBroadSheet() {
         )}
       </div>
 
-      <h2 className="text-lg lg:text-3xl font-medium text-gray-900 mb-2 font-inter hidden lg:block">
-        Broadsheet
-      </h2>
       {/* Desktop tabs */}
-      <div className="hidden lg:flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 relative mb-6 mt-5">
+      <div className="hidden lg:flex flex-wrap items-center gap-10 border-b border-gray-200 relative mb-6 mt-5">
         {tabs.map((tab) => (
           <button
             key={tab}

@@ -1,14 +1,11 @@
-import ListOfCampus from "../components/list-of-campus"
-import SearchCampusComp from "../components/search-campus-comp"
+import ManageCampuses from "../components/manage-campuses"
+
 
 const CampusView = () => {
   return (
     <div>
-      <SearchCampusComp />
-      <div className="mt-5">
-        <ListOfCampus />
+     <ManageCampuses />
       </div>
-    </div>
   );
 }
 

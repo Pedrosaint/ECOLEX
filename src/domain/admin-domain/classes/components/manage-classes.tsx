@@ -1,44 +1,32 @@
 import { useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
-import ViewBroadsheet from "./view-broadsheet";
-import ViewPendingResult from "./view-pending-result";
-import ViewApprovedResult from "./view-approved-result";
-import ViewPromotion from "./view-promotion";
-import ViewRepeatStudents from "./view-repeat-students";
-import CustomizeCANaming from "./customize-ca-naming";
-import ViewClassTeacherRemark from "./view-class-teacher-remark";
+import AddClass from "./add-class";
+import AddGroup from "./add-group";
+import ViewClass from "./view-class";
+import ViewGroup from "./view-group";
 
-export default function ManageBroadSheet() {
-  const [activeTab, setActiveTab] = useState("View Broadsheet");
+
+export default function ManageClasses() {
+  const [activeTab, setActiveTab] = useState("Add Class");
   const [showDropdown, setShowDropdown] = useState(false);
 
   const tabs = [
-    "View Broadsheet",
-    "Pending Result",
-    "Approved Result",
-    "Promotion",
-    "Repeat Students",
-    "Customize CA Naming",
-    // "Update CA Setup",
-    "Class Teacher Remark Access",
+    "Add Class",
+    "View Class",
+    "Add Group",
+    "View Group",
   ];
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "View Broadsheet":
-        return <ViewBroadsheet />;
-      case "Pending Result":
-        return <ViewPendingResult />;
-      case "Approved Result":
-        return <ViewApprovedResult />;
-      case "Promotion":
-        return <ViewPromotion />;
-      case "Repeat Students":
-        return <ViewRepeatStudents />;
-      case "Customize CA Naming":
-        return <CustomizeCANaming />;
-        case "Class Teacher Remark Access":
-        return <ViewClassTeacherRemark />;
+      case "Add Class":
+        return <AddClass />;
+        case "View Class":
+        return <ViewClass />;
+         case "Add Group":
+        return <AddGroup />;
+      case "View Group":
+        return <ViewGroup />;
       default:
         return null;
     }
@@ -78,9 +66,6 @@ export default function ManageBroadSheet() {
         )}
       </div>
 
-      <h2 className="text-lg lg:text-3xl font-medium text-gray-900 mb-2 font-inter hidden lg:block">
-        Broadsheet
-      </h2>
       {/* Desktop tabs */}
       <div className="hidden lg:flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 relative mb-6 mt-5">
         {tabs.map((tab) => (

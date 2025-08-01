@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Printer, Search } from "lucide-react";
+import { useState } from "react";
+import Print from "../../../../general/common/print";
 
 export default function ViewBroadsheet() {
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const subjects = [
       "Mathematics",
       "English",
@@ -130,10 +133,25 @@ export default function ViewBroadsheet() {
       </div>
 
       {/* Display Result Button */}
-      <div className="bg-[#F4A300] px-6 py-3 flex items-center justify-center cursor-pointer">
-        <button className="flex text-white font-semibold cursor-pointer">
-          <Search className="w-5 h-5 mr-2" />
-          DISPLAY RESULT
+      <div className="bg-[#8000BD] px-6 py-3">
+        <div className="flex items-center justify-center">
+          <Search className="w-5 h-5 mr-2 text-white" />
+          <button
+            type="button"
+            className="bg-transparent text-white font-semibold outline-none placeholder-white"
+          >
+            DISPLAY RESULT
+          </button>
+        </div>
+      </div>
+
+      <div className="flex justify-end mt-5">
+        <button
+          onClick={() => setIsPrintModalOpen(true)}
+          className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center cursor-pointer space-x-2 text-sm font-semibold transition-colors"
+        >
+          <Printer size={20} />
+          <span>PRINT RECORD</span>
         </button>
       </div>
 
@@ -242,6 +260,10 @@ export default function ViewBroadsheet() {
             </table>
           </div>
         </div>
+
+        {isPrintModalOpen && (
+          <Print onClose={() => setIsPrintModalOpen(false)} />
+        )}
 
         {/* Pagination */}
         <div className="flex items-center justify-between mt-6">

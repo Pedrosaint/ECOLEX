@@ -10,7 +10,7 @@ export default function SearchInterface() {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1:grid-cols-4 lg:grid-cols-5 gap-4 items-end">
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 items-end">
         {/* Campus Dropdown */}
         <div className="flex flex-col">
           <label className="text-sm font-bold text-[#120D1C] font-poppins mb-4">Campus</label>

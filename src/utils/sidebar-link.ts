@@ -4,7 +4,6 @@ import {
   BookOpen,
   Building,
   FileText,
-  Settings,
 } from "lucide-react";
 import { GoHomeFill } from "react-icons/go";
 
@@ -23,5 +22,4 @@ export const navLinks: NavLink[] = [
   { path: "/admin/result", icon: FileText, label: "Manage Result" },
   { path: "/admin/subjects", icon: BookOpen, label: "Manage Subject" },
   { path: "/admin/broadsheet", icon: FileText, label: "Broadsheet" },
-  { path: "/admin/settings", icon: Settings, label: "Settings" },
 ];

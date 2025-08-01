@@ -1,15 +1,9 @@
 
 import { RxCross2 } from "react-icons/rx";
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
 
-type ContextType = {
-  showSensitiveData: boolean;
-};
-
 export default function SetupGradesTab() {
-  const { showSensitiveData } = useOutletContext<ContextType>();
   const [grades, setGrades] = useState([
     { min: "0", max: "39", grade: "F", remarks: "Fail" },
     { min: "55", max: "64", grade: "D", remarks: "Pass" },
@@ -65,45 +59,11 @@ export default function SetupGradesTab() {
                 <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200"></th>
               </tr>
             </thead>
-            {/* <tbody className="divide-y divide-gray-200">
-              {grade.map((grade, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="py-3 text-center text-sm text-gray-600 border-r bg border-gray-200">
-                    <div className="border border-gray-300 p-3 mx-auto w-30">
-                      {showSensitiveData ? grade.minimumScore : "*********"}
-                    </div>
-                  </td>
-                  <td className="py-3 text-center text-sm text-gray-600 border-r border-gray-200">
-                    <div className="border border-gray-300 p-3 mx-auto w-30">
-                      {showSensitiveData ? grade.maximumScore : "*********"}
-                    </div>
-                  </td>
-                  <td className="py-3 text-center text-sm text-gray-600 border-r border-gray-200">
-                    <div className="border border-gray-300 p-3 mx-auto w-30">
-                      {showSensitiveData ? grade.grades : "*********"}
-                    </div>
-                  </td>
-                  <td className="py-3 text-center text-sm text-gray-600 border-r border-gray-200">
-                    <div className="border border-gray-300 p-3 mx-auto w-30">
-                      {showSensitiveData ? grade.remarks : "*********"}
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-center text-sm text-gray-600 border-r border-gray-200">
-                    <div 
-                    onClick={() => handleRemoveGrade(index)}
-                    className="border border-gray-300 p-1 flex justify-center bg-gray-200 cursor-pointer mx-auto w-10">
-                      <RxCross2 className="text-red-700" size={20} />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody> */}
 
             <tbody className="divide-y divide-gray-200">
               {grades.map((grade, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="py-3 text-center text-sm border-r border-gray-200">
-                    {showSensitiveData ? (
                       <input
                         type="text"
                         value={grade.min}
@@ -114,12 +74,8 @@ export default function SetupGradesTab() {
                         }}
                         className="w-20 p-2 border border-gray-300 rounded text-center"
                       />
-                    ) : (
-                      "*********"
-                    )}
                   </td>
                   <td className="py-3 text-center text-sm border-r border-gray-200">
-                    {showSensitiveData ? (
                       <input
                         type="text"
                         value={grade.max}
@@ -130,12 +86,8 @@ export default function SetupGradesTab() {
                         }}
                         className="w-20 p-2 border border-gray-300 rounded text-center"
                       />
-                    ) : (
-                      "*********"
-                    )}
                   </td>
                   <td className="py-3 text-center text-sm border-r border-gray-200">
-                    {showSensitiveData ? (
                       <input
                         type="text"
                         value={grade.grade}
@@ -146,12 +98,8 @@ export default function SetupGradesTab() {
                         }}
                         className="w-20 p-2 border border-gray-300 rounded text-center"
                       />
-                    ) : (
-                      "*********"
-                    )}
                   </td>
                   <td className="py-3 text-center text-sm border-r border-gray-200">
-                    {showSensitiveData ? (
                       <input
                         type="text"
                         value={grade.remarks}
@@ -160,13 +108,10 @@ export default function SetupGradesTab() {
                           updated[index].remarks = e.target.value;
                           setGrades(updated);
                         }}
-                        className="w-20 p-2 border border-gray-300 rounded text-center"
+                        className="w-30 p-2 border border-gray-300 rounded text-center"
                       />
-                    ) : (
-                      "*********"
-                    )}
                   </td>
-                  <td className="py-3 text-center text-sm">
+                  <td className="py-3 w-15 text-center text-sm">
                     <button
                       onClick={() => handleRemoveGrade(index)}
                       className="p-1 bg-gray-100 border border-gray-300 rounded hover:bg-red-100 cursor-pointer"

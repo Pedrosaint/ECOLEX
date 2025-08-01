@@ -1,14 +1,14 @@
 
-import ListOfClasses from "../components/list-of-classes"
-import SearchClassComp from "../components/search-class-comp"
+import ManageClasses from "../components/manage-classes";
+
 
 
 const ClassesView = () => {
   return (
     <div>
-      <SearchClassComp />
+      <ManageClasses />
       <div className="mt-5">
-        <ListOfClasses />
+        {/* <ListOfClasses /> */}
       </div>
     </div>
   );

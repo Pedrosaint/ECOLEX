@@ -1,7 +1,15 @@
 import { X, ChevronDown, Search, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import AddNewNoticeModal from "./add-new-notice.modal";
 
-export default function EditNoticeModal({ onClose }: { onClose: () => void }) {
+interface ViewNoticeModalProps {
+  onClose: () => void;
+  openAddModal: () => void;
+}
+
+export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeModalProps) {
+  const [isAddNoticeMolda, setIsAddNoticeModal] = useState(false);
   // Notice data array
   const notices = [
     {
@@ -25,6 +33,11 @@ export default function EditNoticeModal({ onClose }: { onClose: () => void }) {
       iconColor: "text-purple-600",
     },
   ];
+
+  const handleAddNotice = () => {
+    onClose();
+    openAddModal();
+  }
 
   return (
     <AnimatePresence>
@@ -120,6 +133,7 @@ export default function EditNoticeModal({ onClose }: { onClose: () => void }) {
                   scale: 1.03,
                   backgroundColor: "#6a1b9a",
                 }}
+                onClick={handleAddNotice}
                 whileTap={{ scale: 0.97 }}
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none border-2 border-[#8000BD] bg-[#8000BD] text-white h-9 px-4 py-2 w-full md:w-auto cursor-pointer"
               >
@@ -182,6 +196,10 @@ export default function EditNoticeModal({ onClose }: { onClose: () => void }) {
             </div>
           </motion.div>
         </motion.div>
+
+        {isAddNoticeMolda && (
+          <AddNewNoticeModal onClose={() => setIsAddNoticeModal(false)}/>
+        )}
       </motion.div>
     </AnimatePresence>
   );

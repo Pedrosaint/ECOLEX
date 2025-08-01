@@ -12,109 +12,22 @@ export default function ViewStudentFormModal({
 }) {
   const [selectedImage] = useState<string | null>(null);
  
-
-  const fields = [
-    {
-      id: "student-name",
-      label: "Student's Name",
-      type: "text",
-      value: "John", // Example value
-    },
-    {
-      id: "surname",
-      label: "Surname",
-      type: "text",
-      value: "Doe", // Example value
-    },
-    {
-      id: "campus",
-      label: "Campus",
-      type: "select",
-      value: "main",
-      options: [
-        { value: "", label: "Select Campus" },
-        { value: "main", label: "Main Campus" },
-        { value: "north", label: "North Campus" },
-      ],
-    },
-    {
-      id: "other-names",
-      label: "Other names",
-      type: "text",
-      value: "Michael", // Example value
-    },
-    {
-      id: "reg-no",
-      label: "Reg. No",
-      type: "text",
-      value: "REG12345", // Example value
-    },
-    {
-      id: "gender",
-      label: "Gender",
-      type: "select",
-      value: "male",
-      options: [
-        { value: "", label: "Select Gender" },
-        { value: "male", label: "Male" },
-        { value: "female", label: "Female" },
-        { value: "other", label: "Other" },
-      ],
-    },
-    {
-      id: "date-of-birth",
-      label: "Date of Birth",
-      type: "date",
-      value: "2000-01-15", // Example value
-    },
-    {
-      id: "guardian-name",
-      label: "Guardian Name",
-      type: "text",
-      value: "Jane Doe", // Example value
-    },
-    {
-      id: "guardian-number",
-      label: "Guardian Number",
-      type: "text",
-      value: "+1234567890", // Example value
-    },
-    {
-      id: "lifestyle",
-      label: "Lifestyle",
-      type: "select",
-      value: "active",
-      options: [
-        { value: "", label: "Select Lifestyle" },
-        { value: "active", label: "Active" },
-        { value: "sedentary", label: "Sedentary" },
-      ],
-    },
-    {
-      id: "class",
-      label: "Class",
-      type: "select",
-      value: "grade1",
-      options: [
-        { value: "", label: "Select Class" },
-        { value: "grade1", label: "Grade 1" },
-        { value: "grade2", label: "Grade 2" },
-      ],
-    },
-  ];
-
-  // Function to get display value for selects
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getDisplayValue = (field: any) => {
-    if (field.type === "select") {
-      const selectedOption = field.options.find(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (opt: any) => opt.value === field.value
-      );
-      return selectedOption ? selectedOption.label : "";
-    }
-    return field.value;
-  };
+const students = [
+  {
+    id: 1,
+    name: "John",
+    surName: "Smith",
+    campus: "Main Campus",
+    dateOfBirth: "2005-05-15",
+    regNo: "STU001",
+    guadianName: "John Smith",
+    class: "JSS1",
+    otherNames: "John",
+    gender: "Male",
+    lifeStyle: "Boarder",
+    guadianNumber: "09012345678",
+  },
+];  
 
   return (
     <motion.div
@@ -153,7 +66,7 @@ export default function ViewStudentFormModal({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-gray-500 text-sm">No image</span>
+                  <div className="text-gray-500 text-sm">No image</div>
                 )}
               </div>
               <div className="flex justify-center">
@@ -174,42 +87,105 @@ export default function ViewStudentFormModal({
           </div>
 
           {/* Form Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            {fields.map((field) => (
-              <div key={field.id} className="flex flex-col">
-                <label
-                  htmlFor={field.id}
-                  className="text-sm font-medium text-gray-700 mb-1"
-                >
-                  {field.label}
-                </label>
+          <div className="gap-y-6">
+            {students.map((student) => (
+              <div
+                key={student.id}
+                className="grid grid-cols-1 md:grid-cols-2 gap-x-8 space-y-5"
+              >
+                <div className="">
+                  <label className="font-medium text-gray-600">Reg. No</label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.regNo}
+                  </div>
+                </div>
 
-                {field.type === "select" ? (
-                  <div className="relative">
-                    <div
-                      id={field.id}
-                      className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm"
-                    >
-                      {getDisplayValue(field)}
-                    </div>
+                <div className="">
+                  <label className="font-medium text-gray-600">
+                    Studen Name
+                  </label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.name}
                   </div>
-                ) : (
-                  <div
-                    id={field.id}
-                    className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm"
-                  >
-                    {field.type === "date"
-                      ? new Date(field.value).toLocaleDateString()
-                      : field.value}
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">Surname</label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.surName}
                   </div>
-                )}
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">Campus</label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.campus}
+                  </div>
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">
+                    Other names
+                  </label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.otherNames}
+                  </div>
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">
+                    Date of Birth
+                  </label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.dateOfBirth
+                      ? new Date(student.dateOfBirth).toLocaleDateString()
+                      : "No date"}
+                  </div>
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">Gender</label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.gender}
+                  </div>
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">Class</label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.class}
+                  </div>
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">
+                    Guardian Name
+                  </label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.guadianName}
+                  </div>
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">
+                    Guardian Number
+                  </label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.guadianNumber}
+                  </div>
+                </div>
+
+                <div className="">
+                  <label className="font-medium text-gray-600">Lifestyle</label>
+                  <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {student.lifeStyle}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-
-     
     </motion.div>
   );
 }

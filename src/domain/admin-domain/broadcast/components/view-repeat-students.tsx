@@ -1,119 +1,200 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 export default function ViewRepeatStudents() {
+  const [formData, setFormData] = useState({
+    campus: "",
+    averageScore: "",
+    currentSession: "",
+    currentClass: "",
+    nextSession: "",
+  });
+
+  const [isCampusOpen, setIsCampusOpen] = useState(false);
+  const [isClassOpen, setIsClassOpen] = useState(false);
+  const [isSessionOpen, setIsSessionOpen] = useState(false);
+  const [isNextSessionOpen, setIsNextSessionOpen] = useState(false);
+
+  const campuses = ["Campus 1", "Campus 2"];
+  const classes = ["Class 1", "Class 2", "Class 3"];
+  const currentSession = ["2022/2023", "2023/2024", "2024/2025"];
+  const nextSession = ["2022/2023", "2023/2024", "2024/2025"];
+
+
+  const handleSelect = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const allFieldsFilled = Object.values(formData).every(
+    (val) => val.trim() !== ""
+  );
+
   return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <h2 className="text-md font-medium text-[#F4A300] mb-2 font-inter">
-          Repeat student’s by average
-        </h2>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div>
-              <label
-                htmlFor="view-campus"
-                className="block text-sm font-semibold font-inter text-gray-700 mb-2"
-              >
-                Select Campus
-              </label>
-              <input
-                type="text"
-                placeholder="Campus 1"
-                className="w-full px-4 py-4 border border-gray-300 rounded-md text-sm text-gray-700 appearance-none focus:outline-none"
-              />
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <h2 className="text-md text-end font-medium text-[#F4A300] mb-2 font-inter">
+        Repeat student's by average
+      </h2>
+
+      <div className="bg-white p-6 rounded-md shadow-sm border border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {/* Campus - Custom Dropdown */}
+          <div className="relative">
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Campus
+            </label>
+            <div
+              className="w-full px-4 py-3 border border-gray-300 rounded text-sm text-gray-700 cursor-pointer flex justify-between items-center"
+              onClick={() => setIsCampusOpen((prev) => !prev)}
+            >
+              <span>{formData.campus || "Choose a campus"}</span>
+              <ChevronDown size={16} />
             </div>
-            <div>
-              <label
-                htmlFor="view-term"
-                className="block text-sm font-semibold font-inter text-gray-700 mb-2"
-              >
-                Average Score Below
-              </label>
-              <div className="relative">
-                <select className="w-full px-4 py-4 border border-gray-300 rounded-md text-sm text-gray-400 appearance-none focus:outline-none pr-10"></select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg
-                    className="fill-current h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
+            {isCampusOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded shadow-md">
+                {campuses.map((campus) => (
+                  <div
+                    key={campus}
+                    className="px-4 py-2 hover:bg-[#8000bd] hover:text-white cursor-pointer text-sm"
+                    onClick={() => {
+                      handleSelect("campus", campus);
+                      setIsCampusOpen(false);
+                    }}
                   >
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                  </svg>
-                </div>
+                    {campus}
+                  </div>
+                ))}
               </div>
-            </div>
-            <div>
-              <label
-                htmlFor="view-academy-year"
-                className="block text-sm font-semibold font-inter text-gray-700 mb-2"
-              >
-                Current Session (From)
-              </label>
-              <div className="relative">
-                <select className="w-full px-4 py-4 border border-gray-300 rounded-md text-sm text-gray-400 appearance-none focus:outline-none pr-10"></select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg
-                    className="fill-current h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="view-class"
-                className="block text-sm font-semibold font-inter text-gray-700 mb-2"
-              >
-                Current Class (From)
-              </label>
-              <div className="relative">
-                <select className="w-full px-4 py-4 border border-gray-300 rounded-md text-sm text-gray-400 appearance-none focus:outline-none"></select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg
-                    className="fill-current h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="view-class"
-                className="block text-sm font-semibold font-inter text-gray-700 mb-2"
-              >
-                Next Session (To)
-              </label>
-              <div className="relative">
-                <select className="w-full px-4 py-4 border border-gray-300 rounded-md text-sm text-gray-400 appearance-none focus:outline-none"></select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg
-                    className="fill-current h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
-          <div className="flex justify-center">
-            <button className="bg-[#4B0082] w-full max-w-md text-white px-6 py-3 rounded-md text-base font-semibold font-inter transition-colors cursor-pointer">
-              Repeat
-            </button>
+
+          {/* Average Score - Input */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Average Score Above (Inclusive)
+            </label>
+            <input
+              type="number"
+              name="averageScore"
+              placeholder="Enter score"
+              value={formData.averageScore}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  averageScore: e.target.value,
+                }))
+              }
+              className="w-full px-4 py-3 border border-gray-300 rounded text-sm focus:outline-none"
+            />
+          </div>
+
+          {/* Current Session Dropdown */}
+          <div className="relative">
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Current Session (From)
+            </label>
+            <div
+              className="w-full px-4 py-3 border border-gray-300 rounded text-sm text-gray-700 cursor-pointer flex justify-between items-center"
+              onClick={() => setIsSessionOpen((prev) => !prev)}
+            >
+              <span>{formData.currentSession || "Choose current session"}</span>
+              <ChevronDown size={16} />
+            </div>
+            {isSessionOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded shadow-md">
+                {currentSession.map((session) => (
+                  <div
+                    key={session}
+                    className="px-4 py-2 hover:bg-[#8000bd] hover:text-white cursor-pointer text-sm"
+                    onClick={() => {
+                      handleSelect("currentSession", session);
+                      setIsSessionOpen(false);
+                    }}
+                  >
+                    {session}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Current Class - Custom Dropdown */}
+          <div className="relative">
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Current Class (From)
+            </label>
+            <div
+              className="w-full px-4 py-3 border border-gray-300 rounded text-sm text-gray-700 cursor-pointer flex justify-between items-center"
+              onClick={() => setIsClassOpen((prev) => !prev)}
+            >
+              <span>{formData.currentClass || "Choose class"}</span>
+              <ChevronDown size={16} />
+            </div>
+            {isClassOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded shadow-md">
+                {classes.map((cls) => (
+                  <div
+                    key={cls}
+                    className="px-4 py-2 hover:bg-[#8000bd] hover:text-white cursor-pointer text-sm"
+                    onClick={() => {
+                      handleSelect("currentClass", cls);
+                      setIsClassOpen(false);
+                    }}
+                  >
+                    {cls}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* You can repeat the pattern for currentSession, nextSession */}
+          <div className="relative">
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Next Session (To)
+            </label>
+            <div
+              className="w-full px-4 py-3 border border-gray-300 rounded text-sm text-gray-700 cursor-pointer flex justify-between items-center"
+              onClick={() => setIsNextSessionOpen((prev) => !prev)}
+            >
+              <span>{formData.nextSession || "Choose next session"}</span>
+              <ChevronDown size={16} />
+            </div>
+            {isNextSessionOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded shadow-md">
+                {nextSession.map((session) => (
+                  <div
+                    key={session}
+                    className="px-4 py-2 hover:bg-[#8000bd] hover:text-white cursor-pointer text-sm"
+                    onClick={() => {
+                      handleSelect("nextSession", session);
+                      setIsNextSessionOpen(false);
+                    }}
+                  >
+                    {session}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </motion.div>
-    </>
+      </div>
+      <div className="flex justify-center mt-5">
+        <button
+          disabled={!allFieldsFilled}
+          className={`w-full px-6 py-3 rounded text-base font-semibold transition-colors ${
+            allFieldsFilled
+              ? "bg-[#4B0082] text-white hover:bg-[#3a0063] cursor-pointer"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
+        >
+          Repeat
+        </button>
+      </div>
+    </motion.div>
   );
 }

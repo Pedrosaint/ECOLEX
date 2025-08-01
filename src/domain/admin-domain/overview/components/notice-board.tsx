@@ -1,12 +1,13 @@
-import { Bell, Edit, Trash2 } from "lucide-react";
+import { Bell, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import AddNewNoticeModal from "../modal/add-new-notice.modal";
-import EditNoticeModal from "../modal/edit-notice.modal";
+
 import { ClipLoader } from "react-spinners";
+import ViewNoticeModal from "../modal/View-notice.modal";
 
 export default function NoticeBoard() {
    const [isnoticesModal, setIsNoticesModal] = useState(false);
-   const [isEditModal, setIsEditModal] = useState(false);
+   const [isEditModal, setIsViewModal] = useState(false);
    const [isLoading, setIsLoading] = useState(true);
 
    useEffect(() => {
@@ -77,7 +78,10 @@ export default function NoticeBoard() {
           <h2 className="text-lg font-semibold text-gray-900 font-sans">
             Notice Board
           </h2>
-          <button className="text-sm text-gray-400 font-sans transition-colors underline cursor-pointer">
+          <button
+            onClick={() => setIsViewModal(true)}
+            className="text-sm text-gray-400 font-sans transition-colors underline cursor-pointer hover:text-[#4B0082]"
+          >
             view all
           </button>
         </div>
@@ -129,12 +133,6 @@ export default function NoticeBoard() {
           >
             Add New
           </button>
-          <button
-            onClick={() => setIsEditModal(true)}
-            className="p-1 rounded transition-colors bg-gray-100 cursor-pointer"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
           <button className="p-1 bg-gray-100 rounded transition-colors cursor-pointer hover:text-red-600">
             <Trash2 className="w-4 h-4" />
           </button>
@@ -145,7 +143,10 @@ export default function NoticeBoard() {
         <AddNewNoticeModal onClose={() => setIsNoticesModal(false)} />
       )}
 
-      {isEditModal && <EditNoticeModal onClose={() => setIsEditModal(false)} />}
+      {isEditModal && <ViewNoticeModal 
+      onClose={() => setIsViewModal(false)} 
+      openAddModal={() => setIsNoticesModal(true)}  
+      />}
     </div>
   );
 }

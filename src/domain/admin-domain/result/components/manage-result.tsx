@@ -35,7 +35,6 @@ export default function ManageResult() {
   return (
     <div className="">
       <div className="">
-        <h1 className="text-2xl font-medium font-inter text-gray-900 mb-6">Manage Result</h1>
 
          {/* Mobile dropdown filter */}
               <div className="md:hidden mb-4 relative">
@@ -71,7 +70,7 @@ export default function ManageResult() {
         
 
         {/* Tab Navigation */}
-        <div className="flex items-center justify-between border-b border-gray-200 relative mb-6">
+        <div className="md:flex items-center justify-between border-b border-gray-200 relative mb-6 hidden">
           {tabs.map((tab) => (
             <button
               key={tab}

@@ -72,7 +72,7 @@ const CurrentAcademyInfo = () => {
                         setSelectedSession(session);
                         setIsSessionOpen(false);
                       }}
-                      className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md"
+                      className="w-full px-4 py-3 text-left text-gray-700 hover:bg-[#8000BD] hover:text-white first:rounded-t-md last:rounded-b-md"
                     >
                       {session}
                     </button>
@@ -110,7 +110,7 @@ const CurrentAcademyInfo = () => {
                         setSelectedTerm(term);
                         setIsTermOpen(false);
                       }}
-                      className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md"
+                      className="w-full px-4 py-3 text-left text-gray-700 hover:bg-[#8000BD] hover:text-white first:rounded-t-md last:rounded-b-md"
                     >
                       {term}
                     </button>

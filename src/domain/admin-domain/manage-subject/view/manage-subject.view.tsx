@@ -1,11 +1,11 @@
-import ListOfSubject from "../components/list-of-subject"
+import ManageSubject from "../components/manage-subject"
 
 
 const ManageSubjectView = () => {
   return (
     <div>
-      <div className="mt-5">
-        <ListOfSubject />
+      <div className="">
+     <ManageSubject />
       </div>
     </div>
   )

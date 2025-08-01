@@ -1,5 +1,4 @@
-import { ArrowLeft, Search, Bell, ChevronDown, Menu } from "lucide-react";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { Search, Bell, ChevronDown, Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 interface HeaderProps {
@@ -9,7 +8,7 @@ interface HeaderProps {
   // setShowSensitiveData: (value: boolean) => void;
 }
 
-export default function Header({ toggleSidebar, showSensitiveData, setShowSensitiveData }: HeaderProps) {
+export default function Header({ toggleSidebar}: HeaderProps) {
   const location = useLocation();
 
   // Get current module name from URL path
@@ -23,7 +22,7 @@ export default function Header({ toggleSidebar, showSensitiveData, setShowSensit
   const isOverview = !moduleName
 
   return (
-    <header className="py-2 px-3 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0">
+    <header className="py-3 px-3 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0">
       {/* Left Section */}
       <div className="flex items-center justify-between space-x-2 w-full sm:w-auto">
         {/* Hamburger Menu - Visible only on mobile */}
@@ -34,28 +33,6 @@ export default function Header({ toggleSidebar, showSensitiveData, setShowSensit
           <Menu className="w-5 h-5 text-gray-600 cursor-pointer" />
         </button>
 
-        {/* Back Button - Hidden on mobile when hamburger is shown */}
-        <button className="bg-white shadow-md border border-[#f8f5f5] rounded-xl p-2 sm:p-3 hidden sm:block">
-          <ArrowLeft className="w-5 h-5 text-gray-600 cursor-pointer" />
-        </button>
-
-        {/* Module Title - Visible on desktop */}
-        {!isOverview && (
-          <div className="md:ml-4 flex items-center gap-2">
-            <h1 className="md:text-lg text-[11px] font-medium font-inter">
-              View All {moduleName} Records
-            </h1>
-            <button 
-            className="cursor-pointer"
-            onClick={() => setShowSensitiveData((prev) => !prev)}>
-              {showSensitiveData ? (
-                <FaRegEye size={20} className="text-gray-700" />
-              ) : (
-                <FaRegEyeSlash size={20} className="text-gray-700" />
-              )}
-            </button>
-          </div>
-        )}
 
         <div className="md:hidden flex items-center space-x-3 cursor-pointer">
           {" "}

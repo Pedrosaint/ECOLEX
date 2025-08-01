@@ -13,7 +13,7 @@ export default function CustomizeCANaming() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 xl:w-1/4">
           <div>
             <label
               htmlFor="view-campus"
@@ -46,7 +46,7 @@ export default function CustomizeCANaming() {
         </div>
         <div className="flex justify-center mt-5">
           <button className="bg-[#4B0082] w-full max-w-md text-white px-6 py-3 rounded-md text-base font-semibold font-inter transition-colors cursor-pointer">
-            Update Customize CA
+            Submit
           </button>
         </div>
       </motion.div>

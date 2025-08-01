@@ -12,7 +12,7 @@ export function TableSkeleton() {
 
   const moduleName = getModuleName();
   const shouldShowHeader =
-    moduleName && !["Dashboard"].includes(moduleName.toLowerCase());
+    moduleName && !["Dashboard","classes","campuses","subjects"].includes(moduleName.toLowerCase());
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -33,15 +33,17 @@ export function TableSkeleton() {
 
       <div className="mt-10 px-6">
         {/* Top Section Skeleton */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <div className="w-48 h-10 bg-gray-200 rounded animate-pulse"></div>
+        {shouldShowHeader && (
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="w-48 h-10 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-32 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
+              <div className="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="w-32 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
-            <div className="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
-          </div>
-        </div>
+        )}
 
         {/* Table Container Skeleton */}
         <motion.div

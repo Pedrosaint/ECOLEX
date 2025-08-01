@@ -5,10 +5,9 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
-import { FaUserCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
 import CompareIcon from "../../../../assets/icon/change-icon";
 import { motion } from "framer-motion";
 import AddStudentFormModal from "../modal/add-student.modal";
@@ -18,10 +17,6 @@ import ViewStudentFormModal from "../modal/view-student.modal";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import EditStudentModal from "../modal/edit-student.modal";
 import ChangeStudentModal from "../modal/change-student.modal";
-
-type ContextType = {
-  showSensitiveData: boolean;
-};
 
 type Student = {
   id: number;
@@ -51,7 +46,7 @@ export default function StudentsList() {
     student: null as Student | null,
     isLoading: false,
   });
-  const { showSensitiveData } = useOutletContext<ContextType>();
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -162,9 +157,15 @@ export default function StudentsList() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
             >
-              <h1 className="text-xl text-gray-900 mb-2 font-inter">
-                All Students List
-              </h1>
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="text-xl text-gray-900 mb-2 font-inter">
+                  All Student List
+                </h1>
+                <button className="bg-[#ED294A] text-white px-5 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
+                  <X size={20} />
+                  <h1> REMOVE</h1>
+                </button>
+              </div>
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
@@ -219,61 +220,44 @@ export default function StudentsList() {
                             {student.no}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData ? student.campus : "*********"}
+                            {student.campus}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData ? student.regNo : "*********"}
+                            {student.regNo}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200">
-                            {showSensitiveData ? student.surname : "*********"}
+                            {student.surname}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? student.otherName
-                              : "*********"}
+                            {student.otherName}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData ? student.gender : "*********"}
+                            {student.gender}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData ? student.dob : "*********"}
+                            {student.dob}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? student.guardianName
-                              : "*********"}
+                            {student.guardianName}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? student.guardianNo
-                              : "*********"}
+                            {student.guardianNo}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData
-                              ? student.lifestyle
-                              : "*********"}
+                            {student.lifestyle}
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                            {showSensitiveData ? student.class : "*********"}
+                            {student.class}
                           </td>
                           <td className="py-3 px-2 text-sm border-r border-gray-200">
-                            {showSensitiveData ? (
-                              <div className="">
-                                <div className="rounded flex items-center justify-center">
-                                  <img
-                                    src="images/passport.png"
-                                    alt="passport"
-                                  />
-                                </div>
-                                <p className="ml-1 text-xs text-gray-600">
-                                  Passport
-                                </p>
+                            <div className="">
+                              <div className="rounded flex items-center justify-center">
+                                <img src="images/passport.png" alt="passport" />
                               </div>
-                            ) : (
-                              <div className="flex justify-center">
-                                <FaUserCircle size={20} />
-                              </div>
-                            )}
+                              <p className="ml-1 text-xs text-gray-600">
+                                Passport
+                              </p>
+                            </div>
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center space-x-1">
@@ -286,11 +270,12 @@ export default function StudentsList() {
                                   className="text-gray-400"
                                 />
                               </button>
-                              <button 
+                              <button
                                 onClick={() =>
                                   setIsChangeStudentModalOpen(true)
                                 }
-                              className="p-1 transition-colors">
+                                className="p-1 transition-colors"
+                              >
                                 <CompareIcon
                                   size={20}
                                   className="text-gray-400 cursor-pointer"
