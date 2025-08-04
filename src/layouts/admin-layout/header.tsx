@@ -2,13 +2,14 @@ import { Search, Bell, ChevronDown, Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 interface HeaderProps {
+  userRole: string;
   toggleSidebar: () => void;
   showSensitiveData: boolean;
   setShowSensitiveData: React.Dispatch<React.SetStateAction<boolean>>;
-  // setShowSensitiveData: (value: boolean) => void;
 }
 
-export default function Header({ toggleSidebar}: HeaderProps) {
+export default function Header({ toggleSidebar, userRole}: HeaderProps) {
+
   const location = useLocation();
 
   // Get current module name from URL path
@@ -22,7 +23,7 @@ export default function Header({ toggleSidebar}: HeaderProps) {
   const isOverview = !moduleName
 
   return (
-    <header className="py-3 px-3 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0">
+    <header className="py-3 px-3 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0 bg-">
       {/* Left Section */}
       <div className="flex items-center justify-between space-x-2 w-full sm:w-auto">
         {/* Hamburger Menu - Visible only on mobile */}
@@ -32,7 +33,6 @@ export default function Header({ toggleSidebar}: HeaderProps) {
         >
           <Menu className="w-5 h-5 text-gray-600 cursor-pointer" />
         </button>
-
 
         <div className="md:hidden flex items-center space-x-3 cursor-pointer">
           {" "}
@@ -44,7 +44,15 @@ export default function Header({ toggleSidebar}: HeaderProps) {
           </div>
           {/* Admin Name */}
           <div className="flex items-center space-x-1 cursor-pointer">
-            <span className="text-sm text-gray-700 font-sans">Admin name</span>
+            {userRole === "student" ? (
+              <span className="text-sm text-gray-700 font-sans">
+                Student name
+              </span>
+            ) : (
+              <span className="text-sm text-gray-700 font-sans">
+                Admin name
+              </span>
+            )}
             <ChevronDown className="w-4 h-4 text-gray-600" />
           </div>
           {/* Notification Bell */}
@@ -70,24 +78,41 @@ export default function Header({ toggleSidebar}: HeaderProps) {
       {/* Right Section */}
       <div className="flex items-center space-x-3 justify-end w-full sm:w-auto">
         {/* Avatar */}
-        <div className="hidden md:flex items-center space-x-3 cursor-pointer">
-          {" "}
-          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-            <img
-              src="https://www.google.com/s2/favicons?domain=google.com"
-              alt="google logo"
+        <div className="">
+          <div className="hidden md:flex items-center space-x-3 cursor-pointer ">
+            {" "}
+            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+              <img
+                src="https://www.google.com/s2/favicons?domain=google.com"
+                alt="google logo"
+              />
+            </div>
+            {/* Admin Name */}
+            <div className="flex items-center space-x-1 cursor-pointer">
+              {userRole === "student" ? (
+                <span className="text-sm text-gray-700 font-sans">
+                  Student name
+                </span>
+              ) : (
+                <span className="text-sm text-gray-700 font-sans">
+                  Admin name
+                </span>
+              )}
+              <ChevronDown className="w-4 h-4 text-gray-600" />
+            </div>
+            {/* Notification Bell */}
+            <Bell
+              size={30}
+              className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
             />
           </div>
-          {/* Admin Name */}
-          <div className="flex items-center space-x-1 cursor-pointer">
-            <span className="text-sm text-gray-700 font-sans">Admin name</span>
-            <ChevronDown className="w-4 h-4 text-gray-600" />
-          </div>
-          {/* Notification Bell */}
-          <Bell
-            size={30}
-            className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
-          />
+          {userRole === "student" && (
+            <div className="flex justify-end mt-3">
+              <h1 className="border border-gray-100 px-3 py-1 bg-white shadow-md">
+                ECO345 JSS 2
+              </h1>
+            </div>
+          )}
         </div>
 
         {/* Mobile Search - Only shown in Overview */}

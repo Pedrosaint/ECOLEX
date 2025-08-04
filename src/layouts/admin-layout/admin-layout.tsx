@@ -1,4 +1,4 @@
-import { navLinks } from "../../utils/sidebar-link";
+import { navLinks, studentNavLinks } from "../../utils/sidebar-link";
 import Sidebar from "../admin-layout/sidebar";
 import Header from "../admin-layout/header";
 import { Outlet } from "react-router-dom";
@@ -9,6 +9,10 @@ export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showSensitiveData, setShowSensitiveData] = useState(false);
 
+// Temporary dummy role
+  const userRole = "student"; // change to "student" to test student sidebar
+
+  const linksToShow = userRole === "student" ? studentNavLinks : navLinks;
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -18,7 +22,7 @@ export default function DashboardLayout() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}
       >
-        <Sidebar navLinks={navLinks} onClick={() => setSidebarOpen(false)} />
+        <Sidebar navLinks={linksToShow} onClick={() => setSidebarOpen(false)} />
       </div>
 
       {/* Overlay for mobile */}
@@ -33,12 +37,13 @@ export default function DashboardLayout() {
 
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header
+          userRole={userRole}
           showSensitiveData={showSensitiveData}
           setShowSensitiveData={setShowSensitiveData}
           toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         />
         <main className="flex-1 overflow-auto p-4">
-          <Outlet context={{ showSensitiveData }} />
+          <Outlet />
         </main>
       </div>
     </div>

@@ -21,12 +21,14 @@ import CampusView from "../domain/admin-domain/campus/view/campus.view";
 import ManageSubjectView from "../domain/admin-domain/manage-subject/view/manage-subject.view";
 import ResultView from "../domain/admin-domain/result/view/result.view";
 import BroadsheetView from "../domain/admin-domain/broadcast/view/broadsheet.view";
+import StudentResultView from "../domain/student-domain/check-result/view/student-result.view";
+import PaymentView from "../domain/student-domain/pay-school-fee/view/payment.view";
 
 export default function appRouter(): RouteObject[] {
   return [
     {
-        path: "/",
-        element: <Navigate to="/auth/auth-layout/super-admin" replace />,
+      path: "/",
+      element: <Navigate to="/auth/auth-layout/super-admin" replace />,
     },
     // {
     //   path: "/",
@@ -122,6 +124,26 @@ export default function appRouter(): RouteObject[] {
         {
           path: "broadsheet",
           element: <BroadsheetView />,
+        },
+      ],
+    },
+
+    // Student portal++++++++++++++++++++++++++++++
+    {
+      path: "student",
+      element: <AdminLayout />,
+      children: [
+        {
+          path: "dashboard",
+          element: <Overview />,
+        },
+        {
+          path: "check-result",
+          element: <StudentResultView  />,
+        },
+        {
+          path: "pay-school-fee",
+          element: <PaymentView />,
         },
       ],
     },

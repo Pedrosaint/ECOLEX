@@ -4,6 +4,8 @@ import {
   BookOpen,
   Building,
   FileText,
+  ClipboardCheck,
+  Tag,
 } from "lucide-react";
 import { GoHomeFill } from "react-icons/go";
 
@@ -22,4 +24,14 @@ export const navLinks: NavLink[] = [
   { path: "/admin/result", icon: FileText, label: "Manage Result" },
   { path: "/admin/subjects", icon: BookOpen, label: "Manage Subject" },
   { path: "/admin/broadsheet", icon: FileText, label: "Broadsheet" },
+];
+
+export const studentNavLinks: NavLink[] = [
+  { path: "/student/dashboard", icon: GoHomeFill, label: "Dashboard" },
+  {
+    path: "/student/check-result",
+    icon: ClipboardCheck,
+    label: "Check Result",
+  },
+  { path: "/student/pay-school-fee", icon: Tag, label: "Pay School Fee" },
 ];
