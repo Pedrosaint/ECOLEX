@@ -55,7 +55,7 @@ export default function ViewGroup() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-17 py-10"
+              className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-4 py-4 md:px-17 md:py-10"
             >
               <div className="flex items-center justify-between mb-2">
                 <h1 className="text-xl text-gray-900 mb-2 font-inter">

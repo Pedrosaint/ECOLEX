@@ -10,6 +10,9 @@ export default function AddStudentFormModal({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Temporary dummy regno
+  const regno = "ECO345";
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -95,21 +98,6 @@ export default function AddStudentFormModal({
 
           {/* Form Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            {/* Student's Name */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="student-name"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Student's Name
-              </label>
-              <input
-                id="student-name"
-                type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-
             {/* Surname */}
             <div className="flex flex-col">
               <label
@@ -121,29 +109,19 @@ export default function AddStudentFormModal({
               <input
                 id="surname"
                 type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 
-            {/* Campus */}
+            {/* Student's Name */}
             <div className="flex flex-col">
-              <label
-                htmlFor="campus"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Campus
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                First Name
               </label>
-              <div className="relative">
-                <select
-                  id="campus"
-                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
-                >
-                  <option value="">Select Campus</option>
-                  <option value="main">Main Campus</option>
-                  <option value="north">North Campus</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-              </div>
+              <input
+                type="text"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              />
             </div>
 
             {/* Other names */}
@@ -157,22 +135,7 @@ export default function AddStudentFormModal({
               <input
                 id="other-names"
                 type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-
-            {/* Reg. No */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="reg-no"
-                className="text-sm font-medium text-gray-700 mb-1"
-              >
-                Reg. No
-              </label>
-              <input
-                id="reg-no"
-                type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 
@@ -187,7 +150,7 @@ export default function AddStudentFormModal({
               <div className="relative">
                 <select
                   id="gender"
-                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
+                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"
                 >
                   <option value="">Select Gender</option>
                   <option value="male">Male</option>
@@ -213,6 +176,19 @@ export default function AddStudentFormModal({
                   className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
                 />
               </div>
+            </div>
+
+            {/* Reg. No */}
+            <div className="flex flex-col">
+              <label
+                htmlFor="reg-no"
+                className="text-sm font-medium text-gray-700 mb-1"
+              >
+                Reg. No
+              </label>
+              <div
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              >{`${regno}`}</div>
             </div>
 
             {/* Guardian Name */}
@@ -241,26 +217,45 @@ export default function AddStudentFormModal({
               <input
                 id="guardian-number"
                 type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 
-            {/* Lifestyle */}
+            {/* Campus */}
             <div className="flex flex-col">
               <label
-                htmlFor="lifestyle"
+                htmlFor="campus"
                 className="text-sm font-medium text-gray-700 mb-1"
               >
-                Lifestyle
+                Campus
               </label>
               <div className="relative">
                 <select
-                  id="lifestyle"
-                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
+                  id="campus"
+                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"
                 >
-                  <option value="">Select Lifestyle</option>
-                  <option value="active">Active</option>
-                  <option value="sedentary">Sedentary</option>
+                  <option value="">Select Campus</option>
+                  <option value="main">Main Campus</option>
+                  <option value="north">North Campus</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Session */}
+            <div className="flex flex-col">
+              <label
+                className="text-sm font-medium text-gray-700 mb-1"
+              >
+                Session
+              </label>
+              <div className="relative">
+                <select
+                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"
+                >
+                  <option value="">Select Session</option>
+                  <option value="main"></option>
+                  <option value="north"></option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
               </div>
@@ -277,11 +272,32 @@ export default function AddStudentFormModal({
               <div className="relative">
                 <select
                   id="class"
-                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
+                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"
                 >
                   <option value="">Select Class</option>
                   <option value="grade1">Grade 1</option>
                   <option value="grade2">Grade 2</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Lifestyle */}
+            <div className="flex flex-col">
+              <label
+                htmlFor="lifestyle"
+                className="text-sm font-medium text-gray-700 mb-1"
+              >
+                Lifestyle
+              </label>
+              <div className="relative">
+                <select
+                  id="lifestyle"
+                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-non disabled:cursor-not-allowed disabled:opacity-50 pr-8"
+                >
+                  <option value="">Select Lifestyle</option>
+                  <option value="active">Active</option>
+                  <option value="sedentary">Sedentary</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
               </div>

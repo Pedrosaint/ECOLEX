@@ -1,5 +1,6 @@
 import { Search, Bell, ChevronDown, Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import Profile from "../../assets/image/profile.png";
 
 interface HeaderProps {
   userRole: string;
@@ -33,33 +34,43 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
         >
           <Menu className="w-5 h-5 text-gray-600 cursor-pointer" />
         </button>
-
-        <div className="md:hidden flex items-center space-x-3 cursor-pointer">
-          {" "}
-          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-            <img
-              src="https://www.google.com/s2/favicons?domain=google.com"
-              alt="google logo"
+        <div>
+          <div className="md:hidden flex items-center space-x-3 cursor-pointer">
+            {" "}
+            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+              <img
+                src={Profile}
+                alt="google logo"
+              />
+            </div>
+            {/* Admin Name */}
+            <div className="flex items-center space-x-1 cursor-pointer">
+              {userRole === "student" ? (
+                <span className="text-sm text-gray-700 font-sans">
+                  Student name
+                </span>
+              ) : (
+                <span className="text-sm text-gray-700 font-sans">
+                  Admin name
+                </span>
+              )}
+              <ChevronDown className="w-4 h-4 text-gray-600" />
+            </div>
+            {/* Notification Bell */}
+            <Bell
+              size={30}
+              className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
             />
           </div>
-          {/* Admin Name */}
-          <div className="flex items-center space-x-1 cursor-pointer">
-            {userRole === "student" ? (
-              <span className="text-sm text-gray-700 font-sans">
-                Student name
-              </span>
-            ) : (
-              <span className="text-sm text-gray-700 font-sans">
-                Admin name
-              </span>
+          <div>
+            {userRole === "student" && (
+              <div className="flex justify-end mt-3">
+                <h1 className="border border-gray-100 px-3 py-1 bg-white shadow-md">
+                  ECO345 JSS 2
+                </h1>
+              </div>
             )}
-            <ChevronDown className="w-4 h-4 text-gray-600" />
           </div>
-          {/* Notification Bell */}
-          <Bell
-            size={30}
-            className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
-          />
         </div>
 
         {/* Search Bar - Only shown in Overview */}
@@ -83,7 +94,7 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
             {" "}
             <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
               <img
-                src="https://www.google.com/s2/favicons?domain=google.com"
+                src={Profile}
                 alt="google logo"
               />
             </div>
@@ -106,13 +117,6 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
               className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
             />
           </div>
-          {userRole === "student" && (
-            <div className="flex justify-end mt-3">
-              <h1 className="border border-gray-100 px-3 py-1 bg-white shadow-md">
-                ECO345 JSS 2
-              </h1>
-            </div>
-          )}
         </div>
 
         {/* Mobile Search - Only shown in Overview */}
