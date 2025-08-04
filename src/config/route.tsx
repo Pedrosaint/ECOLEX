@@ -26,7 +26,7 @@ export default function appRouter(): RouteObject[] {
   return [
     {
         path: "/",
-        element: <Navigate to="/auth/auth-layout/super-admin" replace />,
+        element: <Navigate to="/admin/dashbaord" replace />,
     },
     // {
     //   path: "/",
@@ -91,7 +91,7 @@ export default function appRouter(): RouteObject[] {
       element: <AdminLayout />,
       children: [
         {
-          path: "dashboard",
+          path: "dashbaord",
           element: <Overview />,
         },
         {

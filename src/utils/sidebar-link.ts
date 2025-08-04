@@ -14,7 +14,7 @@ interface NavLink {
 }
 
 export const navLinks: NavLink[] = [
-  { path: "/admin/dashboard", icon: GoHomeFill , label: "Overview" },
+  { path: "/admin/dashbaord", icon: GoHomeFill , label: "Overview" },
   { path: "/admin/student's", icon: Users, label: "Manage Students" },
   { path: "/admin/staff", icon: UserCheck, label: "Manage Staff" },
   { path: "/admin/classes", icon: BookOpen, label: "Manage Classes" },
