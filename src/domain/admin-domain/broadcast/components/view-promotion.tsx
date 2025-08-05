@@ -98,11 +98,11 @@ export default function ViewPromotion() {
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Campus
+              Average Score Above (Inclusive)
             </label>
             <input
               type="text"
-              name="avearge"
+              name="averageScore"
               placeholder="type average here"
               className="w-full px-4 py-4 border border-gray-300 rounded text-sm outline-none"
               value={formData.averageScore}
@@ -173,7 +173,7 @@ export default function ViewPromotion() {
           {/* Next Section (date input) */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Next Section (To)
+              Next Session (To)
             </label>
             <input
               type="date"
@@ -203,14 +203,14 @@ export default function ViewPromotion() {
 
       <div className="flex justify-center">
         <button
-          className={`w-full text-white px-6 py-3 rounded mt-5 text-base font-semibold font-inter transition-colors ${
+          className={`w-full text-white px-6 py-3 cursor-pointer rounded mt-5 text-base font-semibold font-inter transition-colors ${
             allFieldsFilled
               ? "bg-[#4B0082] hover:bg-[#3a0063]"
               : "bg-gray-400 cursor-not-allowed"
           }`}
           disabled={!allFieldsFilled}
         >
-          Promote
+          PROMOTE STUDENT
         </button>
       </div>
     </motion.div>

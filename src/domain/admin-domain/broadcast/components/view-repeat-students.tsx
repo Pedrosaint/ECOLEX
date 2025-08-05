@@ -192,7 +192,7 @@ export default function ViewRepeatStudents() {
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
         >
-          Repeat
+          REPEAT STUDENT
         </button>
       </div>
     </motion.div>
