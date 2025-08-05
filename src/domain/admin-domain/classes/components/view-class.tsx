@@ -7,11 +7,13 @@ import {
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
+import Print from "../../../../general/common/print";
 
 
 export default function ViewClass() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isPrinting, setIsPrinting] = useState(false);
 
 
   useEffect(() => {
@@ -43,7 +45,9 @@ export default function ViewClass() {
       ) : (
         <div className="min-h-screen bg-gray-50">
           <div className="flex justify-end mt-10">
-            <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
+            <button 
+            onClick={() => setIsPrinting(true)}
+            className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
@@ -113,6 +117,8 @@ export default function ViewClass() {
                     </tbody>
                   </table>
                 </div>
+
+                {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
 
                 {/* Pagination */}
                 <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">

@@ -17,6 +17,7 @@ import AssignStaffModal from "../modal/assign-teacher.modal";
 import ViewStaffModal from "../modal/view-staff.modal";
 import EditStaffModal from "../modal/edit-staff.modal";
 import DeleteStaffModal from "../modal/delete-staff.modal";
+import Print from "../../../../general/common/print";
 
 type Staff = {
   id: number;
@@ -35,6 +36,7 @@ type Staff = {
 
 export default function ListOfStaff() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isPrinting, setIsPrinting] = useState(false);
   const [activeTab, setActiveTab] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
@@ -123,8 +125,11 @@ export default function ListOfStaff() {
             </div>
           </div>
 
+          {/* Print button */}
           <div className="flex justify-end mt-10">
-            <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
+            <button 
+            onClick={() => setIsPrinting(true)}
+            className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
@@ -152,6 +157,7 @@ export default function ListOfStaff() {
               </div>
             </div>
 
+            {/* Tabs */}
             <div className="p-5">
               <div className="flex items-center space-x-6 md:space-x-8 border-b border-gray-200 relative">
                 {tabs.map((tab) => (
@@ -338,6 +344,8 @@ export default function ListOfStaff() {
                     onClose={() => setIsEditStaffModalOpen(false)}
                   />
                 )}
+
+                {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
 
                 {isDeleteStaffModalOpen && (
                   <DeleteStaffModal
