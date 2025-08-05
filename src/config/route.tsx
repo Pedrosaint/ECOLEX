@@ -23,6 +23,7 @@ import ResultView from "../domain/admin-domain/result/view/result.view";
 import BroadsheetView from "../domain/admin-domain/broadcast/view/broadsheet.view";
 import StudentResultView from "../domain/student-domain/check-result/view/student-result.view";
 import PaymentView from "../domain/student-domain/pay-school-fee/view/payment.view";
+import StudentDashbaordView from "../domain/student-domain/dashboard/view/student-dashbaord.view";
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -135,7 +136,7 @@ export default function appRouter(): RouteObject[] {
       children: [
         {
           path: "dashboard",
-          element: <Overview />,
+          element: <StudentDashbaordView />,
         },
         {
           path: "check-result",

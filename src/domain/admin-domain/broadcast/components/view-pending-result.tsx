@@ -159,7 +159,7 @@ export default function ViewPendingResult() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden py-6 px-3 md:px-15 mt-10"
+        className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden py-6 px-3 xl:px-15 mt-10"
       >
         <div className="flex items-center justify-between mb-2">
           <h1 className=" text-gray-900 mb-2 font-inter">

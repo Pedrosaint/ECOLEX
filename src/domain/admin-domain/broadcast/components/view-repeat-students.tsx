@@ -41,7 +41,7 @@ export default function ViewRepeatStudents() {
       </h2>
 
       <div className="bg-white p-6 rounded-md shadow-sm border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {/* Campus - Custom Dropdown */}
           <div className="relative">
             <label className="block text-sm font-semibold mb-2 text-gray-700">

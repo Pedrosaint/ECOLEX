@@ -47,7 +47,7 @@ export default function ManageBroadSheet() {
   return (
     <div>
       {/* Mobile dropdown filter */}
-      <div className="lg:hidden mb-4 relative">
+      <div className="xl:hidden mb-4 relative">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
           className="flex items-center justify-between w-full bg-[#8000BD] text-white px-4 py-2 rounded-md"
@@ -78,11 +78,8 @@ export default function ManageBroadSheet() {
         )}
       </div>
 
-      <h2 className="text-lg lg:text-3xl font-medium text-gray-900 mb-2 font-inter hidden lg:block">
-        Broadsheet
-      </h2>
       {/* Desktop tabs */}
-      <div className="hidden lg:flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 relative mb-6 mt-5">
+      <div className="hidden xl:flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 relative mb-6 mt-5">
         {tabs.map((tab) => (
           <button
             key={tab}
