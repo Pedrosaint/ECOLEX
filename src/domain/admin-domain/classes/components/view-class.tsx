@@ -8,12 +8,14 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import Print from "../../../../general/common/print";
+import EditClass from "../modal/edit-class";
 
 
 export default function ViewClass() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [isPrinting, setIsPrinting] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
 
   useEffect(() => {
@@ -104,7 +106,9 @@ export default function ViewClass() {
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center justify-center space-x-1">
-                              <button className="p-1 transition-colors">
+                              <button 
+                              onClick={() => setIsEditOpen(true)}
+                              className="p-1 transition-colors">
                                 <Edit
                                   size={20}
                                   className="text-gray-400 hover:text-gray-600"
@@ -175,6 +179,10 @@ export default function ViewClass() {
               </div>
             </motion.div>
           </div>
+
+          {isEditOpen && (
+            <EditClass onClose={()=> setIsEditOpen(false)} />
+          )}
         </div>
       )}
     </>

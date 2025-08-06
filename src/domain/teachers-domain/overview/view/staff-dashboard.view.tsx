@@ -11,7 +11,7 @@ const StaffDashboardView = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-[#FFFFFF] mt-9 flex flex-col md:flex-row gap-5 justify-between border border-[#f3eaea] p-5 "
+        className="bg-[#FFFFFF] mt-9 flex flex-col xl:flex-row gap-5 justify-between border border-[#f3eaea] p-5 "
       >
         <StaffInfo />
         <LatestNewFeed />
