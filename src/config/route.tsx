@@ -24,6 +24,10 @@ import BroadsheetView from "../domain/admin-domain/broadcast/view/broadsheet.vie
 import StudentResultView from "../domain/student-domain/check-result/view/student-result.view";
 import PaymentView from "../domain/student-domain/pay-school-fee/view/payment.view";
 import StudentDashbaordView from "../domain/student-domain/dashboard/view/student-dashbaord.view";
+import StaffDashboardView from "../domain/teachers-domain/overview/view/staff-dashboard.view";
+import ComputeResultView from "../domain/teachers-domain/compute/view/compute-result.view";
+import StaffSetupRecordView from "../domain/teachers-domain/teachers-result-mark/view/staff-setup-record-view";
+import StaffViewResultView from "../domain/teachers-domain/view-class-result/view/staff-view-result.view";
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -140,12 +144,36 @@ export default function appRouter(): RouteObject[] {
         },
         {
           path: "check-result",
-          element: <StudentResultView  />,
+          element: <StudentResultView />,
         },
         {
           path: "pay-school-fee",
           element: <PaymentView />,
         },
+      ],
+    },
+
+    // Staff portal++++++++++++++++++++++++++++++
+    {
+      path: "staff",
+      element: <AdminLayout />,
+      children: [
+        {
+          path: "dashboard",
+          element: <StaffDashboardView />,
+        },
+        {
+          path: "compute-result",
+          element: <ComputeResultView />,
+        },
+        {
+          path: "result-mark",
+          element: <StaffSetupRecordView />,
+        },
+        {
+          path: "view-class-results",
+          element: <StaffViewResultView />,
+        }
       ],
     },
   ];

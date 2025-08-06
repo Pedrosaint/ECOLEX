@@ -1,4 +1,4 @@
-import { navLinks, studentNavLinks } from "../../utils/sidebar-link";
+import { navLinks, studentNavLinks, staffNavLinks } from "../../utils/sidebar-link";
 import Sidebar from "../admin-layout/sidebar";
 import Header from "../admin-layout/header";
 import { Outlet } from "react-router-dom";
@@ -10,9 +10,14 @@ export default function DashboardLayout() {
   const [showSensitiveData, setShowSensitiveData] = useState(false);
 
 // Temporary dummy role
-  const userRole = "admin"; // change to "student" to test student sidebar
+  const userRole = "staff"; // change to "student" to test student sidebar
 
-  const linksToShow = userRole === "admin" ? navLinks : studentNavLinks;
+  const linksToShow =
+    userRole === "staff"
+      ? staffNavLinks
+      : userRole === "student"
+      ? studentNavLinks
+      : navLinks;
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">

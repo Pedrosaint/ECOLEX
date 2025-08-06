@@ -46,9 +46,13 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
                 <span className="text-sm text-gray-700 font-sans">
                   Student name
                 </span>
-              ) : (
+              ) : userRole === "admin" ? (
                 <span className="text-sm text-gray-700 font-sans">
                   Admin name
+                </span>
+              ) : (
+                <span className="text-sm text-gray-700 font-sans">
+                  Teacher's name
                 </span>
               )}
               {/* <ChevronDown className="w-4 h-4 text-gray-600" /> */}
@@ -68,10 +72,19 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
               </div>
             )}
           </div>
+          <div className="md:hidden">
+            {userRole === "staff" && (
+              <div className="flex justify-end mt-3">
+                <h1 className="border border-gray-100 px-3 py-1 bg-white">
+                  Role: <span>Teacher</span>
+                </h1>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Search Bar - Only shown in Overview */}
-        {isOverview &&  (
+        {isOverview && (
           <div className="md:flex items-center flex-1 hidden gap-2 bg-[#EBEAEF] rounded-3xl p-2">
             <Search className="w-5 h-5 text-gray-400" />
             <input
@@ -98,9 +111,13 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
                 <span className="text-sm text-gray-700 font-sans">
                   Student name
                 </span>
-              ) : (
+              ) : userRole === "admin" ? (
                 <span className="text-sm text-gray-700 font-sans">
                   Admin name
+                </span>
+              ) : (
+                <span className="text-sm text-gray-700 font-sans">
+                  Teacher's name
                 </span>
               )}
               {/* <ChevronDown className="w-4 h-4 text-gray-600" /> */}
@@ -116,6 +133,15 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
               <div className="flex justify-end mt-3">
                 <h1 className="border border-gray-100 px-3 py-1 bg-white">
                   ECO345 JSS 2
+                </h1>
+              </div>
+            )}
+          </div>
+          <div className="hidden md:block">
+            {userRole === "staff" && (
+              <div className="flex justify-end mt-3">
+                <h1 className="border border-gray-100 px-3 py-1 bg-white">
+                  Role: <span>Teacher</span>
                 </h1>
               </div>
             )}
