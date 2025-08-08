@@ -33,33 +33,6 @@ export const SuperAdminForm = () => {
     password: string;
   }
 
-  // const onSubmit = async (data: SuperAdminFormData) => {
-  //   console.log("Form submission started with data:", data);
-  //   setIsLoading(true);
-
-  //   try {
-  //     const formData = {
-  //       ...data,
-  //       role: "super_admin",
-  //     };
-  //     const response = await createAdmin(formData).unwrap();
-  //     dispatch(markTokenAsUsed(data.uniqueKey));
-  //     console.log("Response:", response);
-  //     await new Promise((resolve) => {
-  //       setTimeout(() => {
-  //         resolve(null);
-  //       }, 1000);
-  //     });
-  //     navigate("/auth/auth-layout/school-setup");
-  //     toast.success("Super admin created successfully");
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     toast.error("Failed to create admin");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const onSubmit = async (data: SuperAdminFormData) => {
     console.log("Form submission started with data:", data);
     setIsLoading(true);
@@ -83,7 +56,7 @@ export const SuperAdminForm = () => {
       console.log("Response:", response);
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      navigate("/auth/auth-layout/school-setup");
+      navigate("/auth/auth-layout/school-setup", {replace: true});
       toast.success("Super admin created successfully");
     } catch (error) {
       console.error("Error:", error);

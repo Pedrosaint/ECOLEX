@@ -2,7 +2,7 @@ import { CgDanger } from "react-icons/cg";
 
 const ComputeResult = () => {
   return (
-    <div>
+    <div className="">
       <div className="bg-[#D9D9D9] p-4 text-sm md:text-lg font-inter font-semibold shadow-sm">
         <h1>Compute Result</h1>
       </div>

@@ -10,14 +10,14 @@ export default function DashboardLayout() {
   const [showSensitiveData, setShowSensitiveData] = useState(false);
 
 // Temporary dummy role
-  const userRole = "admin"; // change to "student" to test student sidebar
+  const userRole = "staff"; // change to "student" to test student sidebar
 
   const linksToShow =
-    userRole === "admin"
-      ? navLinks
+    userRole === "staff"
+      ? staffNavLinks
       : userRole === "student"
       ? studentNavLinks
-      : staffNavLinks;
+      : navLinks;
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">

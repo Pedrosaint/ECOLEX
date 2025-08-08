@@ -1,4 +1,5 @@
 // Response types
+
 export interface TokenResponse {
   token: string;
   message: string;
@@ -16,8 +17,8 @@ export interface Data {
 
 export interface Admin {
   id: number;
-  schoolId: any;
-  campusId: any;
+  schoolId: number;
+  campusId: number;
   name: string;
   email: string;
   password: string;
@@ -57,8 +58,8 @@ export interface AdminLogin {
 
 export interface Admin {
   id: number;
-  schoolId: any;
-  campusId: any;
+  schoolId: number;
+  campusId: number;
   name: string;
   email: string;
   password: string;
@@ -102,7 +103,7 @@ export interface SavedClass {
   schoolId: number;
   campusId: number;
   name: string;
-  teacherId: any;
+  teacherId: any | string;
   createdAt: string;
 }
 

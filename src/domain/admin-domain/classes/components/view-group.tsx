@@ -8,12 +8,14 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import Print from "../../../../general/common/print";
+import EditGroup from "../modal/edit-group";
 
 
 export default function ViewGroup() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [isPrinting, setIsPrinting] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);  
 
 
   useEffect(() => {
@@ -111,7 +113,9 @@ export default function ViewGroup() {
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center justify-center space-x-1">
-                              <button className="p-1 transition-colors">
+                              <button 
+                              onClick={() => setIsEditOpen(true)}
+                              className="p-1 cursor-pointer">
                                 <Edit
                                   size={20}
                                   className="text-gray-400 hover:text-gray-600"
@@ -182,6 +186,11 @@ export default function ViewGroup() {
               </div>
             </motion.div>
           </div>
+
+
+          {isEditOpen && (
+            <EditGroup onClose={()=> setIsEditOpen(false)} />
+          )}
         </div>
       )}
     </>

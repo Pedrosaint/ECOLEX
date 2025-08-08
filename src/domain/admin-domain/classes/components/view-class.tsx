@@ -108,7 +108,7 @@ export default function ViewClass() {
                             <div className="flex items-center justify-center space-x-1">
                               <button 
                               onClick={() => setIsEditOpen(true)}
-                              className="p-1 transition-colors">
+                              className="p-1 cursor-pointer">
                                 <Edit
                                   size={20}
                                   className="text-gray-400 hover:text-gray-600"
