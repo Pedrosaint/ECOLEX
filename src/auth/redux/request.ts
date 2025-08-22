@@ -58,7 +58,7 @@ export interface Assessment {
 }
 
 export interface Exam {
-  class_id: number;
+  class_id: number[];
   name: string;
   weightage: number;
   max_score: number;
