@@ -31,10 +31,10 @@ export function TableSkeleton() {
         <div className="w-32 h-10 bg-gray-200 rounded-sm animate-pulse"></div>
       </div>
 
-      <div className="mt-10 px-6">
+      <div className="mt-10 px-2 md:px-6">
         {/* Top Section Skeleton */}
         {shouldShowHeader && (
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2 justify-between mb-6">
             <div>
               <div className="w-48 h-10 bg-gray-200 rounded animate-pulse"></div>
             </div>
@@ -50,7 +50,7 @@ export function TableSkeleton() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
+          className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-5"
         >
           <div className="w-48 h-6 bg-gray-200 rounded mb-4 animate-pulse"></div>
 

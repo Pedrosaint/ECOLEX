@@ -7,11 +7,15 @@ import {
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
+import Print from "../../../../general/common/print";
+import EditGroup from "../modal/edit-group";
 
 
 export default function ViewGroup() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);  
 
 
   useEffect(() => {
@@ -44,7 +48,9 @@ export default function ViewGroup() {
       ) : (
         <div className="min-h-screen bg-gray-50">
           <div className="flex justify-end mt-10">
-            <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
+            <button 
+            onClick={() => setIsPrinting(true)}
+            className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
@@ -55,7 +61,7 @@ export default function ViewGroup() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-5 md:px-17 py-10"
+              className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-4 py-4 xl:px-17 xl:py-10"
             >
               <div className="flex items-center justify-between mb-2">
                 <h1 className="text-xl text-gray-900 mb-2 font-inter">
@@ -107,7 +113,9 @@ export default function ViewGroup() {
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center justify-center space-x-1">
-                              <button className="p-1 transition-colors">
+                              <button 
+                              onClick={() => setIsEditOpen(true)}
+                              className="p-1 cursor-pointer">
                                 <Edit
                                   size={20}
                                   className="text-gray-400 hover:text-gray-600"
@@ -120,6 +128,8 @@ export default function ViewGroup() {
                     </tbody>
                   </table>
                 </div>
+
+                {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
 
                 {/* Pagination */}
                 <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
@@ -176,6 +186,11 @@ export default function ViewGroup() {
               </div>
             </motion.div>
           </div>
+
+
+          {isEditOpen && (
+            <EditGroup onClose={()=> setIsEditOpen(false)} />
+          )}
         </div>
       )}
     </>

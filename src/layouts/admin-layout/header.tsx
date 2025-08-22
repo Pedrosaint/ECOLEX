@@ -1,14 +1,16 @@
-import { Search, Bell, ChevronDown, Menu } from "lucide-react";
+import { Search, Bell, Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import Profile from "../../assets/image/profile.png";
 
 interface HeaderProps {
+  userRole: string;
   toggleSidebar: () => void;
   showSensitiveData: boolean;
   setShowSensitiveData: React.Dispatch<React.SetStateAction<boolean>>;
-  // setShowSensitiveData: (value: boolean) => void;
 }
 
-export default function Header({ toggleSidebar}: HeaderProps) {
+export default function Header({ toggleSidebar, userRole}: HeaderProps) {
+
   const location = useLocation();
 
   // Get current module name from URL path
@@ -19,39 +21,66 @@ export default function Header({ toggleSidebar}: HeaderProps) {
   };
 
   const moduleName = getModuleName();
-  const isOverview = !moduleName
+  const isOverview = !moduleName && userRole === "admin"
 
   return (
-    <header className="py-3 px-3 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0">
+    <header className="py-3 px-3 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0 bg-">
       {/* Left Section */}
-      <div className="flex items-center justify-between space-x-2 w-full sm:w-auto">
+      <div className="flex items-center justify-between  w-full md:w-auto">
         {/* Hamburger Menu - Visible only on mobile */}
         <button
-          className="bg-white shadow-2xl border-2 border-[#f8f5f5] rounded-xl p-2 sm:hidden mr-2"
+          className="bg-white shadow-2xl border-2 border-[#f8f5f5] rounded-xl p-2 lg:hidden mr-2"
           onClick={toggleSidebar}
         >
           <Menu className="w-5 h-5 text-gray-600 cursor-pointer" />
         </button>
-
-
-        <div className="md:hidden flex items-center space-x-3 cursor-pointer">
-          {" "}
-          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-            <img
-              src="https://www.google.com/s2/favicons?domain=google.com"
-              alt="google logo"
+        <div className="flex flex-col">
+          <div className="md:hidden flex items-center space-x-3 cursor-pointer">
+            {" "}
+            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+              <img src={Profile} alt="" />
+            </div>
+            {/* Admin Name */}
+            <div className="flex items-center space-x-1 cursor-pointer">
+              {userRole === "student" ? (
+                <span className="text-sm text-gray-700 font-sans">
+                  Student name
+                </span>
+              ) : userRole === "admin" ? (
+                <span className="text-sm text-gray-700 font-sans">
+                  Admin name
+                </span>
+              ) : (
+                <span className="text-sm text-gray-700 font-sans">
+                  Teacher's name
+                </span>
+              )}
+              {/* <ChevronDown className="w-4 h-4 text-gray-600" /> */}
+            </div>
+            {/* Notification Bell */}
+            <Bell
+              size={30}
+              className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
             />
           </div>
-          {/* Admin Name */}
-          <div className="flex items-center space-x-1 cursor-pointer">
-            <span className="text-sm text-gray-700 font-sans">Admin name</span>
-            <ChevronDown className="w-4 h-4 text-gray-600" />
+          <div className="md:hidden">
+            {userRole === "student" && (
+              <div className="flex justify-end mt-3">
+                <h1 className="border border-gray-100 px-3 py-1 bg-white">
+                  ECO345 JSS 2
+                </h1>
+              </div>
+            )}
           </div>
-          {/* Notification Bell */}
-          <Bell
-            size={30}
-            className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
-          />
+          <div className="md:hidden">
+            {userRole === "staff" && (
+              <div className="flex justify-end mt-3">
+                <h1 className="border border-gray-100 px-3 py-1 bg-white">
+                  Role: <span>Teacher</span>
+                </h1>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Search Bar - Only shown in Overview */}
@@ -70,24 +99,53 @@ export default function Header({ toggleSidebar}: HeaderProps) {
       {/* Right Section */}
       <div className="flex items-center space-x-3 justify-end w-full sm:w-auto">
         {/* Avatar */}
-        <div className="hidden md:flex items-center space-x-3 cursor-pointer">
-          {" "}
-          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-            <img
-              src="https://www.google.com/s2/favicons?domain=google.com"
-              alt="google logo"
+        <div className="">
+          <div className="hidden md:flex items-center space-x-3 cursor-pointer ">
+            {" "}
+            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+              <img src={Profile} alt="" />
+            </div>
+            {/* Admin Name */}
+            <div className="flex items-center space-x-1 cursor-pointer">
+              {userRole === "student" ? (
+                <span className="text-sm text-gray-700 font-sans">
+                  Student name
+                </span>
+              ) : userRole === "admin" ? (
+                <span className="text-sm text-gray-700 font-sans">
+                  Admin name
+                </span>
+              ) : (
+                <span className="text-sm text-gray-700 font-sans">
+                  Teacher's name
+                </span>
+              )}
+              {/* <ChevronDown className="w-4 h-4 text-gray-600" /> */}
+            </div>
+            {/* Notification Bell */}
+            <Bell
+              size={30}
+              className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
             />
           </div>
-          {/* Admin Name */}
-          <div className="flex items-center space-x-1 cursor-pointer">
-            <span className="text-sm text-gray-700 font-sans">Admin name</span>
-            <ChevronDown className="w-4 h-4 text-gray-600" />
+          <div className="hidden md:block">
+            {userRole === "student" && (
+              <div className="flex justify-end mt-3">
+                <h1 className="border border-gray-100 px-3 py-1 bg-white">
+                  ECO345 JSS 2
+                </h1>
+              </div>
+            )}
           </div>
-          {/* Notification Bell */}
-          <Bell
-            size={30}
-            className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
-          />
+          <div className="hidden md:block">
+            {userRole === "staff" && (
+              <div className="flex justify-end mt-3">
+                <h1 className="border border-gray-100 px-3 py-1 bg-white">
+                  Role: <span>Teacher</span>
+                </h1>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile Search - Only shown in Overview */}

@@ -14,16 +14,21 @@ import upload from "../../assets/image/upload.png";
 import { Upload, X, ImageIcon } from "lucide-react";
 import { useSchoolSetupMutation } from "../api/auth-api";
 import { toast } from "sonner";
+import { type FormValues } from "../models/types";
 
 
-type FormValues = {
-  name: string;
-  email: string;
-  phoneNumber: string;
-  address: string;
-  prefix: string;
-  logoUrl?: string | FileList;
-  stampUrl?: string | FileList;
+
+const saveFormData = (data: FormValues) => {
+  localStorage.setItem("schoolSetupFormData", JSON.stringify(data));
+};
+
+const loadFormData = (): Partial<FormValues> | null => {
+  const savedData = localStorage.getItem("schoolSetupFormData");
+  return savedData ? JSON.parse(savedData) : null;
+};
+
+const clearFormData = () => {
+  localStorage.removeItem("schoolSetupFormData");
 };
 
 export default function SchoolSetup() {
@@ -35,6 +40,27 @@ export default function SchoolSetup() {
   const [SchoolSetup] = useSchoolSetupMutation();
   const registeredName = localStorage.getItem("registeredName") || "";
   const registeredEmail = localStorage.getItem("registeredEmail") || "";
+  const [, setLogoFile] = useState<File | null>(null);
+  const [, setStampFile] = useState<File | null>(null);
+
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setLogoFile(file);
+      setValue("logoUrl", e.target.files, { shouldValidate: true });
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleStampChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setStampFile(file);
+      setValue("stampUrl", e.target.files, { shouldValidate: true });
+      setStampPreview(URL.createObjectURL(file));
+    }
+  };
 
   const {
     register,
@@ -42,6 +68,8 @@ export default function SchoolSetup() {
     formState: { errors },
     setValue,
     control,
+    reset,
+    watch,
   } = useForm<FormValues>({
     mode: "onChange",
     resolver: yupResolver(schoolSetupSchema) as Resolver<FormValues>,
@@ -57,6 +85,27 @@ export default function SchoolSetup() {
   });
   // Watch all form fields
   const formValues = useWatch({ control });
+
+  // Load saved data on component mount
+  useEffect(() => {
+    const savedData = loadFormData();
+    if (savedData) {
+      reset({
+        ...savedData,
+        email: registeredEmail || savedData.email || "",
+        name: registeredName || savedData.name || "",
+      });
+    }
+  }, [registeredEmail, registeredName, reset]);
+
+  // Save form data whenever it changes
+  useEffect(() => {
+    const subscription = watch((value) => {
+      saveFormData(value as FormValues);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
 
   // Ensure fields stay synced
   useEffect(() => {
@@ -150,10 +199,10 @@ export default function SchoolSetup() {
         token,
       }).unwrap();
       console.log("Response:", response);
-      // Store the school ID in localStorage
+      clearFormData();
       localStorage.setItem("schoolId", response.school.id.toString());
       toast.success("School setup successful");
-      navigate("/auth/input-campus");
+      navigate("/auth/input-campus", {replace: true});
     } catch (error) {
       toast.error("Failed to submit form");
       console.error("Error:", error);
@@ -476,13 +525,7 @@ export default function SchoolSetup() {
             id="logoUpload"
             accept=".jpeg,.jpg,.png,.webp"
             className="hidden"
-            onChange={(e) => {
-              if (e.target.files && e.target.files.length > 0) {
-                const file = e.target.files[0];
-                setValue("logoUrl", e.target.files, { shouldValidate: true });
-                setLogoPreview(URL.createObjectURL(file));
-              }
-            }}
+            onChange={handleLogoChange}
           />
           {errors.logoUrl && (
             <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
@@ -561,13 +604,7 @@ export default function SchoolSetup() {
             id="stampUpload"
             accept=".jpeg,.jpg,.png,.webp"
             className="hidden"
-            onChange={(e) => {
-              if (e.target.files && e.target.files.length > 0) {
-                const file = e.target.files[0];
-                setValue("stampUrl", e.target.files, { shouldValidate: true });
-                setStampPreview(URL.createObjectURL(file));
-              }
-            }}
+            onChange={handleStampChange}
           />
 
           {errors.stampUrl && (

@@ -38,7 +38,7 @@ export default function AddSubject() {
         <div className="flex justify-center items-center">
           <button
             disabled={!isFormComplete}
-            className={`text-white w-full px-4 py-4 rounded text-lg uppercase font-semibold transition-colors duration-200 ${
+            className={`text-white w-full px-4 py-3 rounded text-lg uppercase font-semibold transition-colors duration-200 ${
               isFormComplete
                 ? "bg-[#8000BD] cursor-pointer"
                 : "bg-[#D9D9D9] cursor-not-allowed"

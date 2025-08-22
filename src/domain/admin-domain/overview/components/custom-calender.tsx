@@ -18,7 +18,7 @@ const CustomCalendar = () => {
 
 
   return (
-        <div className="bg-white rounded-4xl p-4 shadow-md text-center">
+        <div className="bg-white rounded-4xl p-4 shadow-md text-center h-full">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-[220px] mb-8">
               <ClipLoader color="#8B5CF6" loading={isLoading} size={50} />
@@ -54,12 +54,6 @@ const CustomCalendar = () => {
             }}
           />
           )}
-          <div className="flex items-start">
-            {" "}
-            <button className="mt-3 px-4 py-2 text-sm rounded-md bg-gray-100 text-gray-500">
-              Manage Calendar
-            </button>
-          </div>
         </div>
   );
 };

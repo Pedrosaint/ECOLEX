@@ -73,9 +73,8 @@ const CCASetup = () => {
   };
 
   const handleBackToCampus = () => {
-    navigate("/auth/customize-school-name");
+    navigate("/auth/customize-school-name", {replace: true});
   };
-  
   const handleSubmit = async () => {
     if (!examName || !examMaxScore) {
       toast.error("Please fill all exam fields");

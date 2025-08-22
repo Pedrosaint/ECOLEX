@@ -17,6 +17,7 @@ import ViewStudentFormModal from "../modal/view-student.modal";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import EditStudentModal from "../modal/edit-student.modal";
 import ChangeStudentModal from "../modal/change-student.modal";
+import Print from "../../../../general/common/print";
 
 type Student = {
   id: number;
@@ -36,6 +37,7 @@ type Student = {
 
 export default function StudentsList() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isPrinting, setIsPrinting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
   const [isViewStudentModalOpen, setIsViewStudentModalOpen] = useState(false);
@@ -124,7 +126,9 @@ export default function StudentsList() {
           </div>
 
           <div className="flex justify-end mt-10">
-            <button className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors">
+            <button 
+            onClick={() => setIsPrinting(true)}
+            className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
@@ -133,7 +137,7 @@ export default function StudentsList() {
             {/* Top Section */}
             <div className="flex items-center justify-between mb-2">
               <div>
-                <h1 className="text-4xl font-meduim text-gray-900 mb-1 font-inter">
+                <h1 className="text-2xl md:text-4xl font-meduim text-gray-900 mb-1 font-inter">
                   Students
                 </h1>
               </div>
@@ -384,6 +388,8 @@ export default function StudentsList() {
               onClose={() => setIsEditStudentModalOpen(false)}
             />
           )}
+
+          {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
 
           <DeleteStudentModal
             isOpen={deleteModal.isOpen}

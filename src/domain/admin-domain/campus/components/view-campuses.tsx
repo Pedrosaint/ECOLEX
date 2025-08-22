@@ -9,12 +9,16 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import Print from "../../../../general/common/print";
+import EditCampus from "../modal/edit-campus.modal";
+import CampuseDeleteModal from "../modal/campuse-delete.modal";
 
 
 export default function ViewCampuses() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -130,10 +134,14 @@ export default function ViewCampuses() {
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center justify-center space-x-1">
-                              <button className="p-1 cursor-pointer">
+                              <button 
+                              onClick={() => setIsEditOpen(true)}
+                              className="p-1 cursor-pointer">
                                 <Edit size={20} className="text-gray-400" />
                               </button>
-                              <button className="p-1 cursor-pointer">
+                              <button 
+                              onClick={() => setIsDeleteOpen(true)}
+                              className="p-1 cursor-pointer">
                                 <Trash2
                                   size={20}
                                   className="text-gray-400 hover:text-red-600"
@@ -205,6 +213,18 @@ export default function ViewCampuses() {
 
           {isPrintModalOpen && (
             <Print onClose={() => setIsPrintModalOpen(false)} />
+          )}
+
+          {isEditOpen && (
+            <EditCampus onClose={() => setIsEditOpen(false)} />
+          )}
+
+          {isDeleteOpen && (
+            <CampuseDeleteModal
+              isOpen={isDeleteOpen}
+              onClose={() => setIsDeleteOpen(false)}
+              onConfirm={() => setIsDeleteOpen(false)}
+            />
           )}
         </div>
       )}

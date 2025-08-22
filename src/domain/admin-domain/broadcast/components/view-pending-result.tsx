@@ -159,14 +159,14 @@ export default function ViewPendingResult() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden py-6 px-15 mt-10"
+        className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden py-6 px-3 xl:px-15 mt-10"
       >
         <div className="flex items-center justify-between mb-2">
           <h1 className=" text-gray-900 mb-2 font-inter">
             <span className="font-semibold">Result</span> for sss1 - 2024/2025
             First Term for Geography
           </h1>
-          <button className="bg-[#ED294A] text-white px-5 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
+          <button className="bg-[#ED294A] text-white px-2 md:px-5 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
             <X size={20} />
             <h1> REMOVE</h1>
           </button>

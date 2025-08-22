@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react"
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import Print from "../../../../general/common/print";
+import EditSubject from "../modal/edit-subject.modal";
 
 
 
@@ -15,6 +16,7 @@ export default function ViewSubject() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -97,7 +99,9 @@ export default function ViewSubject() {
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center justify-center space-x-1">
-                              <button className="p-1 hover:bg-gray-100 rounded transition-colors">
+                              <button 
+                              onClick={() => setIsEditOpen(true)}
+                              className="p-1 hover:bg-gray-100 rounded transition-colors">
                                 <Edit size={20} className="text-gray-400" />
                               </button>
                             </div>
@@ -110,6 +114,10 @@ export default function ViewSubject() {
 
                 {isPrintModalOpen && (
                   <Print onClose={() => setIsPrintModalOpen(false)} />
+                )}
+
+                {isEditOpen && (
+                  <EditSubject onClose={() => setIsEditOpen(false)} />
                 )}
 
                 {/* Pagination */}

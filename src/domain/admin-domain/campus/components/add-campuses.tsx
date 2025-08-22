@@ -7,8 +7,10 @@ export default function AddCampuses() {
   const [number, setnumber] = useState("");
   const [email, setemail] = useState("");
   const [principal, setprincipal] = useState("");
-  const [noOfStudent, setnoOfStudent] = useState("");
-  const [noOfStaff, setnoOfStaff] = useState("");
+
+  // Temporary dummy values
+  const noOfStudent = "23";
+  const noOfStaff = "50" 
 
 
 
@@ -48,7 +50,7 @@ export default function AddCampuses() {
           </label>
           <input
             value={address}
-            placeholder="E.g 12 Ambrose Allie"
+            placeholder="E.g.,  No 12, Ambrose Allie"
             onChange={(e) => setaddress(e.target.value)}
             className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm focus:outline-none"
           />
@@ -73,6 +75,7 @@ export default function AddCampuses() {
           </label>
           <input
             value={number}
+            maxLength={11}
             placeholder="E.g 09044523114"
             onChange={(e) => setnumber(e.target.value)}
             className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm focus:outline-none"
@@ -95,24 +98,18 @@ export default function AddCampuses() {
           <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
           No. of Students
           </label>
-          <input
-            value={noOfStudent}
-            placeholder="E.g 23"
-            onChange={(e) => setnoOfStudent(e.target.value)}
+          <div
             className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm focus:outline-none"
-          />
+          >{noOfStudent}</div>
         </div>
 
         <div className="flex flex-col">
           <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
             No. of Staff
           </label>
-          <input
-            value={noOfStaff}
-            placeholder="E.g 23"
-            onChange={(e) => setnoOfStaff(e.target.value)}
+          <div
             className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm focus:outline-none"
-          />
+          >{noOfStaff}</div>
         </div>
 
         {/* Submit Button */}
