@@ -1,0 +1,20 @@
+export interface EditStaffResponse {
+  success: boolean;
+  message: string;
+  staff: Staff;
+}
+
+export interface Staff {
+  id: number;
+  schoolId: number;
+  campusId: number;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  duty: string;
+  nextOfKin: string;
+  dateEmployed: string;
+  payroll: string;
+  createdAt: string;
+}

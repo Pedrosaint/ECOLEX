@@ -44,6 +44,11 @@ export const AdminLogin = () => {
       });
       navigate("/admin/dashboard");
       console.log("Response:", response);
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+
+      // (Optional) dispatch to Redux slice if you’re managing auth globally
+      // dispatch(setToken(token))
       toast.success("Super admin login successfully");
     } catch (error) {
       console.error("Error:", error);

@@ -156,7 +156,7 @@ export default function StudentsList() {
               </div>            </div>
 
             {/* Table Container */}
-            {students.length < 0 ? (
+            {students.length > 0 ? (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}

@@ -98,7 +98,7 @@ export default function appRouter(): RouteObject[] {
       element: <AdminLayout />,
       children: [
         {
-          path: "dashbaord",
+          path: "dashboard",
           element: <Overview />,
         },
         {

@@ -16,11 +16,12 @@ import type {
   ClassSetupRequest,
   TokenRequest,
 } from "../redux/request";
+import { BASE_URL } from "../../redux/apiConfig";
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://testecolex.com.ng/api/",
+    baseUrl: BASE_URL,
   }),
   endpoints: (builder) => ({
     generateToken: builder.mutation<TokenResponse, TokenRequest>({

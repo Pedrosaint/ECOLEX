@@ -38,7 +38,10 @@ export default function EditStudentModal({
       <div className="flex justify-center items-center min-h-full">
         <div className="relative w-full max-w-3xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-8 my-8">
           {/* Header */}
-          <div className="flex items-center justify-end pb-4 border-b border-gray-200 mb-6">
+          <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
+            <h2 className="text-2xl font-medium font-inter text-gray-900">
+              Edit Student
+            </h2>
             <button
               className="p-2 cursor-pointer transition-colors"
               onClick={onClose}

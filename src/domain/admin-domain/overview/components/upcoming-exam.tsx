@@ -34,12 +34,6 @@ interface Exam {
      date: "2024-07-10",
      class: "ss3",
    },
-   {
-     id: 5,
-     name: "Special Exam",
-     date: "2024-07-10",
-     class: "ss3",
-   },
  ];
 
 

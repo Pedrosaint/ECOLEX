@@ -1,28 +1,20 @@
 import { motion } from "framer-motion";
-import { X, } from "lucide-react";
+import { X } from "lucide-react";
+import { useGetStaffQuery } from "../../staff/api/staff-api";
 import { useState } from "react";
+import LoadingBall from "../components/loading-ball";
 
 export default function ViewStaffModal({
   onClose,
+  staffId,
 }: {
   onClose: () => void;
   onEdit: () => void;
+  staffId: number;
 }) {
   const [selectedImage] = useState<string | null>(null);
 
-  const staffData = [
-    { label: "Staff's Name", value: "Mrs. Linda Osei" },
-    { label: "Campus", value: "Main Campus" },
-    { label: "Date Employed", value: "2014-06-01" },
-    { label: "Payroll", value: "#90,000" },
-    { label: "Class", value: "Ss1" },
-    { label: "Subject", value: "English" },
-    { label: "Address", value: "N0 5 adama street, fct." },
-    { label: "Number", value: "09044523114" },
-    { label: "Duty", value: "Cleaners" },
-
-   
-  ];
+  const { data, isLoading, error } = useGetStaffQuery({ id: staffId });
 
   return (
     <motion.div
@@ -50,49 +42,108 @@ export default function ViewStaffModal({
             </button>
           </div>
 
+          {/* Loading / Error States */}
+          {isLoading && <LoadingBall />}
+          {error && (
+            <p className="text-red-500">Failed to load staff details ❌</p>
+          )}
+
           {/* Profile Section */}
-          <div className="flex justify-between md:items-center gap-6 mb-8">
-            <div>
-              <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                {selectedImage ? (
-                  <img
-                    src={selectedImage}
-                    alt="Staff"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-gray-500 text-sm">No Image</span>
-                )}
-              </div>
-              <div className="text-center text-sm mt-2">Passport</div>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mt-4">
-              {/* <button
-                onClick={onEdit}
-                className="ml-auto inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors bg-gray-200 text-black cursor-pointer h-9 px-4 py-2"
-              >
-                <Check className="h-4 w-4 mr-2" />
-                Edit
-              </button> */}
-            </div>
-          </div>
-
-          {/* Staff Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            {staffData.map((staff, index) => (
-              <div key={index} className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                  {staff.label}
-                </label>
-                <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
-                  {staff.label.includes("Date")
-                    ? new Date(staff.value).toLocaleDateString()
-                    : staff.value}
+          {data && (
+            <>
+              <div className="flex justify-between md:items-center gap-6 mb-8">
+                <div>
+                  <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                    {selectedImage ? (
+                      <img
+                        src={selectedImage}
+                        alt="Staff"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-500 text-sm">No Image</span>
+                    )}
+                  </div>
+                  <div className="text-center text-sm mt-2">Passport</div>
                 </div>
               </div>
-            ))}
-          </div>
+
+              {/* Staff Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Staff's Name
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.name}
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Campus
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.campusId}
+                  </div>
+                </div>
+
+              <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Date Employed
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.dateEmployed}
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Payroll
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.payroll}
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Address
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.address}
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Next of Kin
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.nextOfKin}
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Duty
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.duty}
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Number
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.phoneNumber}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </motion.div>
