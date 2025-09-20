@@ -1,11 +1,38 @@
 import { navLinks, studentNavLinks, staffNavLinks } from "../../utils/sidebar-link";
 import Sidebar from "../admin-layout/sidebar";
 import Header from "../admin-layout/header";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import LogoutModal from "../../domain/admin-domain/logout/modal/logout.modal";
+import { toast } from "sonner";
 
 
 export default function DashboardLayout() {
+   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+ const navigate = useNavigate();
+
+ const handleConfirmLogout = async () => {
+   try {
+     setIsLoggingOut(true);
+     localStorage.clear();
+     sessionStorage.clear();
+     toast.success("Logged out successfully!");
+
+     // optional: if you want to call backend logout API
+     // await api.post("/logout");
+
+     // redirect to login page
+     navigate("/auth/auth-layout/admin-login");
+   } catch (error) {
+    toast.error("Failed to logout!");
+     console.error("Logout failed:", error);
+   } finally {
+     setIsLoggingOut(false);
+     setIsLogoutOpen(false);
+   }
+ };
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showSensitiveData, setShowSensitiveData] = useState(false);
 
@@ -27,7 +54,7 @@ export default function DashboardLayout() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out`}
       >
-        <Sidebar navLinks={linksToShow} onClick={() => setSidebarOpen(false)} />
+        <Sidebar navLinks={linksToShow} onClick={() => setSidebarOpen(false)} onLogoutClick={() => setIsLogoutOpen(true)} />
       </div>
 
       {/* Overlay for mobile */}
@@ -49,6 +76,13 @@ export default function DashboardLayout() {
         />
         <main className="flex-1 p-4 overflow-y-auto">
           <Outlet />
+
+          <LogoutModal
+            isOpen={isLogoutOpen}
+            onClose={() => setIsLogoutOpen(false)}
+            onConfirm={handleConfirmLogout}
+            isLoading={isLoggingOut}
+          />
         </main>
       </div>
     </div>

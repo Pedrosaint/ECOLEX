@@ -1,44 +1,28 @@
-import {
-  Printer,
-  ChevronLeft,
-  ChevronRight,
-  Edit,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { Printer, ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import Print from "../../../../general/common/print";
 import EditClass from "../modal/edit-class";
-
+import { useGetClassesQuery } from "../api/class-api";
 
 export default function ViewClass() {
-  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [isPrinting, setIsPrinting] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
 
+  // ✅ Fetch classes from API
+  const { data, isLoading } = useGetClassesQuery();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  const classes = data?.classes ?? [];
+  const total = data?.count ?? 0;
 
-
-  // Sample student data matching the image
-  const students = Array.from({ length: 9 }, (_, index) => ({
-    id: index + 1,
-    no: index + 1,
-    classCategory: "junior secondary school",
-    claaName: "JSS 1",
-    addedBy: "Admin",
-
-  }));
-
-  const totalStudents = 223;
-  const studentsPerPage = 9;
-  const totalPages = Math.ceil(totalStudents / studentsPerPage);
+  // ✅ Frontend pagination setup
+  const itemsPerPage = 9;
+  const totalPages = Math.ceil(total / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedClasses = classes.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <>
@@ -46,16 +30,19 @@ export default function ViewClass() {
         <TableSkeleton />
       ) : (
         <div className="min-h-screen bg-gray-50">
+          {/* Print Button */}
           <div className="flex justify-end mt-10">
-            <button 
-            onClick={() => setIsPrinting(true)}
-            className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
+            <button
+              onClick={() => setIsPrinting(true)}
+              className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
+            >
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
           </div>
+
+          {/* Table */}
           <div className="mt-7">
-            {/* Table Container */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -72,63 +59,80 @@ export default function ViewClass() {
                   <table className="w-full border-collapse">
                     <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
                       <tr>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                           No
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Class Category
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                          Campus
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Class Name
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                          Custom Classname
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Added By
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                          Class name
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {students.map((student, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200 text-center">
-                            {student.no}
-                          </td>
-                          <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
-                            {student.classCategory}
-                          </td>
-                          <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
-                            {student.claaName}
-                          </td>
-                          <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200 text-center">
-                            {student.addedBy}
-                          </td>
-                          <td className="py-3 px-5">
-                            <div className="flex items-center justify-center space-x-1">
-                              <button 
-                              onClick={() => setIsEditOpen(true)}
-                              className="p-1 cursor-pointer">
-                                <Edit
-                                  size={20}
-                                  className="text-gray-400 hover:text-gray-600"
-                                />
-                              </button>
-                            </div>
+                      {paginatedClasses.length > 0 ? (
+                        paginatedClasses.map((classItem, index) => (
+                          <tr key={classItem.id} className="hover:bg-gray-50">
+                            <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200 text-center">
+                              {startIndex + index + 1}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                              {classItem.campus?.name}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                              {classItem.customName}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                              {classItem.name}
+                            </td>
+                            <td className="py-3 px-5">
+                              <div className="flex items-center justify-center space-x-1">
+                                <button
+                                  onClick={() => {
+                                    setIsEditOpen(true);
+                                    setSelectedClassId(classItem.id);
+                                  }}
+                                  className="p-1 cursor-pointer"
+                                >
+                                  <Edit
+                                    size={20}
+                                    className="text-gray-400 hover:text-gray-600"
+                                  />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={3}
+                            className="py-6 text-center text-gray-500"
+                          >
+                            No classes found
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
 
+                {/* Print Modal */}
                 {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
 
                 {/* Pagination */}
                 <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-600">
-                      Showing 1-9 of {totalStudents}
+                      Showing {startIndex + 1}-
+                      {Math.min(startIndex + itemsPerPage, total)} of {total}
                     </div>
                     <div className="flex items-center space-x-2">
                       <button
@@ -142,26 +146,19 @@ export default function ViewClass() {
                       </button>
 
                       <div className="flex items-center space-x-1 font-space">
-                        {[1, 2, 3].map((page) => (
+                        {[...Array(totalPages)].map((_, page) => (
                           <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
+                            key={page + 1}
+                            onClick={() => setCurrentPage(page + 1)}
                             className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
-                              currentPage === page
+                              currentPage === page + 1
                                 ? "bg-[#8000BD] text-white"
                                 : "text-gray-600 hover:bg-gray-100"
                             }`}
                           >
-                            {page}
+                            {page + 1}
                           </button>
                         ))}
-                        <span className="text-gray-400 px-2">...</span>
-                        <button
-                          onClick={() => setCurrentPage(totalPages)}
-                          className="w-8 h-8 rounded text-sm font-semibold text-gray-600 hover:bg-gray-100 font-space"
-                        >
-                          {totalPages}
-                        </button>
                       </div>
 
                       <button
@@ -180,8 +177,11 @@ export default function ViewClass() {
             </motion.div>
           </div>
 
-          {isEditOpen && (
-            <EditClass onClose={()=> setIsEditOpen(false)} />
+          {isEditOpen && selectedClassId !== null && (
+            <EditClass
+              onClose={() => setIsEditOpen(false)}
+              classId={selectedClassId}
+            />
           )}
         </div>
       )}

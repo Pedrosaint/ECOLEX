@@ -247,19 +247,20 @@
 
 
 
-
 import { motion } from "framer-motion";
-import { X, Check } from "lucide-react";
+import { X, Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useCreateStaffMutation } from "../../staff/api/staff-api";
 import { toast } from "sonner";
+import { useGetCampusQuery } from "../../campus/api/campus.api";
 
 export default function AddStaffFormModal({
   onClose,
 }: {
   onClose: () => void;
 }) {
-  // ✅ Form state
+  const [campusDropdown, setCampusDropdown] = useState(false);
+  const [campusSearch, setCampusSearch] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -272,10 +273,17 @@ export default function AddStaffFormModal({
     campusId: "",
   });
 
-  // API mutation hook
+  // === API mutation hook ===
   const [createStaff, { isLoading }] = useCreateStaffMutation();
+  const { data } = useGetCampusQuery();
+  const campuses = data?.campuses || [];
 
-  // ✅ Handle input changes
+  // === Filtered campuses for search ===
+  const filteredCampuses = campuses.filter((c) =>
+    c.name.toLowerCase().includes(campusSearch.toLowerCase())
+  );
+
+  // === Handle input changes ===
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
@@ -285,38 +293,40 @@ export default function AddStaffFormModal({
   };
 
   // Handle Save (API call)
-const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.preventDefault();
-  try {
-    const payload = {
-      ...formData,
-      payroll: Number(formData.payroll.replace(/,/g, "")),
-      campusId: Number(formData.campusId),
-    };
+  const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        ...formData,
+        payroll: Number(formData.payroll.replace(/,/g, "")),
+        campusId: Number(formData.campusId),
+        dateEmployed: formData.dateEmployed
+          ? formData.dateEmployed.split("T")[0]
+          : "",
+      };
 
-    const response = await createStaff(payload).unwrap();
-    toast.success("Staff created successfully!");
-    console.log("✅ Staff created:", response);
+      const response = await createStaff(payload).unwrap();
+      toast.success("Staff created successfully!");
+      console.log("Staff created:", response);
 
-    setFormData({
-      name: "",
-      email: "",
-      phoneNumber: "",
-      address: "",
-      duty: "",
-      nextOfKin: "",
-      dateEmployed: "",
-      payroll: "",
-      campusId: "",
-    });
+      setFormData({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        address: "",
+        duty: "",
+        nextOfKin: "",
+        dateEmployed: "",
+        payroll: "",
+        campusId: "",
+      });
 
-    onClose();
-  } catch (error) {
-    toast.error("Failed to create staff!");
-    console.error("❌ Failed to create staff:", error);
-  }
-};
-
+      onClose();
+    } catch (error) {
+      toast.error("Failed to create staff!");
+      console.error("Failed to create staff:", error);
+    }
+  };
 
   return (
     <motion.div
@@ -346,7 +356,7 @@ const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
             <button
               onClick={handleSave}
               disabled={isLoading}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-[#4B0082] text-white h-9 px-4 py-2 disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-[#4B0082] text-white h-9 px-4 py-2 disabled:opacity-50 cursor-pointer"
             >
               <Check className="h-4 w-4 mr-2" />
               {isLoading ? "Saving..." : "Save"}
@@ -367,16 +377,69 @@ const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
               />
             </div>
 
-            {/* Campus (now input not dropdown) */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1">Campus ID</label>
-              <input
-                id="campusId"
-                value={formData.campusId}
-                onChange={handleChange}
-                type="number"
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm outline-none border-gray-400"
-              />
+            {/* Campus Custom Dropdown */}
+            <div className="flex flex-col relative">
+              <label className="text-sm font-medium mb-1">Campus</label>
+
+              {/* Trigger */}
+              <button
+                type="button"
+                onClick={() => setCampusDropdown((prev) => !prev)}
+                className="h-10 w-full rounded-md border px-3 py-2 text-sm text-left outline-none border-gray-400 flex justify-between items-center"
+              >
+                {formData.campusId
+                  ? campuses.find((c) => c.id === Number(formData.campusId))
+                      ?.name
+                  : "Select a campus"}
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform ${
+                    campusDropdown ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {/* Dropdown List */}
+              {campusDropdown && (
+                <div className="absolute z-10 mt-17 w-full bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto">
+                  {/* Search box */}
+                  <div className="p-2">
+                    <input
+                      type="text"
+                      placeholder="Search campus..."
+                      value={campusSearch}
+                      onChange={(e) => setCampusSearch(e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 outline-none rounded text-sm"
+                    />
+                  </div>
+
+                  {/* List */}
+                  <ul>
+                    {filteredCampuses.length > 0 ? (
+                      filteredCampuses.map((campus) => (
+                        <li
+                          key={campus.id}
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              campusId: String(campus.id),
+                            }));
+                            setCampusDropdown(false);
+                            setCampusSearch("");
+                          }}
+                          className="px-3 py-2 hover:bg-[#6a00a1] cursor-pointer hover:text-white"
+                        >
+                          {campus.name}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="px-3 py-2 text-gray-500 italic">
+                        No campus found
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Date */}
@@ -395,7 +458,6 @@ const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
             <div className="flex flex-col">
               <label className="text-sm font-medium mb-1">Payroll</label>
               <div className="relative">
-                {" "}
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">
                   ₦
                 </span>
@@ -421,7 +483,7 @@ const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
               />
             </div>
 
-            {/* Subject → Email */}
+            {/* Email */}
             <div className="flex flex-col">
               <label className="text-sm font-medium mb-1">Email</label>
               <input

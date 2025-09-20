@@ -11,7 +11,7 @@ const EditSubject = ({ onClose }: { onClose: () => void }) => {
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md md:max-w-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">EDIT CAMPUSES</h2>
+          <h2 className="text-lg font-semibold text-gray-900">EDIT SUBJECT</h2>
           <div className="flex items-center gap-2">
             <button className="bg-[#8000BD] text-white px-4 py-2 text-sm rounded-md flex items-center">
               <svg
@@ -64,7 +64,7 @@ const EditSubject = ({ onClose }: { onClose: () => void }) => {
           {/* Success Message */}
           {showSuccess && (
             <div className="bg-[#67D424] text-white px-4 py-3 text-center text-sm font-medium">
-              Group was updated successfully
+              Subjrct was updated successfully
             </div>
           )}
         </div>

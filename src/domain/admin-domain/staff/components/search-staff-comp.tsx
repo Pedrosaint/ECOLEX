@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { useState } from "react";
 // import { Search } from "lucide-react";
 
@@ -138,8 +139,12 @@
 // }
 
 
+
+
 import { useState, useRef, useEffect } from "react";
 import { Search, X, ChevronDown } from "lucide-react";
+import { useGetCampusQuery } from "../../campus/api/campus.api";
+import DotLoader from "../../../../general/ui/dot-loader";
 
 interface SearchStaffCompProps {
   onDisplayStaff: (filters: {
@@ -171,10 +176,13 @@ export default function SearchStaffComp({
   const campusRef = useRef<HTMLDivElement>(null);
   const dutyRef = useRef<HTMLDivElement>(null);
 
+  const { data } = useGetCampusQuery();
   const campusOptions: DropdownOption[] = [
     { value: "", label: "Select Campus" },
-    { value: "1", label: "Campus 1" },
-    { value: "2", label: "Campus 2" },
+    ...(data?.campuses?.map((c: any) => ({
+      value: String(c.id),
+      label: c.name,
+    })) || []),
   ];
 
   const dutyOptions: DropdownOption[] = [
@@ -204,10 +212,9 @@ export default function SearchStaffComp({
     value: string,
     options: DropdownOption[]
   ): string => {
-    return (
-      options.find((option) => option.value === value)?.label ||
-      options[0].label
-    );
+    if (!options || options.length === 0) return "";
+    const found = options.find((option) => option.value === value);
+    return found ? found.label : options[0].label;
   };
 
   // Close dropdowns when clicking outside
@@ -289,7 +296,7 @@ export default function SearchStaffComp({
           />
         </div>
 
-        {/* Search By Duty Dropdown */}
+        {/* Duty Dropdown */}
         <div className="flex flex-col" ref={dutyRef}>
           <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
             Search By Duty
@@ -338,7 +345,7 @@ export default function SearchStaffComp({
             type="button"
             onClick={handleClearFilters}
             disabled={isLoading}
-            className="bg-gray-500 text-white px-6 py-3 rounded flex items-center gap-2 font-semibold disabled:opacity-50 hover:bg-gray-600 transition-colors"
+            className="bg-gray-500 text-[13px] text-white px-3 py-1 rounded flex items-center gap-2 font-semibold disabled:opacity-50 hover:bg-gray-600 transition-colors cursor-pointer"
           >
             <X size={20} />
             CLEAR FILTERS
@@ -346,21 +353,36 @@ export default function SearchStaffComp({
         )}
       </div>
 
-      <div
-        onClick={handleDisplayStaff}
-        className="bg-[#8000BD] px-6 py-3 mb-4 mt-5 rounded cursor-pointer hover:bg-[#6a00a1] transition-colors"
-      >
-        <div className="flex items-center justify-center">
-          <Search className="w-5 h-5 mr-2 text-white" />
-          <button
-            type="button"
-            disabled={isLoading}
-            className="bg-transparent text-white font-semibold outline-none placeholder-white disabled:opacity-50"
-          >
-            {isLoading ? "LOADING..." : "DISPLAY STAFF"}
-          </button>
+      {isLoading || (!campusId && !searchName.trim() && !duty) ? (
+        <div className="bg-[#8000BD]/80 px-6 py-3 mb-4 mt-5 rounded cursor-not-allowed transition-colors opacity-50">
+          <div className="flex items-center justify-center">
+           {!isLoading && <Search className="w-5 h-5 mr-2 text-white" />}
+            <button
+              type="button"
+              disabled={isLoading}
+              className="bg-transparent text-white font-semibold outline-none placeholder-white disabled:opacity-50 cursor-not-allowed"
+            >
+              {isLoading ? <DotLoader />: "DISPLAY STAFF"}
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div
+          onClick={handleDisplayStaff}
+          className="bg-[#8000BD] px-6 py-3 mb-4 mt-5 rounded cursor-pointer hover:bg-[#6a00a1] transition-colors"
+        >
+          <div className="flex items-center justify-center">
+            <Search className="w-5 h-5 mr-2 text-white" />
+            <button
+              type="button"
+              disabled={isLoading}
+              className="bg-transparent text-white font-semibold outline-none placeholder-white disabled:opacity-10 cursor-pointer"
+            >
+              {isLoading ? "LOADING..." : "DISPLAY STAFF"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

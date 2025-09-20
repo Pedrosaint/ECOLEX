@@ -422,7 +422,6 @@
 
 
 
-
 import {
   Plus,
   Printer,
@@ -431,9 +430,12 @@ import {
   ChevronRight,
   Edit,
   X,
+  AlertCircle,
+  UserPlus,
+  Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { IoEyeOutline } from "react-icons/io5";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import AddStaffFormModal from "../modal/add-staff.modal";
@@ -444,6 +446,7 @@ import DeleteStaffModal from "../modal/delete-staff.modal";
 import Print from "../../../../general/common/print";
 import SearchStaffComp from "../components/search-staff-comp";
 import { useDeleteStaffMutation, useGetAllStaffQuery } from "../api/staff-api";
+import { MdOutlineNetworkCheck } from "react-icons/md";
 
 // Remove the mock Staff type and use your actual interface
 import type { Staff as ApiStaff } from "../model/staff.model";
@@ -457,6 +460,8 @@ export default function ListOfStaff() {
     page: 1,
     pageSize: 9,
   });
+
+  const [showTable, setShowTable] = useState(true);
 
   const [hasFilters, setHasFilters] = useState(false);
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
@@ -605,7 +610,7 @@ export default function ListOfStaff() {
             </button>
           </div>
 
-          <div className="mt-5 mx-4">
+          <div className="mt-5">
             {/* Top Section */}
             <div className="flex items-center justify-end mb-2">
               <div className="flex items-center">
@@ -654,7 +659,7 @@ export default function ListOfStaff() {
             </div>
 
             {/* Loading state for tab changes */}
-            {isTabLoading &&  (
+            {isTabLoading && (
               <div className="bg-white p-6 rounded-lg shadow-sm mt-4">
                 <div className="border border-gray-200 rounded-lg p-6">
                   <div className="flex flex-col items-center justify-center py-8">
@@ -668,243 +673,292 @@ export default function ListOfStaff() {
               </div>
             )}
 
-            {/* Error state */}
+            {/* Error state - Show only when there's an error */}
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                Error loading staff data. Please try again.
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex flex-col items-center text-center mt-4">
+                <MdOutlineNetworkCheck
+                  size={60}
+                  className="text-red-500 mb-4"
+                />
+
+                {/* Error details */}
+                <div className="flex items-start justify-center">
+                  <AlertCircle className="h-6 w-6 text-red-500 mr-2 mt-1" />
+                  <div>
+                    <p className="text-red-800 font-medium">
+                      Failed to load staff data
+                    </p>
+                    <p className="text-red-600 text-sm">
+                      Please check your connection and try again.
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* Table Container - Only show when not loading from tab change */}
-            {!isTabLoading && data && data.staff.length > 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-4"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h1 className="text-xl text-gray-900 mb-2 font-inter">
-                    All Staff List
-                  </h1>
-                  <button className="bg-[#ED294A] text-white px-5 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
-                    <X size={20} />
-                    <h1> REMOVE</h1>
-                  </button>
-                </div>
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
-                        <tr>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            No
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Name
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Subject
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Class
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Address
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Number
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Reg.No
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Date Employeed
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Payroll
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Campus
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                            Duty
-                          </th>
-                          <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {data.staff.map((staff, index) => (
-                          <tr key={staff.id} className="hover:bg-gray-50">
-                            <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">
-                              {(filters.page - 1) * filters.pageSize +
-                                index +
-                                1}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {staff.name}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {"N/A"}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200">
-                              {"N/A"}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {staff.address}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {staff.phoneNumber}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {"N/A"}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {staff.dateEmployed}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {staff.payroll}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {staff.campusId}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {staff.duty}
-                            </td>
-                            <td className="py-3 px-5">
-                              <div className="flex items-center space-x-1">
-                                <button
-                                  onClick={() => {
-                                    setIsViewStaffModalOpen(true);
-                                    setSelectedStaffId(staff.id);
-                                  }}
-                                  className="p-1 cursor-pointer"
-                                >
-                                  <IoEyeOutline
-                                    size={20}
-                                    className="text-gray-400 hover:text-purple-600"
-                                  />
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setIsEditStaffModalOpen(true);
-                                    setSelectedStaffId(staff.id);
-                                  }}
-                                  className="p-1 cursor-pointer"
-                                >
-                                  <Edit
-                                    size={20}
-                                    className="text-gray-400 hover:text-yellow-600"
-                                  />
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    setIsDeleteStaffModalOpen({
-                                      isOpen: true,
-                                      staff: staff as unknown as ApiStaff,
-                                      isLoading: false,
-                                    })
-                                  }
-                                  className="p-1 cursor-pointer"
-                                >
-                                  <Trash2
-                                    size={20}
-                                    className="text-gray-400 hover:text-red-600"
-                                  />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+            {/* Table Container - Only show when not loading from tab change and no error */}
+            <AnimatePresence mode="wait">
+              {!error &&
+              !isTabLoading &&
+              data &&
+              data.staff.length > 0 &&
+              showTable ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-4"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h1 className="text-xl text-gray-900 mb-2 font-inter">
+                      All Staff List
+                    </h1>
+                    <button
+                      onClick={() => setShowTable(false)}
+                      className="bg-[#ED294A] text-white px-5 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
+                    >
+                      <X size={20} />
+                      <h1> REMOVE</h1>
+                    </button>
                   </div>
-
-                  {/* Pagination */}
-                  {data.pagination && data.pagination.totalPages > 1 && (
-                    <div className="p-2 md:px-6 py-2 border-t border-gray-200 bg-gray-50">
-                      <div className="flex items-center justify-between">
-                        <div className="text-[12px] md:text-sm text-gray-600">
-                          Showing {(filters.page - 1) * filters.pageSize + 1}-
-                          {Math.min(
-                            filters.page * filters.pageSize,
-                            data.pagination.total
-                          )}{" "}
-                          of {data.pagination.total}
-                        </div>
-                        <div className="flex items-center">
-                          <button
-                            onClick={() => handlePageChange(filters.page - 1)}
-                            disabled={filters.page === 1}
-                            className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <ChevronLeft size={20} />
-                          </button>
-
-                          <div className="flex items-center font-space">
-                            {Array.from(
-                              {
-                                length: Math.min(5, data.pagination.totalPages),
-                              },
-                              (_, i) => {
-                                const pageNum = i + 1;
-                                return (
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
+                          <tr>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              No
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Name
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Subject
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Class
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Address
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Number
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Reg.No
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Date Employeed
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Payroll
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Campus
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                              Duty
+                            </th>
+                            <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                              Action
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {data.staff.map((staff, index) => (
+                            <tr key={staff.id} className="hover:bg-gray-50">
+                              <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">
+                                {(filters.page - 1) * filters.pageSize +
+                                  index +
+                                  1}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {staff.name}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {"N/A"}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200">
+                                {"N/A"}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {staff.address}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {staff.phoneNumber}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {"N/A"}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {staff.dateEmployed}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {staff.payroll}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {staff.campus?.name}
+                              </td>
+                              <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                {staff.duty}
+                              </td>
+                              <td className="py-3 px-5">
+                                <div className="flex items-center space-x-1">
                                   <button
-                                    key={pageNum}
-                                    onClick={() => handlePageChange(pageNum)}
-                                    className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
-                                      filters.page === pageNum
-                                        ? "bg-[#8000BD] text-white"
-                                        : "text-gray-600 hover:bg-gray-100"
-                                    }`}
+                                    onClick={() => {
+                                      setIsViewStaffModalOpen(true);
+                                      setSelectedStaffId(staff.id);
+                                    }}
+                                    className="p-1 cursor-pointer"
                                   >
-                                    {pageNum}
+                                    <IoEyeOutline
+                                      size={20}
+                                      className="text-gray-400 hover:text-purple-600"
+                                    />
                                   </button>
-                                );
-                              }
-                            )}
-                            {data.pagination.totalPages > 5 && (
-                              <>
-                                <span className="text-gray-400 px-2">...</span>
-                                <button
-                                  onClick={() =>
-                                    handlePageChange(data.pagination.totalPages)
-                                  }
-                                  className="w-8 h-8 rounded text-sm font-semibold text-gray-600 hover:bg-gray-100 font-space"
-                                >
-                                  {data.pagination.totalPages}
-                                </button>
-                              </>
-                            )}
-                          </div>
+                                  <button
+                                    onClick={() => {
+                                      setIsEditStaffModalOpen(true);
+                                      setSelectedStaffId(staff.id);
+                                    }}
+                                    className="p-1 cursor-pointer"
+                                  >
+                                    <Edit
+                                      size={20}
+                                      className="text-gray-400 hover:text-yellow-600"
+                                    />
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      setIsDeleteStaffModalOpen({
+                                        isOpen: true,
+                                        staff: staff as unknown as ApiStaff,
+                                        isLoading: false,
+                                      })
+                                    }
+                                    className="p-1 cursor-pointer"
+                                  >
+                                    <Trash2
+                                      size={20}
+                                      className="text-gray-400 hover:text-red-600"
+                                    />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
-                          <button
-                            onClick={() => handlePageChange(filters.page + 1)}
-                            disabled={
-                              filters.page === data.pagination.totalPages
-                            }
-                            className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <ChevronRight size={20} />
-                          </button>
+                    {/* Pagination */}
+                    {data.pagination && data.pagination.totalPages > 1 && (
+                      <div className="p-2 md:px-6 py-2 border-t border-gray-200 bg-gray-50">
+                        <div className="flex items-center justify-between">
+                          <div className="text-[12px] md:text-sm text-gray-600">
+                            Showing {(filters.page - 1) * filters.pageSize + 1}-
+                            {Math.min(
+                              filters.page * filters.pageSize,
+                              data.pagination.total
+                            )}{" "}
+                            of {data.pagination.total}
+                          </div>
+                          <div className="flex items-center">
+                            <button
+                              onClick={() => handlePageChange(filters.page - 1)}
+                              disabled={filters.page === 1}
+                              className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <ChevronLeft size={20} />
+                            </button>
+
+                            <div className="flex items-center font-space">
+                              {Array.from(
+                                {
+                                  length: Math.min(
+                                    5,
+                                    data.pagination.totalPages
+                                  ),
+                                },
+                                (_, i) => {
+                                  const pageNum = i + 1;
+                                  return (
+                                    <button
+                                      key={pageNum}
+                                      onClick={() => handlePageChange(pageNum)}
+                                      className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
+                                        filters.page === pageNum
+                                          ? "bg-[#8000BD] text-white"
+                                          : "text-gray-600 hover:bg-gray-100"
+                                      }`}
+                                    >
+                                      {pageNum}
+                                    </button>
+                                  );
+                                }
+                              )}
+                              {data.pagination.totalPages > 5 && (
+                                <>
+                                  <span className="text-gray-400 px-2">
+                                    ...
+                                  </span>
+                                  <button
+                                    onClick={() =>
+                                      handlePageChange(
+                                        data.pagination.totalPages
+                                      )
+                                    }
+                                    className="w-8 h-8 rounded text-sm font-semibold text-gray-600 hover:bg-gray-100 font-space"
+                                  >
+                                    {data.pagination.totalPages}
+                                  </button>
+                                </>
+                              )}
+                            </div>
+
+                            <button
+                              onClick={() => handlePageChange(filters.page + 1)}
+                              disabled={
+                                filters.page === data.pagination.totalPages
+                              }
+                              className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <ChevronRight size={20} />
+                            </button>
+                          </div>
                         </div>
                       </div>
+                    )}
+                  </div>
+                </motion.div>
+              ) : (
+                !error &&
+                !isFetching &&
+                !isTabLoading && (
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center mt-4">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Users className="h-8 w-8 text-gray-400" />
                     </div>
-                  )}
-                </div>
-              </motion.div>
-            ) : (
-              !isFetching &&
-              !isTabLoading && (
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center mt-4">
-                  <p className="text-gray-500">
-                    No staff found matching your criteria.
-                  </p>
-                </div>
-              )
-            )}
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No staff found
+                    </h3>
+                    <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+                      No staff members match your current search criteria. Try
+                      adjusting your filters or search terms.
+                    </p>
+                    <div className="flex justify-center gap-3">
+                      <button
+                        onClick={() => setIsAddStaffModalOpen(true)}
+                        className="inline-flex items-center px-4 py-2 bg-[#4B0082] text-white rounded-md text-sm font-medium hover:bg-[#3a0066] transition-colors cursor-pointer"
+                      >
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Add Staff
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
+            </AnimatePresence>
 
             {/* Your modals */}
             {isAddStaffModalOpen && (

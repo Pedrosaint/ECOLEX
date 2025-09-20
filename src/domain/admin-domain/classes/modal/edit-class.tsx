@@ -1,17 +1,64 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  EearlyEducationDropdown,
+  JuniorSecondaryDropdown,
+  PrimaryDropdown,
+  SeniorSecondaryDropdown,
+} from "../../../../auth/dropdown-data";
+import { useEditClassMutation } from "../api/class-api";
+import { AnimatePresence, motion } from "framer-motion";
 
-const EditClass = ({ onClose }: { onClose: () => void }) => {
-  const [showSuccess] = useState(true);
-  const [category, setCategory] = useState("Junior Secondary");
+const groupedCategories = {
+  "Early Education": EearlyEducationDropdown,
+  Primary: PrimaryDropdown,
+  "Junior Secondary": JuniorSecondaryDropdown,
+  "Senior Secondary": SeniorSecondaryDropdown,
+};
+
+const EditClass = ({
+  onClose,
+  classId,
+}: {
+  onClose: () => void;
+  classId: number;
+}) => {
+  const [category, setCategory] = useState("Select Category");
   const [className, setClassName] = useState("");
+  const [customName, setCustomName] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const categories = ["Junior Secondary", "Senior Secondary", "Primary"];
+  const [editClass, { isLoading, isSuccess, isError }] = useEditClassMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      setShowSuccess(true);
+      const timer = setTimeout(() => setShowSuccess(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSuccess]);
 
   const handleCategorySelect = (cat: string) => {
     setCategory(cat);
     setIsDropdownOpen(false);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await editClass({
+        id: classId,
+        payload: {
+          name: `${category} ${className}`,
+          customName,
+        },
+      }).unwrap();
+
+      setClassName("");
+      setCustomName("");
+    } catch (err) {
+      console.error("Failed to update class:", err);
+    }
   };
 
   return (
@@ -21,21 +68,16 @@ const EditClass = ({ onClose }: { onClose: () => void }) => {
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">EDIT CLASS</h2>
           <div className="flex items-center gap-2">
-            <button className="bg-[#8000BD] text-white px-4 py-2 text-sm rounded-md flex items-center">
-              <svg
-                className="w-4 h-4 mr-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-              Save
+            <button
+              disabled={isLoading}
+              onClick={handleSubmit}
+              className={`px-4 py-2 text-sm rounded-md flex items-center text-white cursor-pointer ${
+                isLoading
+                  ? "bg-[#8000BD]/40 cursor-not-allowed"
+                  : "bg-[#8000BD]"
+              }`}
+            >
+              {isLoading ? "Saving..." : "Save"}
             </button>
             <button
               onClick={onClose}
@@ -49,6 +91,7 @@ const EditClass = ({ onClose }: { onClose: () => void }) => {
         {/* Form Content */}
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Category Dropdown */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-900">
                 Select Category
@@ -62,7 +105,7 @@ const EditClass = ({ onClose }: { onClose: () => void }) => {
                   {category}
                   <svg
                     className={`w-5 h-5 text-gray-400 transition-transform ${
-                      isDropdownOpen ? "transform rotate-180" : ""
+                      isDropdownOpen ? "rotate-180" : ""
                     }`}
                     fill="none"
                     stroke="currentColor"
@@ -78,28 +121,37 @@ const EditClass = ({ onClose }: { onClose: () => void }) => {
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute z-10 mt-1 w-full bg-white shadow-lg border border-gray-200">
-                    {categories.map((cat, index) => (
-                      <div
-                        key={index}
-                        onClick={() => handleCategorySelect(cat)}
-                        className={`px-4 py-2 cursor-pointer ${
-                          category === cat ? "bg-[#8000BD] text-white" : ""
-                        }`}
-                      >
-                        {cat}
-                      </div>
-                    ))}
+                  <div className="absolute z-10 mt-1 w-full bg-white shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
+                    {Object.entries(groupedCategories).map(
+                      ([group, items], i) => (
+                        <div key={i}>
+                          <div className="px-4 py-2 bg-gray-100 text-sm font-semibold text-gray-700">
+                            {group}
+                          </div>
+                          {items.map((cat, index) => (
+                            <div
+                              key={index}
+                              onClick={() => handleCategorySelect(cat)}
+                              className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                                category === cat
+                                  ? "bg-[#8000BD] text-white"
+                                  : ""
+                              }`}
+                            >
+                              {cat}
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    )}
                   </div>
                 )}
               </div>
             </div>
 
+            {/* Class Name */}
             <div className="space-y-2">
-              <label
-                htmlFor="className"
-                className="text-sm font-medium text-gray-900"
-              >
+              <label className="text-sm font-medium text-gray-900">
                 Class Name
               </label>
               <div className="flex">
@@ -115,13 +167,46 @@ const EditClass = ({ onClose }: { onClose: () => void }) => {
                 />
               </div>
             </div>
+
+            {/* Custom Name */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-900">
+                Custom Name
+              </label>
+              <input
+                type="text"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 focus:outline-none"
+                placeholder="E.g., Pink Class"
+              />
+            </div>
           </div>
 
-          {/* Success Message */}
+          {/* Messages */}
           {showSuccess && (
-            <div className="bg-[#67D424] text-white px-4 py-3 text-center text-sm font-medium">
-              Class was updated successfully
-            </div>
+            <AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-[#67D424] text-white px-4 py-3 text-center text-sm font-medium"
+              >
+                Class was updated successfully
+              </motion.div>
+            </AnimatePresence>
+          )}
+
+          {isError && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="bg-red-500 text-white px-4 py-3 text-center text-sm font-medium"
+            >
+              Failed to update class
+            </motion.div>
           )}
         </div>
       </div>

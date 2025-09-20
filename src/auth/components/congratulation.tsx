@@ -1,15 +1,22 @@
 
-import Confetti from "react-confetti";
-import { useWindowSize } from "@react-hook/window-size";
+import confetti from "canvas-confetti"
 import { useNavigate } from "react-router-dom";
 import congratulation from "../../assets/image/congratulation.png";
+import { useEffect } from "react";
 
 const Congratulation = () => {
     const navigate = useNavigate();
-  const [width, height] = useWindowSize();
+    useEffect(() => {
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.4, x: 0.7 },
+        colors: ["#030e4c", "#4f46e5", "#10b981", "#f59e0b"],
+      });
+    }, []);
 
   return (
-    <div className="relative z-10 flex items-center justify-center gap-4 text-center">
+    <div className="relative z-20 flex items-center justify-center gap-4 text-center">
       <div className="p-15 min-h-screen">
         <div className="flex items-center justify-center gap-4 text-center">
           <div className="w-1/2 rounded-2xl bg-[#EBE9FE] hidden md:block">
@@ -17,13 +24,7 @@ const Congratulation = () => {
           </div>
           <div className="md:w-1/2 space-y-10 my-40 md:my-0">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <Confetti
-                width={width}
-                height={height}
-                recycle={false}
-                numberOfPieces={800}
-                style={{ position: "absolute" }}
-              />
+          
             </div>
             <div>
               <h1 className="text-2xl font-semibold text-gray-900">

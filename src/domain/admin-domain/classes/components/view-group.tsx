@@ -1,45 +1,28 @@
-import {
-  Printer,
-  ChevronLeft,
-  ChevronRight,
-  Edit,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { Printer, ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import Print from "../../../../general/common/print";
 import EditGroup from "../modal/edit-group";
+import { useGetClassGroupsQuery } from "../api/class-api";
+
 
 
 export default function ViewGroup() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isPrinting, setIsPrinting] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);  
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
+
+ 
+ const { data, isLoading, isError } = useGetClassGroupsQuery({
+   page: currentPage,
+   limit: 7,
+ });
 
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-
-  // Sample student data matching the image
-  const students = Array.from({ length: 9 }, (_, index) => ({
-    id: index + 1,
-    no: index + 1,
-    campus: "Campus 1",
-    claaName: "JSS 1",
-    addedBy: "Admin",
-    group: "Group 1",
-
-  }));
-
-  const totalStudents = 223;
-  const studentsPerPage = 9;
-  const totalPages = Math.ceil(totalStudents / studentsPerPage);
+  const groups = data?.groups ?? [];
+  const pagination = data?.pagination;
 
   return (
     <>
@@ -48,9 +31,10 @@ export default function ViewGroup() {
       ) : (
         <div className="min-h-screen bg-gray-50">
           <div className="flex justify-end mt-10">
-            <button 
-            onClick={() => setIsPrinting(true)}
-            className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer">
+            <button
+              onClick={() => setIsPrinting(true)}
+              className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
+            >
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
@@ -73,123 +57,146 @@ export default function ViewGroup() {
                   <table className="w-full border-collapse">
                     <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
                       <tr>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                           No
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Campus
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                           Class Name
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Added By
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                           Group
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                           Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {students.map((student, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200 text-center">
-                            {student.no}
-                          </td>
-                          <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
-                            {student.campus}
-                          </td>
-                          <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
-                            {student.claaName}
-                          </td>
-                          <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200 text-center">
-                            {student.addedBy}
-                          </td>
-                          <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200 text-center">
-                            {student.group}
-                          </td>
-                          <td className="py-3 px-5">
-                            <div className="flex items-center justify-center space-x-1">
-                              <button 
-                              onClick={() => setIsEditOpen(true)}
-                              className="p-1 cursor-pointer">
-                                <Edit
-                                  size={20}
-                                  className="text-gray-400 hover:text-gray-600"
-                                />
-                              </button>
-                            </div>
+                      {isError && (
+                        <tr>
+                          <td
+                            colSpan={4}
+                            className="text-center py-4 text-red-500"
+                          >
+                            Failed to load groups
                           </td>
                         </tr>
-                      ))}
+                      )}
+
+                      {!isError &&
+                        groups.map((group, index) => (
+                          <tr key={group.id} className="hover:bg-gray-50">
+                            <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200 text-center">
+                              {(currentPage - 1) * 7 + (index + 1)}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                              {group.class.name}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200 text-center">
+                              {group.name}
+                            </td>
+                            <td className="py-3 px-5">
+                              <div className="flex items-center justify-center space-x-1">
+                                <button
+                                  onClick={() => {
+                                    setIsEditOpen(true);
+                                    setSelectedGroupId(group.id);
+                                  }}
+                                  className="p-1 cursor-pointer"
+                                >
+                                  <Edit
+                                    size={20}
+                                    className="text-gray-400 hover:text-gray-600"
+                                  />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
 
                 {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
 
-                {/* Pagination */}
-                <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-600">
-                      Showing 1-9 of {totalStudents}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() =>
-                          setCurrentPage(Math.max(1, currentPage - 1))
-                        }
-                        disabled={currentPage === 1}
-                        className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronLeft size={20} />
-                      </button>
-
-                      <div className="flex items-center space-x-1 font-space">
-                        {[1, 2, 3].map((page) => (
-                          <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
-                              currentPage === page
-                                ? "bg-[#8000BD] text-white"
-                                : "text-gray-600 hover:bg-gray-100"
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        ))}
-                        <span className="text-gray-400 px-2">...</span>
+                {/* Pagination (using API response) */}
+                {pagination && (
+                  <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-gray-600">
+                        Showing page {pagination.page} of{" "}
+                        {pagination.totalPages} ({pagination.total} groups)
+                      </div>
+                      <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => setCurrentPage(totalPages)}
-                          className="w-8 h-8 rounded text-sm font-semibold text-gray-600 hover:bg-gray-100 font-space"
+                          onClick={() =>
+                            setCurrentPage(Math.max(1, currentPage - 1))
+                          }
+                          disabled={currentPage === 1}
+                          className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {totalPages}
+                          <ChevronLeft size={20} />
+                        </button>
+
+                        <div className="flex items-center space-x-1 font-space">
+                          {[...Array(pagination.totalPages).keys()]
+                            .slice(0, 3) // just first 3 for demo
+                            .map((page) => (
+                              <button
+                                key={page + 1}
+                                onClick={() => setCurrentPage(page + 1)}
+                                className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
+                                  currentPage === page + 1
+                                    ? "bg-[#8000BD] text-white"
+                                    : "text-gray-600 hover:bg-gray-100"
+                                }`}
+                              >
+                                {page + 1}
+                              </button>
+                            ))}
+                          <span className="text-gray-400 px-2">...</span>
+                          <button
+                            onClick={() =>
+                              setCurrentPage(pagination.totalPages)
+                            }
+                            className="w-8 h-8 rounded text-sm font-semibold text-gray-600 hover:bg-gray-100 font-space"
+                          >
+                            {pagination.totalPages}
+                          </button>
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            setCurrentPage(
+                              Math.min(pagination.totalPages, currentPage + 1)
+                            )
+                          }
+                          disabled={currentPage === pagination.totalPages}
+                          className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <ChevronRight size={20} />
                         </button>
                       </div>
-
-                      <button
-                        onClick={() =>
-                          setCurrentPage(Math.min(totalPages, currentPage + 1))
-                        }
-                        disabled={currentPage === totalPages}
-                        className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronRight size={20} />
-                      </button>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </motion.div>
           </div>
 
-
-          {isEditOpen && (
-            <EditGroup onClose={()=> setIsEditOpen(false)} />
+          {isEditOpen && selectedGroupId !== null && (
+            <EditGroup
+              onClose={() => setIsEditOpen(false)}
+              groupId={selectedGroupId}
+              initialClassId={
+                groups.find((g) => g.id === selectedGroupId)?.classId ??
+                groups.find((g) => g.id === selectedGroupId)?.class.id ??
+                0
+              }
+              initialGroupName={
+                groups.find((g) => g.id === selectedGroupId)?.name ?? ""
+              }
+            />
           )}
         </div>
       )}

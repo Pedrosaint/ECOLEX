@@ -22,6 +22,7 @@ export const staffApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Staff"],
   endpoints: (builder) => ({
     createStaff: builder.mutation<CreateStaffResponse, CreateStaffRequest>({
       query: (credentials) => ({
@@ -29,6 +30,7 @@ export const staffApi = createApi({
         method: "POST",
         body: credentials,
       }),
+      invalidatesTags: ["Staff"],
     }),
 
     getStaff: builder.query<GetStaffResponse, { id: number }>({
@@ -36,6 +38,7 @@ export const staffApi = createApi({
         url: `admin/staff/${id}`,
         method: "GET",
       }),
+      providesTags: ["Staff"],
     }),
 
     getAllStaff: builder.query<
@@ -64,6 +67,7 @@ export const staffApi = createApi({
           name: params.name,
         },
       }),
+      providesTags: ["Staff"],
     }),
 
     deleteStaff: builder.mutation<DeleteStaffResponse, { id: number }>({
@@ -73,14 +77,17 @@ export const staffApi = createApi({
       }),
     }),
 
-    editStaff: builder.mutation<EditStaffResponse, { id: number, payload: EditStaffRequest }>({
+    editStaff: builder.mutation<
+      EditStaffResponse,
+      { id: number; payload: EditStaffRequest }
+    >({
       query: ({ id, payload }) => ({
         url: `admin/staff/${id}`,
         method: "PATCH",
         body: payload,
       }),
+      invalidatesTags: ["Staff"],
     }),
-
   }),
 });
 

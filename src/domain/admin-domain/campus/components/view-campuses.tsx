@@ -1,48 +1,30 @@
-import {
-  Printer,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-  Edit,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Printer, Trash2, ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import Print from "../../../../general/common/print";
 import EditCampus from "../modal/edit-campus.modal";
 import CampuseDeleteModal from "../modal/campuse-delete.modal";
-
+import { useGetCampusParamsQuery } from "../api/campus.api";
 
 export default function ViewCampuses() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+   const [selectedCampus, setSelectedCampus] = useState<any>(null);
 
-  // Sample student data matching the image
-  const students = Array.from({ length: 9 }, (_, index) => ({
-    id: index + 1,
-    no: index + 1,
-    campusName: "Meercy Model College",
-    address: "N0 5 adama street, fct.",
-    principal: "Mrs Uzoechi",
-    number: "09044523114",
-    email: "admin@gmail.com",
-    noOfStudent: "23",
-    noOfStaff: "3",
-  }));
+  // ✅ Fetch data with pagination
+  const { data, isLoading } = useGetCampusParamsQuery({
+    page: currentPage,
+    limit: 9,
+  });
 
-  const totalStudents = 223;
-  const studentsPerPage = 9;
-  const totalPages = Math.ceil(totalStudents / studentsPerPage);
+  const campuses = data?.campuses ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = data?.pages ?? 1;
 
   return (
     <>
@@ -50,6 +32,7 @@ export default function ViewCampuses() {
         <TableSkeleton />
       ) : (
         <div className="min-h-screen bg-gray-50">
+          {/* Print Button */}
           <div className="flex justify-end mt-10">
             <button
               onClick={() => setIsPrintModalOpen(true)}
@@ -60,8 +43,8 @@ export default function ViewCampuses() {
             </button>
           </div>
 
+          {/* Table */}
           <div className="mt-9">
-            {/* Table Container */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -71,77 +54,64 @@ export default function ViewCampuses() {
               <h1 className="text-xl text-gray-900 mb-2 font-inter">
                 All Campuses List
               </h1>
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
-                      <tr>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          No
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Campus Name
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Address
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Principal
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Number
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          Email
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          No. of Students
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
-                          No. of Staff
-                        </th>
-                        <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {students.map((student, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
+                    <tr>
+                      <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        No
+                      </th>
+                      <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        Campus Name
+                      </th>
+                      <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        Address
+                      </th>
+                      <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        Number
+                      </th>
+                      <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        Email
+                      </th>
+                      <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {campuses.length > 0 ? (
+                      campuses.map((campus, index) => (
+                        <tr key={campus.id} className="hover:bg-gray-50">
                           <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
-                            {student.no}
+                            {(currentPage - 1) * 9 + index + 1}
                           </td>
                           <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {student.campusName}
+                            {campus.name}
                           </td>
                           <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {student.address}
+                            {campus.address}
                           </td>
                           <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {student.principal}
+                            {campus.phoneNumber}
                           </td>
                           <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {student.number}
-                          </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {student.email}
-                          </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {student.noOfStudent}
-                          </td>
-                          <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
-                            {student.noOfStaff}
+                            {campus.email}
                           </td>
                           <td className="py-3 px-5">
                             <div className="flex items-center justify-center space-x-1">
-                              <button 
-                              onClick={() => setIsEditOpen(true)}
-                              className="p-1 cursor-pointer">
+                              <button
+                                onClick={() => { 
+                                  setIsEditOpen(true);
+                                   setSelectedCampus(campus);
+                                }}
+                                className="p-1 cursor-pointer"
+                              >
                                 <Edit size={20} className="text-gray-400" />
                               </button>
-                              <button 
-                              onClick={() => setIsDeleteOpen(true)}
-                              className="p-1 cursor-pointer">
+                              <button
+                                onClick={() => setIsDeleteOpen(true)}
+                                className="p-1 cursor-pointer"
+                              >
                                 <Trash2
                                   size={20}
                                   className="text-gray-400 hover:text-red-600"
@@ -150,75 +120,75 @@ export default function ViewCampuses() {
                             </div>
                           </td>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Pagination */}
-                <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-600">
-                      Showing 1-9 of {totalStudents}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() =>
-                          setCurrentPage(Math.max(1, currentPage - 1))
-                        }
-                        disabled={currentPage === 1}
-                        className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronLeft size={20} />
-                      </button>
-
-                      <div className="flex items-center space-x-1 font-space">
-                        {[1, 2, 3].map((page) => (
-                          <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
-                              currentPage === page
-                                ? "bg-[#8000BD] text-white"
-                                : "text-gray-600 hover:bg-gray-100"
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        ))}
-                        <span className="text-gray-400 px-2">...</span>
-                        <button
-                          onClick={() => setCurrentPage(totalPages)}
-                          className="w-8 h-8 rounded text-sm font-semibold text-gray-600 hover:bg-gray-100 font-space"
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="py-6 text-center text-gray-500"
                         >
-                          {totalPages}
-                        </button>
-                      </div>
+                          No campuses found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
-                      <button
-                        onClick={() =>
-                          setCurrentPage(Math.min(totalPages, currentPage + 1))
-                        }
-                        disabled={currentPage === totalPages}
-                        className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronRight size={20} />
-                      </button>
+              {/* Pagination */}
+              <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    Showing {(currentPage - 1) * 9 + 1}-
+                    {Math.min(currentPage * 9, total)} of {total}
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() =>
+                        setCurrentPage(Math.max(1, currentPage - 1))
+                      }
+                      disabled={currentPage === 1}
+                      className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+
+                    <div className="flex items-center space-x-1 font-space">
+                      {[...Array(totalPages)].map((_, page) => (
+                        <button
+                          key={page + 1}
+                          onClick={() => setCurrentPage(page + 1)}
+                          className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
+                            currentPage === page + 1
+                              ? "bg-[#8000BD] text-white"
+                              : "text-gray-600 hover:bg-gray-100"
+                          }`}
+                        >
+                          {page + 1}
+                        </button>
+                      ))}
                     </div>
+
+                    <button
+                      onClick={() =>
+                        setCurrentPage(Math.min(totalPages, currentPage + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                      className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
                   </div>
                 </div>
               </div>
             </motion.div>
           </div>
 
+          {/* Modals */}
           {isPrintModalOpen && (
             <Print onClose={() => setIsPrintModalOpen(false)} />
           )}
-
-          {isEditOpen && (
-            <EditCampus onClose={() => setIsEditOpen(false)} />
-          )}
-
+          {isEditOpen && selectedCampus&& <EditCampus onClose={() => setIsEditOpen(false)}  campus={selectedCampus}/>}
           {isDeleteOpen && (
             <CampuseDeleteModal
               isOpen={isDeleteOpen}

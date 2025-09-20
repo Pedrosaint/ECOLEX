@@ -232,6 +232,7 @@ import { X, Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useEditStaffMutation } from "../../staff/api/staff-api";
 import { toast } from "sonner";
+import { useGetCampusQuery } from "../../campus/api/campus.api";
 
 export default function EditStaffModal({
   onClose,
@@ -242,6 +243,8 @@ export default function EditStaffModal({
   staffId: number;
   initialData?: any;
 }) {
+  const [campusDropdown, setCampusDropdown] = useState(false);
+  const [campusSearch, setCampusSearch] = useState("");
   const [editStaff, { isLoading }] = useEditStaffMutation();
 
   const [form, setForm] = useState({
@@ -255,12 +258,18 @@ export default function EditStaffModal({
     nextOfKin: initialData?.nextOfKin || "",
     campusId: initialData?.campusId || "",
   });
+   const { data } = useGetCampusQuery();
+  const campuses = data?.campuses || [];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+  const filteredCampuses = campuses.filter((c) =>
+    c.name.toLowerCase().includes(campusSearch.toLowerCase())
+  );
 
  const handleSubmit = async () => {
    try {
@@ -429,17 +438,67 @@ export default function EditStaffModal({
             </div>
 
             {/* Campus ID */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Campus ID
-              </label>
-              <input
-                name="campusId"
-                value={form.campusId}
-                onChange={handleChange}
-                type="text"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-              />
+            <div className="flex flex-col relative">
+              <label className="text-sm font-medium mb-1">Campus</label>
+
+              {/* Trigger */}
+              <button
+                type="button"
+                onClick={() => setCampusDropdown((prev) => !prev)}
+                className="h-10 w-full rounded-md border px-3 py-2 text-sm text-left outline-none border-gray-400 flex justify-between items-center"
+              >
+                {form.campusId
+                  ? campuses.find((c) => c.id === Number(form.campusId))?.name
+                  : "Select a campus"}
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform ${
+                    campusDropdown ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {/* Dropdown List */}
+              {campusDropdown && (
+                <div className="absolute z-10 mt-17 w-full bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto">
+                  {/* Search box */}
+                  <div className="p-2">
+                    <input
+                      type="text"
+                      placeholder="Search campus..."
+                      value={campusSearch}
+                      onChange={(e) => setCampusSearch(e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 outline-none rounded text-sm"
+                    />
+                  </div>
+
+                  {/* List */}
+                  <ul>
+                    {filteredCampuses.length > 0 ? (
+                      filteredCampuses.map((campus) => (
+                        <li
+                          key={campus.id}
+                          onClick={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              campusId: String(campus.id),
+                            }));
+                            setCampusDropdown(false);
+                            setCampusSearch("");
+                          }}
+                          className="px-3 py-2 hover:bg-[#6a00a1] cursor-pointer hover:text-white"
+                        >
+                          {campus.name}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="px-3 py-2 text-gray-500 italic">
+                        No campus found
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Duty */}
