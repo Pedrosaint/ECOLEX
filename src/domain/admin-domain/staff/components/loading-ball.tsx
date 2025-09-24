@@ -3,16 +3,15 @@ const LoadingBall = () => {
   return (
     <div>
       <div className="bg-white p-6 rounded-lg shadow-sm">
-        <h3 className="text-lg font-semibold mb-4">Bouncing Balls</h3>
         <div className="flex items-center gap-3">
           <div className="flex space-x-1">
-            <div className="h-3 w-3 bg-blue-600 rounded-full animate-bounce"></div>
+            <div className="h-3 w-3 bg-[#4B0082] rounded-full animate-bounce"></div>
             <div
-              className="h-3 w-3 bg-blue-600 rounded-full animate-bounce"
+              className="h-3 w-3 bg-[#4B0082] rounded-full animate-bounce"
               style={{ animationDelay: "0.1s" }}
             ></div>
             <div
-              className="h-3 w-3 bg-blue-600 rounded-full animate-bounce"
+              className="h-3 w-3 bg-[#4B0082] rounded-full animate-bounce"
               style={{ animationDelay: "0.2s" }}
             ></div>
           </div>

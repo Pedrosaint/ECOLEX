@@ -75,6 +75,34 @@ export default function AddClass() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="w-full border border-gray-300 rounded-lg p-6 bg-white shadow-md"
     >
+      {/* Progress indicator */}
+      <div className="mb-4">
+        <div className="flex space-x-2">
+          <div
+            className={`h-1 rounded-full transition-all duration-500 ${
+              campusId
+                ? "bg-gradient-to-r from-purple-500 to-blue-500 w-8"
+                : "bg-gray-200 w-4"
+            }`}
+          ></div>
+          <div
+            className={`h-1 rounded-full transition-all duration-500 delay-200 ${
+              className
+                ? "bg-gradient-to-r from-purple-500 to-blue-500 w-8"
+                : "bg-gray-200 w-4"
+            }`}
+          ></div>
+          <div
+            className={`h-1 rounded-full transition-all duration-500 delay-400 ${
+              classes
+                ? "bg-gradient-to-r from-purple-500 to-blue-500 w-8"
+                : "bg-gray-200 w-4"
+            }`}
+          ></div>
+        </div>
+      </div>
+
+
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 items-end"
@@ -161,12 +189,13 @@ export default function AddClass() {
 
       {showSuccess && (
         <AnimatePresence>
-          <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.2 }}
-          className="bg-[#67D424] px-6 py-3 mt-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="bg-[#67D424] px-6 py-3 mt-4"
+          >
             <div className="flex items-center justify-center">
               <button
                 type="button"

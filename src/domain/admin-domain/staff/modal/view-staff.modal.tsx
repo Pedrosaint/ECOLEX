@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { useGetStaffQuery } from "../../staff/api/staff-api";
 import { useState } from "react";
 import LoadingBall from "../components/loading-ball";
+import { IoMdRefresh } from "react-icons/io";
 
 export default function ViewStaffModal({
   onClose,
@@ -14,7 +15,7 @@ export default function ViewStaffModal({
 }) {
   const [selectedImage] = useState<string | null>(null);
 
-  const { data, isLoading, error } = useGetStaffQuery({ id: staffId });
+  const { data, isLoading, error, refetch } = useGetStaffQuery({ id: staffId });
 
   return (
     <motion.div
@@ -44,8 +45,28 @@ export default function ViewStaffModal({
 
           {/* Loading / Error States */}
           {isLoading && <LoadingBall />}
+          {/* {error && (
+            <p className="text-red-500">
+              Failed to load staff details{" "}
+              <button
+                onClick={() => refetch()}
+                className="ml-2 text-red-500 underline"
+              >
+                <IoMdRefresh size={20} className="animate-spin" />
+              </button>
+            </p>
+          )} */}
           {error && (
-            <p className="text-red-500">Failed to load staff details ❌</p>
+            <div className="text-center mt-4">
+              <p className="text-red-500 mb-2">Failed to load staff details</p>
+              <button
+                onClick={() => refetch()}
+                className="flex items-center justify-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+              >
+                <IoMdRefresh size={20} className="animate-spin" />
+                Try Again
+              </button>
+            </div>
           )}
 
           {/* Profile Section */}
@@ -88,7 +109,7 @@ export default function ViewStaffModal({
                   </div>
                 </div>
 
-              <div className="flex flex-col">
+                <div className="flex flex-col">
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Date Employed
                   </label>

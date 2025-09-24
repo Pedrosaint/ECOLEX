@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { motion } from "framer-motion";
 // import { X, Check, ChevronDown } from "lucide-react";
 // import { useState, useRef } from "react";
@@ -322,8 +323,8 @@ export default function AddStaffFormModal({
       });
 
       onClose();
-    } catch (error) {
-      toast.error("Failed to create staff!");
+    } catch (error : any) {
+      toast.error(error?.data?.message || "Failed to create staff!");
       console.error("Failed to create staff:", error);
     }
   };
@@ -373,7 +374,7 @@ export default function AddStaffFormModal({
                 value={formData.name}
                 onChange={handleChange}
                 type="text"
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm outline-none border-gray-400"
+                className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
 
@@ -385,7 +386,7 @@ export default function AddStaffFormModal({
               <button
                 type="button"
                 onClick={() => setCampusDropdown((prev) => !prev)}
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm text-left outline-none border-gray-400 flex justify-between items-center"
+                className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm text-left outline-none border-gray-200 flex justify-between items-center"
               >
                 {formData.campusId
                   ? campuses.find((c) => c.id === Number(formData.campusId))
@@ -401,7 +402,7 @@ export default function AddStaffFormModal({
 
               {/* Dropdown List */}
               {campusDropdown && (
-                <div className="absolute z-10 mt-17 w-full bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-10 mt-17 w-full bg-white border-2 border-gray-200 rounded shadow-lg max-h-60 overflow-y-auto">
                   {/* Search box */}
                   <div className="p-2">
                     <input
@@ -409,7 +410,7 @@ export default function AddStaffFormModal({
                       placeholder="Search campus..."
                       value={campusSearch}
                       onChange={(e) => setCampusSearch(e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 outline-none rounded text-sm"
+                      className="w-full px-2 py-1 border-2 border-gray-200 outline-none rounded text-sm"
                     />
                   </div>
 
@@ -450,7 +451,7 @@ export default function AddStaffFormModal({
                 value={formData.dateEmployed}
                 onChange={handleChange}
                 type="date"
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm outline-none border-gray-400"
+                className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
 
@@ -466,7 +467,7 @@ export default function AddStaffFormModal({
                   value={formData.payroll}
                   onChange={handleChange}
                   type="text"
-                  className="h-10 w-full rounded-md border pl-7 px-3 py-2 text-sm outline-none border-gray-400"
+                  className="h-10 w-full rounded-md border-2 pl-7 px-3 py-2 text-sm outline-none border-gray-200"
                 />
               </div>
             </div>
@@ -479,7 +480,7 @@ export default function AddStaffFormModal({
                 value={formData.duty}
                 onChange={handleChange}
                 type="text"
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm outline-none border-gray-400"
+                className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
 
@@ -491,7 +492,7 @@ export default function AddStaffFormModal({
                 value={formData.email}
                 onChange={handleChange}
                 type="email"
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm outline-none border-gray-400"
+                className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
 
@@ -503,7 +504,7 @@ export default function AddStaffFormModal({
                 value={formData.address}
                 onChange={handleChange}
                 type="text"
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm outline-none border-gray-400"
+                className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
 
@@ -515,7 +516,7 @@ export default function AddStaffFormModal({
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 type="text"
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm outline-none border-gray-400"
+                className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
 
@@ -527,7 +528,7 @@ export default function AddStaffFormModal({
                 value={formData.nextOfKin}
                 onChange={handleChange}
                 type="text"
-                className="h-10 w-full rounded-md border px-3 py-2 text-sm outline-none border-gray-400"
+                className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
           </div>

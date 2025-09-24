@@ -1,4 +1,4 @@
-import { Printer, ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { Printer, ChevronLeft, ChevronRight, Edit, Users } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
@@ -31,7 +31,7 @@ export default function ViewClass() {
       ) : (
         <div className="min-h-screen bg-gray-50">
           {/* Print Button */}
-          <div className="flex justify-end mt-10">
+          <div className="flex justify-end">
             <button
               onClick={() => setIsPrinting(true)}
               className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
@@ -47,7 +47,7 @@ export default function ViewClass() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-4 xl:px-17 py-4 xl:py-10"
+              className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-4 xl:px-9 py-4"
             >
               <div className="flex items-center justify-between mb-2">
                 <h1 className="text-xl text-gray-900 mb-2 font-inter">
@@ -76,7 +76,7 @@ export default function ViewClass() {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    {/* <tbody className="divide-y divide-gray-200">
                       {paginatedClasses.length > 0 ? (
                         paginatedClasses.map((classItem, index) => (
                           <tr key={classItem.id} className="hover:bg-gray-50">
@@ -117,6 +117,60 @@ export default function ViewClass() {
                             className="py-6 text-center text-gray-500"
                           >
                             No classes found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody> */}
+                    <tbody className="divide-y divide-gray-200">
+                      {paginatedClasses.length > 0 ? (
+                        paginatedClasses.map((classItem, index) => (
+                          <tr key={classItem.id} className="hover:bg-gray-50">
+                            <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200 text-center">
+                              {startIndex + index + 1}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                              {classItem.campus?.name}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                              {classItem.customName}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
+                              {classItem.name}
+                            </td>
+                            <td className="py-3 px-5">
+                              <div className="flex items-center justify-center space-x-1">
+                                <button
+                                  onClick={() => {
+                                    setIsEditOpen(true);
+                                    setSelectedClassId(classItem.id);
+                                  }}
+                                  className="p-1 cursor-pointer"
+                                >
+                                  <Edit
+                                    size={20}
+                                    className="text-gray-400 hover:text-gray-600"
+                                  />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="py-10">
+                            <div className="flex flex-col items-center justify-center text-center space-y-4">
+                              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-purple-100 text-purple-600">
+                                <Users size={32} />
+                              </div>
+                              <h3 className="text-lg font-semibold text-gray-800">
+                                No Classes Added Yet
+                              </h3>
+                              <p className="text-sm text-gray-500 max-w-sm">
+                                It looks like you haven’t created any classes.
+                                Start by adding your first class to organize
+                                students and staff better.
+                              </p>
+                            </div>
                           </td>
                         </tr>
                       )}

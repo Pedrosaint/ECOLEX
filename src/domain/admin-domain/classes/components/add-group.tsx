@@ -103,94 +103,139 @@ export default function AddGroup() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="w-full border border-gray-300 rounded-lg p-6 bg-white shadow-md"
     >
+
       {groups.map((group, index) => {
         const isFormComplete =
           group.groupName.trim() !== "" && group.classId.trim() !== "";
-        
+
         const isDisabled = group.isSubmitted || group.isLoading;
 
         return (
-          <div
-            key={index}
-            className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 items-end mb-4"
-          >
-            {/* Class Dropdown */}
-            <div className="flex flex-col relative">
-              <label className="text-sm font-bold text-[#120D1C] font-poppins mb-4">
-                Select class
-              </label>
-              <div
-                onClick={() =>
-                  !isDisabled &&
-                  handleChange(index, "isClassOpen", !group.isClassOpen)
-                }
-                className={`w-full px-4 py-4 border border-gray-300 rounded flex items-center justify-between ${
-                  isDisabled
-                    ? "bg-gray-100 cursor-not-allowed"
-                    : "cursor-pointer"
-                }`}
-              >
-                {getSelectedLabel(group.classId, classOptions)}
-                {!isDisabled && (
-                  <ChevronDown
-                    size={16}
-                    className={`transition-transform ${
-                      group.isClassOpen ? "rotate-180" : ""
-                    }`}
-                  />
+          <div key={index}>
+            {/* Progress indicator */}
+            <div className="mb-4">
+              <div className="flex space-x-2">
+                <div
+                  className={`h-1 rounded-full transition-all duration-500 ${
+                    group.classId
+                      ? "bg-gradient-to-r from-purple-500 to-blue-500 w-8"
+                      : "bg-gray-200 w-4"
+                  }`}
+                ></div>
+                <div
+                  className={`h-1 rounded-full transition-all duration-500 ${
+                    group.groupName
+                      ? "bg-gradient-to-r from-purple-500 to-blue-500 w-8"
+                      : "bg-gray-200 w-4"
+                  }`}
+                ></div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 items-end mb-4">
+              {/* Class Dropdown */}
+              <div className="flex flex-col relative">
+                <label className="text-sm font-bold text-[#120D1C] font-poppins mb-4">
+                  Select class
+                </label>
+                <div
+                  onClick={() =>
+                    !isDisabled &&
+                    handleChange(index, "isClassOpen", !group.isClassOpen)
+                  }
+                  className={`w-full px-4 py-4 border border-gray-300 rounded flex items-center justify-between ${
+                    isDisabled
+                      ? "bg-gray-100 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  {getSelectedLabel(group.classId, classOptions)}
+                  {!isDisabled && (
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform ${
+                        group.isClassOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  )}
+                </div>
+
+                {group.isClassOpen && !isDisabled && (
+                  <div className="absolute z-10 w-full mt-25 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+                    {classOptions.map((option) => (
+                      <div
+                        key={option.value}
+                        onClick={() => {
+                          handleChange(index, "classId", option.value);
+                          handleChange(index, "isClassOpen", false);
+                        }}
+                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                          group.classId === option.value
+                            ? "bg-gray-100 font-medium"
+                            : ""
+                        }`}
+                      >
+                        {option.label}
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
 
-              {group.isClassOpen && !isDisabled && (
-                <div className="absolute z-10 w-full mt-25 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
-                  {classOptions.map((option) => (
-                    <div
-                      key={option.value}
-                      onClick={() => {
-                        handleChange(index, "classId", option.value);
-                        handleChange(index, "isClassOpen", false);
-                      }}
-                      className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                        group.classId === option.value
-                          ? "bg-gray-100 font-medium"
-                          : ""
-                      }`}
-                    >
-                      {option.label}
+              {/* Group Name Input */}
+              <div className="flex flex-col">
+                <label className="text-sm font-bold text-[#120D1C] font-poppins mb-4">
+                  Group Name
+                </label>
+                <input
+                  value={group.groupName}
+                  placeholder="E.g A"
+                  onChange={(e) =>
+                    handleChange(index, "groupName", e.target.value)
+                  }
+                  disabled={isDisabled}
+                  className={`w-full px-3 py-4 border border-gray-300 rounded text-sm focus:outline-none ${
+                    isDisabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"
+                  }`}
+                />
+              </div>
+
+              {/* Add Group Button + Remove */}
+              <div className="flex justify-center items-center">
+                {group.isSubmitted ? (
+                  <>
+                    <div className="flex items-center justify-between w-full px-4 py-4 rounded text-lg font-semibold bg-green-100 text-green-700">
+                      <div className="flex items-center">
+                        <Check size={20} className="mr-2" />
+                        Added
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveGroup(index)}
+                      className="text-red-500 ml-2"
+                    >
+                      <X size={20} />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => handleSubmitGroup(index)}
+                    disabled={
+                      !isFormComplete || group.isLoading || group.isSubmitted
+                    }
+                    className={`text-white w-full px-4 py-4 rounded text-lg font-semibold transition-colors duration-200 ${
+                      isFormComplete && !group.isLoading
+                        ? "bg-[#8000BD] cursor-pointer hover:bg-[#6a00a1]"
+                        : "bg-[#D9D9D9] cursor-not-allowed"
+                    }`}
+                  >
+                    {group.isLoading ? "Adding..." : "Add Group"}
+                  </button>
+                )}
 
-            {/* Group Name Input */}
-            <div className="flex flex-col">
-              <label className="text-sm font-bold text-[#120D1C] font-poppins mb-4">
-                Group Name
-              </label>
-              <input
-                value={group.groupName}
-                placeholder="E.g A"
-                onChange={(e) =>
-                  handleChange(index, "groupName", e.target.value)
-                }
-                disabled={isDisabled}
-                className={`w-full px-3 py-4 border border-gray-300 rounded text-sm focus:outline-none ${
-                  isDisabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"
-                }`}
-              />
-            </div>
-
-            {/* Add Group Button + Remove */}
-            <div className="flex justify-center items-center">
-              {group.isSubmitted ? (
-                <>
-                <div className="flex items-center justify-between w-full px-4 py-4 rounded text-lg font-semibold bg-green-100 text-green-700">
-                  <div className="flex items-center">
-                    <Check size={20} className="mr-2" />
-                    Added
-                  </div>
-                </div>
+                {/* Remove unsubmitted rows */}
+                {groups.length > 1 && !group.isSubmitted && (
                   <button
                     type="button"
                     onClick={() => handleRemoveGroup(index)}
@@ -198,41 +243,16 @@ export default function AddGroup() {
                   >
                     <X size={20} />
                   </button>
-                  </>
-              ) : (
-                <button
-                  onClick={() => handleSubmitGroup(index)}
-                  disabled={
-                    !isFormComplete || group.isLoading || group.isSubmitted
-                  }
-                  className={`text-white w-full px-4 py-4 rounded text-lg font-semibold transition-colors duration-200 ${
-                    isFormComplete && !group.isLoading
-                      ? "bg-[#8000BD] cursor-pointer hover:bg-[#6a00a1]"
-                      : "bg-[#D9D9D9] cursor-not-allowed"
-                  }`}
-                >
-                  {group.isLoading ? "Adding..." : "Add Group"}
-                </button>
-              )}
+                )}
+              </div>
 
-              {/* Remove unsubmitted rows */}
-              {groups.length > 1 && !group.isSubmitted && (
-                <button
-                  type="button"
-                  onClick={() => handleRemoveGroup(index)}
-                  className="text-red-500 ml-2"
-                >
-                  <X size={20} />
-                </button>
+              {/* Individual group feedback */}
+              {group.isError && (
+                <div className="col-span-full bg-red-100 px-4 py-2 rounded text-red-700 text-sm mt-2">
+                  Failed to add this group. Please try again.
+                </div>
               )}
             </div>
-
-            {/* Individual group feedback */}
-            {group.isError && (
-              <div className="col-span-full bg-red-100 px-4 py-2 rounded text-red-700 text-sm mt-2">
-                Failed to add this group. Please try again.
-              </div>
-            )}
           </div>
         );
       })}

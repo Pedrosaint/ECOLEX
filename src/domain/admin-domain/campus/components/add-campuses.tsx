@@ -9,6 +9,7 @@ export default function AddCampuses() {
   const [number, setNumber] = useState("");
   const [email, setEmail] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const [addCampus, { isLoading, isSuccess, isError, error }] =
     useAddCampusMutation();
@@ -20,6 +21,14 @@ export default function AddCampuses() {
           return () => clearTimeout(timer);
         }
       }, [isSuccess]);
+
+        useEffect(() => {
+          if (isError) {
+            setShowError(true);
+            const timer = setTimeout(() => setShowError(false), 3000);
+            return () => clearTimeout(timer);
+          }
+        }, [isError]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,7 +108,7 @@ export default function AddCampuses() {
           />
         </div>
 
-         {/* Class Name Dropdown (custom controlled like Category) */}
+        {/* Class Name Dropdown (custom controlled like Category) */}
         {/* <div className="flex flex-col">
           <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
             Principal Name
@@ -158,7 +167,7 @@ export default function AddCampuses() {
       )}
 
       {/* Error Message */}
-      {isError && (
+      {showError && (
         <div className="bg-red-500 px-6 py-3 mt-4 rounded">
           <p className="text-white font-semibold text-center">
             {error && "data" in error

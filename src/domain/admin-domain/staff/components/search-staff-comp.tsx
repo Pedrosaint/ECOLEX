@@ -339,13 +339,13 @@ export default function SearchStaffComp({
         </div>
       </div>
 
-      <div className="flex justify-end mt-5 gap-4">
+      <div className="flex justify-end mt-2 mb-2 gap-4">
         {hasFilters && (
           <button
             type="button"
             onClick={handleClearFilters}
             disabled={isLoading}
-            className="bg-gray-500 text-[13px] text-white px-3 py-1 rounded flex items-center gap-2 font-semibold disabled:opacity-50 hover:bg-gray-600 transition-colors cursor-pointer"
+            className="bg-red-600 text-[13px] text-white px-3 py-1 rounded flex items-center gap-2 font-semibold disabled:opacity-50 hover:bg-red-700 transition-colors cursor-pointer"
           >
             <X size={20} />
             CLEAR FILTERS
@@ -354,7 +354,7 @@ export default function SearchStaffComp({
       </div>
 
       {isLoading || (!campusId && !searchName.trim() && !duty) ? (
-        <div className="bg-[#8000BD]/80 px-6 py-3 mb-4 mt-5 rounded cursor-not-allowed transition-colors opacity-50">
+        <div className="bg-[#8000BD]/80 px-6 py-3 mb-4 rounded cursor-not-allowed transition-colors opacity-50">
           <div className="flex items-center justify-center">
            {!isLoading && <Search className="w-5 h-5 mr-2 text-white" />}
             <button
@@ -369,7 +369,7 @@ export default function SearchStaffComp({
       ) : (
         <div
           onClick={handleDisplayStaff}
-          className="bg-[#8000BD] px-6 py-3 mb-4 mt-5 rounded cursor-pointer hover:bg-[#6a00a1] transition-colors"
+          className="bg-[#8000BD] px-6 py-3 mb-4 rounded cursor-pointer hover:bg-[#6a00a1] transition-colors"
         >
           <div className="flex items-center justify-center">
             <Search className="w-5 h-5 mr-2 text-white" />
