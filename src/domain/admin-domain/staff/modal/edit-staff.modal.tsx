@@ -249,7 +249,9 @@ export default function EditStaffModal({
 
   const [form, setForm] = useState({
     name: initialData?.name || "",
-    dateEmployed: initialData?.dateEmployed || "",
+    dateEmployed: initialData?.dateEmployed
+      ? new Date(initialData.dateEmployed).toISOString().split("T")[0]
+      : "",
     payroll: initialData?.payroll || "",
     address: initialData?.address || "",
     duty: initialData?.duty || "",
@@ -514,11 +516,12 @@ export default function EditStaffModal({
                   className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm pr-8"
                 >
                   <option value="">Select Duty</option>
-                  <option value="teaching">Teacher</option>
-                  <option value="admin">Security</option>
-                  <option value="support">Cleaner</option>
-                  <option value="hr">HR</option>
+                  <option value="Teacher">Teacher</option>
+                  <option value="Security">Security</option>
+                  <option value="Cleaner">Cleaner</option>
+                  <option value="HR">HR</option>
                 </select>
+
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
               </div>
             </div>

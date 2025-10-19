@@ -16,4 +16,11 @@ export interface Staff {
   dateEmployed: string;
   payroll: string;
   createdAt: string;
+  registrationNumber: string;
+  campus: Campus;
+}
+
+export interface Campus {
+  id: number;
+  name: string;
 }

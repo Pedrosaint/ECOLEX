@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../../../../redux/apiConfig";
-import type { CreateStudentResponse, EditStudentResponse, GetStudentsResponse } from "../response/students.response";
+import type { CreateStudentResponse, EditStudentResponse, GetStudentResponse, GetStudentsResponse } from "../response/students.response";
 import type { CreateStudentRequest, EditStudentRequest } from "../request/students.request";
 
 
@@ -16,6 +16,7 @@ export const studentApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Student"],
   endpoints: (builder) => ({
     createStudent: builder.mutation<
       CreateStudentResponse,
@@ -26,14 +27,16 @@ export const studentApi = createApi({
         method: "POST",
         body: credentials,
       }),
+      invalidatesTags: ["Student"],
     }),
 
-    // getStaff: builder.query<GetStaffResponse, { id: number }>({
-    //   query: ({ id }) => ({
-    //     url: `admin/staff/${id}`,
-    //     method: "GET",
-    //   }),
-    // }),
+    getStudent: builder.query<GetStudentResponse, { id: number }>({
+      query: ({ id }) => ({
+        url: `admin/student/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Student"],
+    }),
 
     getAllStudent: builder.query<
       GetStudentsResponse,
@@ -60,11 +63,12 @@ export const studentApi = createApi({
           name: params.name,
         },
       }),
+      providesTags: ["Student"],
     }),
 
-    // deleteStaff: builder.mutation<DeleteStaffResponse, { id: number }>({
+    // deleteStudent: builder.mutation<DeleteStudentResponse, { id: number }>({
     //   query: ({ id }) => ({
-    //     url: `admin/staff/${id}`,
+    //     url: `admin/student/${id}`,
     //     method: "DELETE",
     //   }),
     // }),
@@ -78,6 +82,7 @@ export const studentApi = createApi({
         method: "PUT",
         body: payload,
       }),
+      invalidatesTags: ["Student"],
     }),
     
   }),
@@ -87,4 +92,5 @@ export const {
   useCreateStudentMutation,
   useGetAllStudentQuery,
   useEditStudentMutation,
+  useGetStudentQuery,
 } = studentApi;

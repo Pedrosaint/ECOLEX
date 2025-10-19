@@ -16,7 +16,7 @@ export default function Sidebar({
   onClick?: () => void;
   onLogoutClick?: () => void;
 }) {
- 
+
 
   return (
     <>

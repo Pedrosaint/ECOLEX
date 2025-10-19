@@ -12,13 +12,13 @@ export default function ViewClass() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
 
-  // ✅ Fetch classes from API
+
   const { data, isLoading } = useGetClassesQuery();
 
   const classes = data?.classes ?? [];
   const total = data?.count ?? 0;
 
-  // ✅ Frontend pagination setup
+
   const itemsPerPage = 9;
   const totalPages = Math.ceil(total / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;

@@ -30,7 +30,7 @@ export interface Student {
 // Get Students
 export interface GetStudentsResponse {
   students: Student[];
-  meta: Meta;
+ pagination: Pagination;
 }
 
 export interface Student {
@@ -48,6 +48,8 @@ export interface Student {
   lifestyle: string;
   session: string;
   email: string;
+  classGroupId: any;
+  registrationNumber: string;
   createdAt: string;
   class: Class;
   campus: Campus;
@@ -58,9 +60,17 @@ export interface Class {
   schoolId: number;
   campusId: number;
   name: string;
+  customName: string;
   staffId: any;
   createdAt: string;
-  classGroups: any[];
+  classGroups: ClassGroup[];
+}
+
+export interface ClassGroup {
+  id: number;
+  classId: number;
+  name: string;
+  createdAt: string;
 }
 
 export interface Campus {
@@ -73,7 +83,7 @@ export interface Campus {
   createdAt: string;
 }
 
-export interface Meta {
+export interface Pagination {
   total: number;
   page: number;
   pageSize: number;
@@ -82,9 +92,37 @@ export interface Meta {
 
 
 
+
 // Edit Student
 export interface EditStudentResponse {
   success: boolean;
   message: string;
   student: Student;
+}
+
+// Get Student
+export interface GetStudentResponse {
+  success: boolean;
+  message: string;
+  data: Data;
+}
+
+export interface Data {
+  id: number;
+  schoolId: number;
+  campusId: number;
+  classId: number;
+  name: string;
+  surname: string;
+  otherNames: string;
+  gender: string;
+  dateOfBirth: string;
+  guardianName: string;
+  guardianNumber: string;
+  lifestyle: string;
+  session: string;
+  email: string;
+  classGroupId: any;
+  registrationNumber: string;
+  createdAt: string;
 }

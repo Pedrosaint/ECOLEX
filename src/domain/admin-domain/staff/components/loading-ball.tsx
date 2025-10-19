@@ -1,5 +1,9 @@
 
-const LoadingBall = () => {
+interface LoadingBallProps {
+  title: string;
+}
+
+const LoadingBall = ({ title }: LoadingBallProps) => {
   return (
     <div>
       <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -15,7 +19,7 @@ const LoadingBall = () => {
               style={{ animationDelay: "0.2s" }}
             ></div>
           </div>
-          <p className="text-gray-600">Loading staff info...</p>
+          <p className="text-gray-600">{title}</p>
         </div>
       </div>
     </div>

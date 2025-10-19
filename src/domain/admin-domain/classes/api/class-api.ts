@@ -65,6 +65,18 @@ export const classesApi = createApi({
       invalidatesTags: ["Classes"],
     }),
 
+    // addGroup: builder.mutation<Group, AddDroupRequest>({
+    //   query: (payload) => ({
+    //     url: `admin/class-groups/create`,
+    //     method: "POST",
+    //     body: payload,
+    //   }),
+    //   invalidatesTags: ["Classes"],
+    //   transformResponse: (response: { group: Group }) => {
+    //     return response.group;
+    //   },
+    // }),
+
     getClassGroups: builder.query<
       GetClassGroupsResponse,
       { page?: number; limit?: number }
@@ -87,8 +99,7 @@ export const classesApi = createApi({
       }),
       invalidatesTags: ["Classes"],
     }),
-
-
+    
   }),
 });
 

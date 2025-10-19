@@ -201,7 +201,7 @@ export default function AddClass() {
                 type="button"
                 className="bg-transparent text-white font-semibold outline-none placeholder-white"
               >
-                Class was added successfully
+                Class added successfully
               </button>
             </div>
           </motion.div>

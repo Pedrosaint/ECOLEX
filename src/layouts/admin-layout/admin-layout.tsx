@@ -5,19 +5,23 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LogoutModal from "../../domain/admin-domain/logout/modal/logout.modal";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { classesApi } from "../../domain/admin-domain/classes/api/class-api";
 
 
 export default function DashboardLayout() {
    const [isLogoutOpen, setIsLogoutOpen] = useState(false);
    const [isLoggingOut, setIsLoggingOut] = useState(false);
-
- const navigate = useNavigate();
+   const navigate = useNavigate(); 
+   const dispatch = useDispatch();
+ 
 
  const handleConfirmLogout = async () => {
    try {
      setIsLoggingOut(true);
      localStorage.clear();
      sessionStorage.clear();
+     dispatch(classesApi.util.resetApiState());
      toast.success("Logged out successfully!");
 
      // optional: if you want to call backend logout API

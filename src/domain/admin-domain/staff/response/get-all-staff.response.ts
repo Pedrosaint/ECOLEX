@@ -26,6 +26,7 @@ export interface Staff {
   payroll: string;
   createdAt: string;
   campus?: Campus;
+  registrationNumber: string;
   assignments: any[];
 }
 
