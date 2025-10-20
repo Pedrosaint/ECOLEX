@@ -8,7 +8,7 @@ import {
   Edit,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoEyeOutline } from "react-icons/io5";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
@@ -17,7 +17,6 @@ import AssignStaffModal from "../modal/assign-teacher.modal";
 import ViewStaffModal from "../modal/view-staff.modal";
 import EditStaffModal from "../modal/edit-staff.modal";
 import DeleteStaffModal from "../modal/delete-staff.modal";
-import Print from "../../../../general/common/print";
 import SearchStaffComp from "../components/search-staff-comp";
 import { useDeleteStaffMutation, useGetAllStaffQuery } from "../api/staff-api";
 
@@ -27,6 +26,7 @@ import type { Staff as ApiStaff } from "../model/staff.model";
 import { toast } from "sonner";
 import EmptyStaffData from "./empty-staff-data";
 import NetworkError from "./network-error";
+import { printContent } from "../../../../utils/print-content";
 
 export default function ListOfStaff() {
   const [filters, setFilters] = useState({
@@ -43,12 +43,12 @@ export default function ListOfStaff() {
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("All");
   const [isTabLoading, setIsTabLoading] = useState(false);
-  const [isPrinting, setIsPrinting] = useState(false);
   const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
   const [isAssignTeacherModalOpen, setIsAssignTeacherModalOpen] =
     useState(false);
   const [isViewStaffModalOpen, setIsViewStaffModalOpen] = useState(false);
   const [isEditStaffModalOpen, setIsEditStaffModalOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [isDeleteStaffModalOpen, setIsDeleteStaffModalOpen] = useState({
     isOpen: false,
     staff: null as ApiStaff | null,
@@ -77,25 +77,47 @@ export default function ListOfStaff() {
     handleTabChange();
   }, [activeTab]);
 
-  const handleDisplayStaff = (newFilters: {
-    campusId?: string;
-    duty?: string;
-    name?: string;
-  }) => {
-    const hasActiveFilters =
-      !!newFilters.campusId || !!newFilters.duty || !!newFilters.name;
-    setHasFilters(hasActiveFilters);
+const handleDisplayStaff = (newFilters: {
+  campusId?: string;
+  duty?: string;
+  name?: string;
+}) => {
+  const hasActiveFilters =
+    !!newFilters.campusId || !!newFilters.duty || !!newFilters.name;
+  setHasFilters(hasActiveFilters);
 
-    setFilters((prev) => ({
-      ...prev,
-      campusId: newFilters.campusId,
-      duty: newFilters.duty,
-      name: newFilters.name,
-      classId: undefined,
-      subjectId: undefined,
-      page: 1,
-    }));
-  };
+  setFilters((prev) => ({
+    ...prev,
+    campusId: newFilters.campusId,
+    duty: newFilters.duty,
+    name: newFilters.name,
+    classId: undefined,
+    subjectId: undefined,
+    page: 1,
+  }));
+
+  // ✅ When user filters, show table again
+  if (hasActiveFilters) {
+    setShowTable(true);
+  } else {
+    setShowTable(false);
+  }
+};
+
+const handleClearFilters = () => {
+  setHasFilters(false);
+  setFilters({
+    campusId: undefined,
+    duty: undefined,
+    name: undefined,
+    page: 1,
+    pageSize: 9,
+  });
+
+  
+  setShowTable(false);
+};
+
 
   const handlePageChange = (newPage: number) => {
     setFilters((prev) => ({ ...prev, page: newPage }));
@@ -145,17 +167,6 @@ export default function ListOfStaff() {
     });
   };
 
-  const handleClearFilters = () => {
-    setHasFilters(false);
-    setFilters({
-      campusId: undefined,
-      duty: undefined,
-      name: undefined,
-      page: 1,
-      pageSize: 9,
-    });
-  };
-
   const isNetworkError = (err: any) => {
     return (
       err?.code === "ERR_NETWORK" ||
@@ -165,6 +176,12 @@ export default function ListOfStaff() {
   };
 
   const tabs = ["All", "Teacher", "Security", "Cleaner", "HR"];
+
+    const handlePrint = () => {
+      if (contentRef.current) {
+        printContent(contentRef.current.innerHTML, "All Staff List");
+      }
+    };
 
   return (
     <>
@@ -184,7 +201,7 @@ export default function ListOfStaff() {
           {/* Print button */}
           <div className="flex justify-end mt-4 mx-4">
             <button
-              onClick={() => setIsPrinting(true)}
+              onClick={handlePrint}
               className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
             >
               <Printer size={20} />
@@ -262,12 +279,13 @@ export default function ListOfStaff() {
               {!error && !isTabLoading && data && data.staff.length > 0 ? (
                 showTable ? (
                   <motion.div
+                    ref={contentRef}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
                     className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-4"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-2 no-print">
                       <h1 className="text-xl text-gray-900 mb-2 font-inter">
                         All Staff List
                       </h1>
@@ -317,7 +335,7 @@ export default function ListOfStaff() {
                               <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                                 Duty
                               </th>
-                              <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                              <th className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider no-print">
                                 Action
                               </th>
                             </tr>
@@ -334,11 +352,29 @@ export default function ListOfStaff() {
                                   {staff.name}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                                  {"N/A"}
+                                  {staff.assignments?.length ? (
+                                    <ul className="list-disc ml-4">
+                                      {staff.assignments.map((a) => (
+                                        <li key={a.id}>{a.subject?.name}</li>
+                                      ))}
+                                    </ul>
+                                  ) : (
+                                    "N/A"
+                                  )}
                                 </td>
-                                <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200">
-                                  {"N/A"}
+
+                                <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                  {staff.assignments?.length ? (
+                                    <ul className="list-disc ml-4">
+                                      {staff.assignments.map((a) => (
+                                        <li key={a.id}>{a.class?.name}</li>
+                                      ))}
+                                    </ul>
+                                  ) : (
+                                    "N/A"
+                                  )}
                                 </td>
+
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   {staff.address}
                                 </td>
@@ -346,7 +382,7 @@ export default function ListOfStaff() {
                                   {staff.phoneNumber}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                                    {staff.registrationNumber}
+                                  {staff.registrationNumber}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   {staff.dateEmployed}
@@ -360,7 +396,7 @@ export default function ListOfStaff() {
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   {staff.duty}
                                 </td>
-                                <td className="py-3 px-5">
+                                <td className="py-3 px-5 no-print">
                                   <div className="flex items-center space-x-1">
                                     <button
                                       onClick={() => {
@@ -412,7 +448,7 @@ export default function ListOfStaff() {
 
                       {/* Pagination */}
                       {data.pagination && data.pagination.totalPages > 1 && (
-                        <div className="p-2 md:px-6 py-2 border-t border-gray-200 bg-gray-50">
+                        <div className="p-2 md:px-6 py-2 border-t border-gray-200 bg-gray-50 no-print">
                           <div className="flex items-center justify-between">
                             <div className="text-[12px] md:text-sm text-gray-600">
                               Showing{" "}
@@ -541,8 +577,6 @@ export default function ListOfStaff() {
                 initialData={selectedStaffData}
               />
             )}
-
-            {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
 
             {isDeleteStaffModalOpen && (
               <DeleteStaffModal

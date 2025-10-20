@@ -1,31 +1,128 @@
+// /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { motion } from "framer-motion";
 // import { X, Check, ChevronDown } from "lucide-react";
-// import { useState, useRef } from "react";
+// import { useState } from "react";
+// import { useAssignTeacherMutation, useGetStaffsQuery } from "../api/staff-api";
+// import { useGetCampusQuery } from "../../campus/api/campus.api";
+// import { useGetClassesQuery } from "../../classes/api/class-api";
+// import { useGetAllSubjectQuery } from "../../manage-subject/api/subject.api";
 
-// export default function AssignStaffModal({
-//   onClose,
-// }: {
-//   onClose: () => void;
-// }) {
-//   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-//   const fileInputRef = useRef<HTMLInputElement>(null);
+// interface AssignItem {
+//   id: string;
+//   staffId: string;
+//   campusId: string;
+//   classId: string;
+//   subjectId: string;
+// }
 
-//   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = e.target.files?.[0];
-//     if (file) {
-//       const reader = new FileReader();
-//       reader.onload = (event) => {
-//         if (event.target?.result) {
-//           setSelectedImage(event.target.result as string);
-//         }
+// export default function AssignStaffModal({ onClose }: { onClose: () => void }) {
+//   // 🔹 Fetch dropdown data
+//   const { data: staffData } = useGetStaffsQuery();
+//   const { data: campusData } = useGetCampusQuery();
+//   const { data: classData } = useGetClassesQuery();
+//   const { data: subjectData } = useGetAllSubjectQuery();
+
+//   const [assignments, setAssignments] = useState<AssignItem[]>([]);
+//   const [form, setForm] = useState({
+//     staffId: "",
+//     campusId: "",
+//     classId: "",
+//     subjectId: "",
+//   });
+
+//   const [assignTeacher, { isLoading }] = useAssignTeacherMutation();
+
+//   // 🔹 Handle form input change
+//   const handleChange = (name: string, value: string) => {
+//     setForm({ ...form, [name]: value });
+//   };
+
+//   // 🔹 Handle save (assign one teacher to one class/subject)
+//   const handleSave = async () => {
+//     if (!form.staffId || !form.campusId || !form.classId || !form.subjectId) {
+//       alert("Please select all fields before saving.");
+//       return;
+//     }
+
+//     try {
+//       await assignTeacher({
+//         staffId: Number(form.staffId),
+//         campusId: Number(form.campusId),
+//         classId: Number(form.classId),
+//         subjectId: Number(form.subjectId),
+//       }).unwrap();
+
+//       const newAssignment: AssignItem = {
+//         id: crypto.randomUUID(),
+//         ...form,
 //       };
-//       reader.readAsDataURL(file);
+
+//       setAssignments([...assignments, newAssignment]);
+//       setForm({ staffId: "", campusId: "", classId: "", subjectId: "" });
+//     } catch (err) {
+//       console.error("Error assigning teacher:", err);
 //     }
 //   };
 
-//   const triggerFileInput = () => {
-//     fileInputRef.current?.click();
+//   // 🔹 Remove assignment from UI
+//   const handleRemove = (id: string) => {
+//     setAssignments(assignments.filter((item) => item.id !== id));
 //   };
+
+//   // 🔹 Reusable dropdown
+//   const Dropdown = ({
+//     label,
+//     name,
+//     value,
+//     options,
+//   }: {
+//     label: string;
+//     name: string;
+//     value: string;
+//     options: { id: string | number; name: string }[];
+//   }) => (
+//     <div className="flex flex-col">
+//       <label className="text-sm font-medium text-gray-700 mb-1">{label}</label>
+//       <div className="relative">
+//         <div
+//           className="flex justify-between items-center h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm cursor-pointer"
+//           onClick={() => {
+//             const el = document.getElementById(name);
+//             el?.classList.toggle("hidden");
+//           }}
+//         >
+//           <span>
+//             {value
+//               ? options.find((opt) => String(opt.id) === value)?.name
+//               : `Select ${label}`}
+//           </span>
+//           <ChevronDown className="h-4 w-4 text-gray-500" />
+//         </div>
+
+//         <div
+//           id={name}
+//           className="hidden absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-md shadow-lg z-20 max-h-48 overflow-y-auto"
+//         >
+//           {options.map((opt) => (
+//             <div
+//               key={opt.id}
+//               onClick={() => {
+//                 handleChange(name, String(opt.id));
+//                 document.getElementById(name)?.classList.add("hidden");
+//               }}
+//               className={`px-3 py-2 text-sm hover:bg-[#4B0082] hover:text-white cursor-pointer ${
+//                 value === String(opt.id)
+//                   ? "bg-[#F3E8FF] text-[#4B0082] font-medium"
+//                   : ""
+//               }`}
+//             >
+//               {opt.name}
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
 
 //   return (
 //     <motion.div
@@ -53,176 +150,93 @@
 //             </button>
 //           </div>
 
-//           {/* Profile Upload Section */}
-//           <div className="flex gap-6 mb-8">
-//             <div className="">
-//               <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-//                 {selectedImage ? (
-//                   <img
-//                     src={selectedImage}
-//                     alt="Passport"
-//                     className="w-full h-full object-cover border-2 border-gray-300"
-//                   />
-//                 ) : (
-//                   <span className="text-gray-500 text-sm">No image</span>
-//                 )}
-//               </div>
-//               <div className="flex flex-col items-start mt-3">
-//                 <span className="text-gray-700 font-medium mb-2">
-//                   Upload Passport
-//                 </span>
-//                 <input
-//                   type="file"
-//                   ref={fileInputRef}
-//                   onChange={handleImageUpload}
-//                   accept="image/*"
-//                   className="hidden"
-//                 />
-//                 <button
-//                   onClick={triggerFileInput}
-//                   className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-100 h-9 px-4 py-2"
-//                 >
-//                   Choose Media
-//                 </button>
-//               </div>
-//             </div>
-//             {/* Save Button */}
-//             <button className="ml-auto inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none bg-[#4B0082] text-white cursor-pointer h-9 px-4 py-2">
+//           {/* Dropdown Grid */}
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//             <Dropdown
+//               label="Staff Name"
+//               name="staffId"
+//               value={form.staffId}
+//               options={
+//                 staffData?.staff?.map((staff: any) => ({
+//                   id: staff.id,
+//                   name: staff.name,
+//                 })) || []
+//               }
+//             />
+//             <Dropdown
+//               label="Campus"
+//               name="campusId"
+//               value={form.campusId}
+//               options={
+//                 campusData?.campuses?.map((campus: any) => ({
+//                   id: campus.id,
+//                   name: campus.name,
+//                 })) || []
+//               }
+//             />
+//             <Dropdown
+//               label="Class"
+//               name="classId"
+//               value={form.classId}
+//               options={
+//                 classData?.classes?.map((cls: any) => ({
+//                   id: cls.id,
+//                   name: cls.name,
+//                 })) || []
+//               }
+//             />
+//             <Dropdown
+//               label="Subject"
+//               name="subjectId"
+//               value={form.subjectId}
+//               options={
+//                 subjectData?.subjects?.map((sub: any) => ({
+//                   id: sub.id,
+//                   name: sub.name,
+//                 })) || []
+//               }
+//             />
+//           </div>
+
+//           {/* Save Button */}
+//           <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
+//             <button
+//               onClick={handleSave}
+//               disabled={isLoading}
+//               className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors bg-[#4B0082] text-white cursor-pointer h-10 px-6 py-2 disabled:opacity-60"
+//             >
 //               <Check className="h-4 w-4 mr-2" />
-//               Save
+//               {isLoading ? "Saving..." : "Save"}
 //             </button>
 //           </div>
 
-//           {/* Form Grid */}
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-//             {/* Student's Name */}
-//             <div className="flex flex-col">
-//               <label className="text-sm font-medium text-gray-700 mb-1">
-//                 Staff's Name
-//               </label>
-//               <input
-//                 id="student-name"
-//                 type="text"
-//                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-//               />
+//           {/* Saved Assignments */}
+//           {assignments.length > 0 && (
+//             <div className="mt-8">
+//               <h3 className="text-lg font-medium text-gray-900 mb-3">
+//                 Assigned Teachers
+//               </h3>
+//               <ul className="space-y-2">
+//                 {assignments.map((item) => (
+//                   <li
+//                     key={item.id}
+//                     className="flex items-center justify-between border border-gray-200 rounded-md px-4 py-2 text-sm"
+//                   >
+//                     <span>
+//                       Staff ID: {item.staffId} | Class ID: {item.classId} |
+//                       Subject ID: {item.subjectId}
+//                     </span>
+//                     <button
+//                       onClick={() => handleRemove(item.id)}
+//                       className="text-red-500 hover:text-red-700 transition-colors"
+//                     >
+//                       <X size={16} />
+//                     </button>
+//                   </li>
+//                 ))}
+//               </ul>
 //             </div>
-
-//             {/* Campus */}
-//             <div className="flex flex-col">
-//               <label
-//                 htmlFor="campus"
-//                 className="text-sm font-medium text-gray-700 mb-1"
-//               >
-//                 Campus
-//               </label>
-//               <div className="relative">
-//                 <select
-//                   id="campus"
-//                   className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"
-//                 >
-//                   <option value="">Select Campus</option>
-//                   <option value="main">Main Campus</option>
-//                   <option value="north">North Campus</option>
-//                 </select>
-//                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-//               </div>
-//             </div>
-
-//             {/* Date */}
-//             <div className="flex flex-col">
-//               <label className="text-sm font-medium text-gray-700 mb-1">
-//                 Date Employed
-//               </label>
-//               <input
-//                 id="date"
-//                 type="date"
-//                 className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-//               />
-//             </div>
-
-//             {/* Payroll */}
-//             <div className="flex flex-col">
-//               <label
-//                 htmlFor="other-names"
-//                 className="text-sm font-medium text-gray-700 mb-1"
-//               >
-//                 Payroll
-//               </label>
-//               <input
-//                 id="other-names"
-//                 type="text"
-//                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-//               />
-//             </div>
-
-//             {/* Class */}
-//             <div className="flex flex-col">
-//               <label
-//                 htmlFor="campus"
-//                 className="text-sm font-medium text-gray-700 mb-1"
-//               >
-//                 Class
-//               </label>
-//               <div className="relative">
-//                 <select
-//                   id="campus"
-//                   className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-8"
-//                 >
-//                   <option value="">Select Class</option>
-//                 </select>
-//                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-//               </div>
-//             </div>
-
-//             {/* Subject */}
-//             <div className="flex flex-col">
-//               <label className="text-sm font-medium text-gray-700 mb-1">
-//                 Subject
-//               </label>
-//               <input
-//                 id="subject"
-//                 type="text"
-//                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-//               />
-//             </div>
-
-//             {/* Address */}
-//             <div className="flex flex-col">
-//               <label className="text-sm font-medium text-gray-700 mb-1">
-//                 Address
-//               </label>
-//               <div className="">
-//                 <input
-//                   id="address"
-//                   type="text"
-//                   className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Number */}
-//             <div className="flex flex-col">
-//               <label className="text-sm font-medium text-gray-700 mb-1">
-//                 Number
-//               </label>
-//               <input
-//                 id="number"
-//                 type="text"
-//                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
-//               />
-//             </div>
-
-//             {/* Duty */}
-//             <div className="flex flex-col">
-//               <label className="text-sm font-medium text-gray-700 mb-1">
-//                 Duty
-//               </label>
-//               <div className="relative">
-//                 <select className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"></select>
-//                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-//               </div>
-//             </div>
-//           </div>
+//           )}
 //         </div>
 //       </div>
 //     </motion.div>
@@ -232,35 +246,188 @@
 
 
 
+
+
+
+
+
+
+
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from "framer-motion";
-import { X, Check, ChevronDown, Plus } from "lucide-react";
+import { X, Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import {
+  useAssignTeacherMutation,
+  useGetStaffsQuery,
+} from "../api/staff-api";
+import { useGetCampusQuery } from "../../campus/api/campus.api";
+import { useGetClassesQuery } from "../../classes/api/class-api";
+import { useGetAllSubjectQuery } from "../../manage-subject/api/subject.api";
+import { toast } from "sonner";
+
+interface AssignItem {
+  id: string;
+  staffId: string;
+  // campusId: string;
+  classId: string;
+  subjectId: string;
+}
 
 export default function AssignStaffModal({ onClose }: { onClose: () => void }) {
-  const [subjects, setSubjects] = useState([{ subject: "" }]);
-  const [classes, setClasses] = useState([""]);
+  // 🔹 Fetch dropdown data
+  const { data: staffData } = useGetStaffsQuery();
+  const { data: campusData } = useGetCampusQuery();
+  const { data: classData } = useGetClassesQuery();
+  const { data: subjectData } = useGetAllSubjectQuery();
 
-  const addSubject = () => {
-    setSubjects([...subjects, { subject: "" }]);
+  const [assignments, setAssignments] = useState<AssignItem[]>([]);
+  const [form, setForm] = useState({
+    staffId: "",
+    campusId: "",
+    classId: "",
+    subjectId: "",
+  });
+
+  const filteredClasses = classData?.classes?.filter(
+    (cls: any) => !form.campusId || cls.campusId === Number(form.campusId)
+  );
+
+  const [selectedSubjects, setSelectedSubjects] = useState<any[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<any[]>([]);
+
+  const [assignTeacher, { isLoading }] = useAssignTeacherMutation();
+
+  // 🔹 Handle form input change
+  const handleChange = (name: string, value: string) => {
+    setForm({ ...form, [name]: value });
   };
 
-  const removeSubject = (index: number) => {
-    if (subjects.length > 1) {
-      const newSubjects = subjects.filter((_, i) => i !== index);
-      setSubjects(newSubjects);
+  // 🔹 Add subjects and classes individually
+  const handleAddSubject = () => {
+    const selected = subjectData?.subjects?.find(
+      (s: any) => String(s.id) === form.subjectId
+    );
+    if (selected && !selectedSubjects.find((s) => s.id === selected.id)) {
+      setSelectedSubjects([...selectedSubjects, selected]);
     }
+    setForm({ ...form, subjectId: "" });
   };
 
-  const addClass = () => {
-    setClasses([...classes, ""]);
+  const handleRemoveSubject = (id: string | number) => {
+    setSelectedSubjects(selectedSubjects.filter((s) => s.id !== id));
   };
 
-  const removeClass = (index: number) => {
-    if (classes.length > 1) {
-      const newClasses = classes.filter((_, i) => i !== index);
-      setClasses(newClasses);
+  const handleAddClass = () => {
+    const selected = classData?.classes?.find(
+      (c: any) => String(c.id) === form.classId
+    );
+    if (selected && !selectedClasses.find((c) => c.id === selected.id)) {
+      setSelectedClasses([...selectedClasses, selected]);
     }
+    setForm({ ...form, classId: "" });
   };
+
+  const handleRemoveClass = (id: string | number) => {
+    setSelectedClasses(selectedClasses.filter((c) => c.id !== id));
+  };
+
+  // 🔹 Handle save (assign one teacher to one or multiple classes/subjects)
+const handleSave = async () => {
+  if (!form.staffId) {
+    toast.warning("Please select Staff and Campus first.");
+    return;
+  }
+
+  if (selectedSubjects.length === 0 || selectedClasses.length === 0) {
+    toast.warning("Please add at least one subject and one class.");
+    return;
+  }
+
+  try {
+    for (const cls of selectedClasses) {
+      for (const sub of selectedSubjects) {
+        await assignTeacher({
+          staffId: Number(form.staffId),
+          classId: Number(cls.id),
+          subjectId: Number(sub.id),
+        }).unwrap();
+      }
+    }
+
+    const newAssignment: AssignItem = {
+      id: crypto.randomUUID(),
+      ...form,
+    };
+
+    setAssignments([...assignments, newAssignment]);
+    setSelectedClasses([]);
+    setSelectedSubjects([]);
+    setForm({ staffId: "", classId: "", subjectId: "" , campusId: "" });
+    onClose();
+
+    toast.success("Teacher assigned successfully!");
+  } catch (err) {
+    console.error("Error assigning teacher:", err);
+    toast.error("An error occurred while assigning teacher.");
+  }
+};
+
+  // 🔹 Reusable dropdown
+  const Dropdown = ({
+    label,
+    name,
+    value,
+    options,
+  }: {
+    label: string;
+    name: string;
+    value: string;
+    options: { id: string | number; name: string }[];
+  }) => (
+    <div className="flex flex-col">
+      <label className="text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <div className="relative">
+        <div
+          className="flex justify-between items-center h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm cursor-pointer"
+          onClick={() => {
+            const el = document.getElementById(name);
+            el?.classList.toggle("hidden");
+          }}
+        >
+          <span>
+            {value
+              ? options.find((opt) => String(opt.id) === value)?.name
+              : `Select ${label}`}
+          </span>
+          <ChevronDown className="h-4 w-4 text-gray-500" />
+        </div>
+
+        <div
+          id={name}
+          className="hidden absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-md shadow-lg z-20 max-h-48 overflow-y-auto"
+        >
+          {options.map((opt) => (
+            <div
+              key={opt.id}
+              onClick={() => {
+                handleChange(name, String(opt.id));
+                document.getElementById(name)?.classList.add("hidden");
+              }}
+              className={`px-3 py-2 text-sm hover:bg-[#4B0082] hover:text-white cursor-pointer ${
+                value === String(opt.id)
+                  ? "bg-[#F3E8FF] text-[#4B0082] font-medium"
+                  : ""
+              }`}
+            >
+              {opt.name}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <motion.div
@@ -288,140 +455,133 @@ export default function AssignStaffModal({ onClose }: { onClose: () => void }) {
             </button>
           </div>
 
-          {/* Form Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            {/* Staff's Name */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Staff's Name
-              </label>
-              <input
-                type="text"
-                defaultValue="James Eunice"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
-              />
-            </div>
+          {/* Dropdown Grid for Staff and Campus */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Dropdown
+              label="Staff Name"
+              name="staffId"
+              value={form.staffId}
+              options={
+                staffData?.staff?.map((staff: any) => ({
+                  id: staff.id,
+                  name: staff.name,
+                })) || []
+              }
+            />
+            <Dropdown
+              label="Campus"
+              name="campusId"
+              value={form.campusId}
+              options={
+                campusData?.campuses?.map((campus: any) => ({
+                  id: campus.id,
+                  name: campus.name,
+                })) || []
+              }
+            />
+          </div>
 
-            {/* Campus */}
-            <div className="flex flex-col">
-              <label
-                htmlFor="campus"
-                className="text-sm font-medium text-gray-700 mb-1"
+          {/* SUBJECTS SECTION */}
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">
+              Subjects
+            </h3>
+
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <Dropdown
+                  label="Select Subject"
+                  name="subjectId"
+                  value={form.subjectId}
+                  options={
+                    subjectData?.subjects?.map((sub: any) => ({
+                      id: sub.id,
+                      name: sub.name,
+                    })) || []
+                  }
+                />
+              </div>
+              <button
+                onClick={handleAddSubject}
+                className="px-4 py-2 bg-[#4B0082] text-white rounded-md hover:bg-[#5a00a8] transition-colors h-10"
               >
-                Campus
-              </label>
-              <div className="relative">
-                <select
-                  id="campus"
-                  className="flex h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 pr-8"
-                >
-                  <option value="campus1">Campus 1</option>
-                  <option value="campus2">Campus 2</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-              </div>
+                + Add
+              </button>
             </div>
 
-            {/* Subjects Section - Full width */}
-            <div className="md:col-span-2">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Subjects
-              </h3>
-
-              <div className="space-y-4">
-                {subjects.map((item, index) => (
-                  <div key={index} className="flex items-end gap-4">
-                    <div className="flex-1">
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">
-                        Subject {index + 1}
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Mathematics"
-                        value={item.subject}
-                        onChange={(e) => {
-                          const newSubjects = [...subjects];
-                          newSubjects[index].subject = e.target.value;
-                          setSubjects(newSubjects);
-                        }}
-                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
-                      />
-                    </div>
-
-                    {subjects.length > 1 && (
-                      <button
-                        onClick={() => removeSubject(index)}
-                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors mb-1"
-                      >
-                        <X size={20} />
-                      </button>
-                    )}
-                  </div>
-                ))}
-
-                <button
-                  onClick={addSubject}
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none border border-gray-300 bg-white hover:bg-gray-100 h-10 px-4 py-2 mt-2"
+            {/* Show added subjects */}
+            <div className="flex flex-wrap gap-2 mt-3">
+              {selectedSubjects.map((sub) => (
+                <span
+                  key={sub.id}
+                  className="flex items-center gap-2 bg-[#F3E8FF] text-[#4B0082] px-3 py-1 rounded-full text-sm font-medium"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add More Subject
-                </button>
-              </div>
-            </div>
-
-            {/* Classes Section - Full width */}
-            <div className="md:col-span-2">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Classes
-              </h3>
-
-              <div className="space-y-4">
-                {classes.map((classItem, index) => (
-                  <div key={index} className="flex items-end gap-4">
-                    <div className="flex-1">
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">
-                        Class {index + 1}
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. JSS 1A"
-                        value={classItem}
-                        onChange={(e) => {
-                          const newClasses = [...classes];
-                          newClasses[index] = e.target.value;
-                          setClasses(newClasses);
-                        }}
-                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none"
-                      />
-                    </div>
-
-                    {classes.length > 1 && (
-                      <button
-                        onClick={() => removeClass(index)}
-                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors mb-1"
-                      >
-                        <X size={20} />
-                      </button>
-                    )}
-                  </div>
-                ))}
-
-                <button
-                  onClick={addClass}
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none border border-gray-300 bg-white hover:bg-gray-100 h-10 px-4 py-2 mt-2"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add More Class
-                </button>
-              </div>
+                  {sub.name}
+                  <X
+                    size={14}
+                    className="cursor-pointer hover:text-red-500"
+                    onClick={() => handleRemoveSubject(sub.id)}
+                  />
+                </span>
+              ))}
             </div>
           </div>
 
-          {/* Save Button */}
-          <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none bg-[#4B0082] text-white cursor-pointer h-10 px-6 py-2">
+          {/* CLASSES SECTION */}
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">
+              Classes
+            </h3>
+
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <Dropdown
+                  label="Select Class"
+                  name="classId"
+                  value={form.classId}
+                  options={
+                    filteredClasses?.map((cls: any) => ({
+                      id: cls.id,
+                      name: cls.name,
+                    })) || []
+                  }
+                />
+              </div>
+              <button
+                onClick={handleAddClass}
+                className="px-4 py-2 bg-[#4B0082] text-white rounded-md hover:bg-[#5a00a8] transition-colors h-10"
+              >
+                + Add
+              </button>
+            </div>
+
+            {/* Show added classes */}
+            <div className="flex flex-wrap gap-2 mt-3">
+              {selectedClasses.map((cls) => (
+                <span
+                  key={cls.id}
+                  className="flex items-center gap-2 bg-[#F3E8FF] text-[#4B0082] px-3 py-1 rounded-full text-sm font-medium"
+                >
+                  {cls.name}
+                  <X
+                    size={14}
+                    className="cursor-pointer hover:text-red-500"
+                    onClick={() => handleRemoveClass(cls.id)}
+                  />
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* ASSIGN BUTTON */}
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={handleSave}
+              disabled={isLoading}
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors bg-[#4B0082] text-white cursor-pointer h-10 px-6 py-2 disabled:opacity-60"
+            >
               <Check className="h-4 w-4 mr-2" />
-              Save
+              {isLoading ? "Saving..." : "Assign"}
             </button>
           </div>
         </div>

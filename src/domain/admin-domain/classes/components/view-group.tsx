@@ -1,58 +1,63 @@
 import { Printer, ChevronLeft, ChevronRight, Edit } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
-import Print from "../../../../general/common/print";
 import EditGroup from "../modal/edit-group";
 import { useGetClassGroupsQuery } from "../api/class-api";
-
-
+import { printContent } from "../../../../utils/print-content";
 
 export default function ViewGroup() {
-  const [isPrinting, setIsPrinting] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
+  const handlePrint = () => {
+    if (contentRef.current) {
+      printContent(contentRef.current.innerHTML, "All Group List");
+    }
+  };
 
- 
- const { data, isLoading, isError } = useGetClassGroupsQuery({
-   page: currentPage,
-   limit: 7,
- });
-
+  const { data, isFetching, isError } = useGetClassGroupsQuery({
+    page: currentPage,
+    limit: 7,
+  });
 
   const groups = data?.groups ?? [];
   const pagination = data?.pagination;
 
   return (
     <>
-      {isLoading ? (
+      {isFetching ? (
         <TableSkeleton />
       ) : (
         <div className="min-h-screen bg-gray-50">
-          <div className="flex justify-end">
+          {/* Print Button */}
+          <div className="flex justify-end no-print">
             <button
-              onClick={() => setIsPrinting(true)}
+              onClick={handlePrint}
               className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
             >
               <Printer size={20} />
               <span>PRINT RECORD</span>
             </button>
           </div>
+
           <div className="mt-7">
             {/* Table Container */}
             <motion.div
+              ref={contentRef}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-4 py-4 xl:px-6"
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-2 no-print">
                 <h1 className="text-xl text-gray-900 mb-2 font-inter">
                   All Group List
                 </h1>
               </div>
+
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
@@ -67,7 +72,7 @@ export default function ViewGroup() {
                         <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                           Group
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200 no-print">
                           Actions
                         </th>
                       </tr>
@@ -96,7 +101,7 @@ export default function ViewGroup() {
                             <td className="py-3 px-2 text-sm text-gray-600 font-semibold border-r border-gray-200 text-center">
                               {group.name}
                             </td>
-                            <td className="py-3 px-5">
+                            <td className="py-3 px-5 no-print">
                               <div className="flex items-center justify-center space-x-1">
                                 <button
                                   onClick={() => {
@@ -118,15 +123,13 @@ export default function ViewGroup() {
                   </table>
                 </div>
 
-                {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
-
-                {/* Pagination (using API response) */}
+                {/* Pagination */}
                 {pagination && (
-                  <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
+                  <div className="px-6 py-2 border-t border-gray-200 bg-gray-50 no-print">
                     <div className="flex items-center justify-between">
                       <div className="text-sm text-gray-600">
                         Showing page {pagination.page} of{" "}
-                        {pagination.totalPages} ({pagination.total} groups)
+                        {pagination.totalPages}
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
@@ -141,7 +144,7 @@ export default function ViewGroup() {
 
                         <div className="flex items-center space-x-1 font-space">
                           {[...Array(pagination.totalPages).keys()]
-                            .slice(0, 3) // just first 3 for demo
+                            .slice(0, 3)
                             .map((page) => (
                               <button
                                 key={page + 1}

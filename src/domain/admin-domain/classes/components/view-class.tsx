@@ -1,17 +1,24 @@
 import { Printer, ChevronLeft, ChevronRight, Edit, Users } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
-import Print from "../../../../general/common/print";
 import EditClass from "../modal/edit-class";
 import { useGetClassesQuery } from "../api/class-api";
+import { printContent } from "../../../../utils/print-content";
 
 export default function ViewClass() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isPrinting, setIsPrinting] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
+
+   const handlePrint = () => {
+      if (contentRef.current) {
+        printContent(contentRef.current.innerHTML, "All Classes List");
+      }
+    };
+  
 
   const { data, isLoading } = useGetClassesQuery();
 
@@ -33,7 +40,7 @@ export default function ViewClass() {
           {/* Print Button */}
           <div className="flex justify-end">
             <button
-              onClick={() => setIsPrinting(true)}
+              onClick={handlePrint}
               className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
             >
               <Printer size={20} />
@@ -44,12 +51,13 @@ export default function ViewClass() {
           {/* Table */}
           <div className="mt-7">
             <motion.div
+              ref={contentRef}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden px-4 xl:px-9 py-4"
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-2 no-print">
                 <h1 className="text-xl text-gray-900 mb-2 font-inter">
                   All Classes List
                 </h1>
@@ -71,56 +79,11 @@ export default function ViewClass() {
                         <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                           Class name
                         </th>
-                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider">
+                        <th className="text-center py-3 px-2 text-xs font-bold text-gray-900 uppercase tracking-wider no-print">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    {/* <tbody className="divide-y divide-gray-200">
-                      {paginatedClasses.length > 0 ? (
-                        paginatedClasses.map((classItem, index) => (
-                          <tr key={classItem.id} className="hover:bg-gray-50">
-                            <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200 text-center">
-                              {startIndex + index + 1}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
-                              {classItem.campus?.name}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
-                              {classItem.customName}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
-                              {classItem.name}
-                            </td>
-                            <td className="py-3 px-5">
-                              <div className="flex items-center justify-center space-x-1">
-                                <button
-                                  onClick={() => {
-                                    setIsEditOpen(true);
-                                    setSelectedClassId(classItem.id);
-                                  }}
-                                  className="p-1 cursor-pointer"
-                                >
-                                  <Edit
-                                    size={20}
-                                    className="text-gray-400 hover:text-gray-600"
-                                  />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan={3}
-                            className="py-6 text-center text-gray-500"
-                          >
-                            No classes found
-                          </td>
-                        </tr>
-                      )}
-                    </tbody> */}
                     <tbody className="divide-y divide-gray-200">
                       {paginatedClasses.length > 0 ? (
                         paginatedClasses.map((classItem, index) => (
@@ -137,7 +100,7 @@ export default function ViewClass() {
                             <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 text-center">
                               {classItem.name}
                             </td>
-                            <td className="py-3 px-5">
+                            <td className="py-3 px-5 no-print">
                               <div className="flex items-center justify-center space-x-1">
                                 <button
                                   onClick={() => {
@@ -178,11 +141,8 @@ export default function ViewClass() {
                   </table>
                 </div>
 
-                {/* Print Modal */}
-                {isPrinting && <Print onClose={() => setIsPrinting(false)} />}
-
                 {/* Pagination */}
-                <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
+                <div className="px-6 py-2 border-t border-gray-200 bg-gray-50 no-print">
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-600">
                       Showing {startIndex + 1}-

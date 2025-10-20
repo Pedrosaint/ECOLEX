@@ -30,3 +30,11 @@ export interface EditStudentRequest {
     session: string;
     email: string;
   };
+
+  // Change Student Class
+export interface ChangeStudentClassRequest {
+  studentIds: number[];
+  classId: number;
+  groupId: number;
+  campusId: number;
+}

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../../../../redux/apiConfig";
-import type { CreateStudentResponse, EditStudentResponse, GetStudentResponse, GetStudentsResponse } from "../response/students.response";
-import type { CreateStudentRequest, EditStudentRequest } from "../request/students.request";
+import type { ChangeStudentClassResponse, CreateStudentResponse, EditStudentResponse, GetStudentResponse, GetStudentsResponse } from "../response/students.response";
+import type { ChangeStudentClassRequest, CreateStudentRequest, EditStudentRequest } from "../request/students.request";
 
 
 export const studentApi = createApi({
@@ -43,7 +43,7 @@ export const studentApi = createApi({
       {
         campusId?: string;
         classId?: string;
-        groupId?: string;
+        classGroupId?: string;
         gender?: string;
         page?: number;
         pageSize?: number;
@@ -56,7 +56,7 @@ export const studentApi = createApi({
         params: {
           campusId: params.campusId,
           classId: params.classId,
-          groupId: params.groupId,
+          classGroupId: params.classGroupId,
           gender: params.gender,
           page: params.page || 1,
           pageSize: params.pageSize || 7,
@@ -84,7 +84,20 @@ export const studentApi = createApi({
       }),
       invalidatesTags: ["Student"],
     }),
-    
+
+    changeClass: builder.mutation<
+      ChangeStudentClassResponse,
+      ChangeStudentClassRequest 
+    >({
+      query: ( payload ) => ({
+        url: `admin/student/change-class`,
+        method: "PATCH",
+        body: payload,
+      }),
+      invalidatesTags: ["Student"],
+    }),
+
+
   }),
 });
 
@@ -93,4 +106,5 @@ export const {
   useGetAllStudentQuery,
   useEditStudentMutation,
   useGetStudentQuery,
+  useChangeClassMutation,
 } = studentApi;

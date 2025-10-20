@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Printer, Trash2, ChevronLeft, ChevronRight, Edit } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
-import Print from "../../../../general/common/print";
 import EditCampus from "../modal/edit-campus.modal";
 import CampuseDeleteModal from "../modal/campuse-delete.modal";
 import { useGetCampusParamsQuery } from "../api/campus.api";
+import { printContent } from "../../../../utils/print-content";
 
 export default function ViewCampuses() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
    const [selectedCampus, setSelectedCampus] = useState<any>(null);
 
@@ -26,6 +26,12 @@ export default function ViewCampuses() {
   const total = data?.total ?? 0;
   const totalPages = data?.pages ?? 1;
 
+    const handlePrint = () => {
+      if (contentRef.current) {
+        printContent(contentRef.current.innerHTML, "All Campuses List");
+      }
+    };
+
   return (
     <>
       {isLoading ? (
@@ -35,7 +41,7 @@ export default function ViewCampuses() {
           {/* Print Button */}
           <div className="flex justify-end mt-10">
             <button
-              onClick={() => setIsPrintModalOpen(true)}
+              onClick={handlePrint}
               className="bg-[#4B0082] text-white cursor-pointer px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors"
             >
               <Printer size={20} />
@@ -46,12 +52,13 @@ export default function ViewCampuses() {
           {/* Table */}
           <div className="mt-9">
             <motion.div
+              ref={contentRef}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden p-5"
             >
-              <h1 className="text-xl text-gray-900 mb-2 font-inter">
+              <h1 className="text-xl text-gray-900 mb-2 font-inter no-print">
                 All Campuses List
               </h1>
               <div className="overflow-x-auto">
@@ -73,7 +80,7 @@ export default function ViewCampuses() {
                       <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                         Email
                       </th>
-                      <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                      <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider no-print">
                         Action
                       </th>
                     </tr>
@@ -97,7 +104,7 @@ export default function ViewCampuses() {
                           <td className="py-3 px-2 text-center text-sm text-gray-600 border-r border-gray-200">
                             {campus.email}
                           </td>
-                          <td className="py-3 px-5">
+                          <td className="py-3 px-5 no-print">
                             <div className="flex items-center justify-center space-x-1">
                               <button
                                 onClick={() => { 
@@ -136,7 +143,7 @@ export default function ViewCampuses() {
               </div>
 
               {/* Pagination */}
-              <div className="px-6 py-2 border-t border-gray-200 bg-gray-50">
+              <div className="px-6 py-2 border-t border-gray-200 bg-gray-50 no-print">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-gray-600">
                     Showing {(currentPage - 1) * 9 + 1}-
@@ -184,10 +191,6 @@ export default function ViewCampuses() {
             </motion.div>
           </div>
 
-          {/* Modals */}
-          {isPrintModalOpen && (
-            <Print onClose={() => setIsPrintModalOpen(false)} />
-          )}
           {isEditOpen && selectedCampus&& <EditCampus onClose={() => setIsEditOpen(false)}  campus={selectedCampus}/>}
           {isDeleteOpen && (
             <CampuseDeleteModal

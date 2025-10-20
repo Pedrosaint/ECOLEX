@@ -7,6 +7,9 @@ import type { GetAllStaffResponse } from "../response/get-all-staff.response";
 import type { DeleteStaffResponse } from "../response/delete-staff.response";
 import type { EditStaffResponse } from "../response/edit-staff.response";
 import type { EditStaffRequest } from "../request/edit-staff-request";
+import type { AssignTeacherRequest } from "../request/assign-teacher.request";
+import type { AssignTeacherResponse } from "../response/assign-teacher.response";
+import type { GetStaffsResponse } from "../response/get-staffs.response";
 
 
 
@@ -75,6 +78,7 @@ export const staffApi = createApi({
         url: `admin/staff/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Staff"],
     }),
 
     editStaff: builder.mutation<
@@ -88,6 +92,27 @@ export const staffApi = createApi({
       }),
       invalidatesTags: ["Staff"],
     }),
+
+    assignTeacher: builder.mutation<
+      AssignTeacherResponse,
+      AssignTeacherRequest
+    >({
+      query: (payload) => ({
+        url: `admin/staff/assign-teacher`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Staff"],
+    }),
+
+    getStaffs: builder.query<GetStaffsResponse, void>({
+      query: () => ({
+        url: `admin/staff`,
+        method: "GET",
+      }),
+      providesTags: ["Staff"],
+    }),
+    
   }),
 });
 
@@ -99,4 +124,6 @@ export const {
     useGetAllStaffQuery,
     useDeleteStaffMutation,
     useEditStaffMutation,
+    useAssignTeacherMutation,
+    useGetStaffsQuery,
 } = staffApi;

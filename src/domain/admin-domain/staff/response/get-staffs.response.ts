@@ -1,4 +1,4 @@
-export interface GetAllStaffResponse {
+export interface GetStaffsResponse {
   success: boolean;
   pagination: Pagination;
   staff: Staff[];

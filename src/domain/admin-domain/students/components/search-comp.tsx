@@ -48,6 +48,15 @@ export default function SearchStudentComp({
   const { data: classData } = useGetClassesQuery();
   const { data: groupData } = useGetClassGroupsQuery({});
 
+  // Filter dependent data
+  const filteredClasses = classData?.classes?.filter(
+    (cls: any) => !campusId || cls.campusId === Number(campusId)
+  );
+
+  const filteredGroups = groupData?.groups?.filter(
+    (grp: any) => !classId || grp.classId === Number(classId)
+  );
+
   // Campus dropdown options
   const campusOptions: DropdownOption[] = [
     { value: "", label: "Select Campus" },
@@ -60,7 +69,7 @@ export default function SearchStudentComp({
   // Class dropdown options
   const classOptions: DropdownOption[] = [
     { value: "", label: "Select Class" },
-    ...(classData?.classes?.map((c: any) => ({
+    ...(filteredClasses?.map((c: any) => ({
       value: String(c.id),
       label: c.name,
     })) || []),
@@ -69,7 +78,7 @@ export default function SearchStudentComp({
   // Group dropdown options
   const groupOptions: DropdownOption[] = [
     { value: "", label: "Select Group" },
-    ...(groupData?.groups?.map((g: any) => ({
+    ...(filteredGroups?.map((g: any) => ({
       value: String(g.id),
       label: g.name,
     })) || []),

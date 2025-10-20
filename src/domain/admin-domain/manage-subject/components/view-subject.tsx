@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from "framer-motion";
 import { Printer, ChevronLeft, ChevronRight, Edit } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
-import Print from "../../../../general/common/print";
 import EditSubject from "../modal/edit-subject.modal";
 import { useGetAllSubjectQuery } from "../api/subject.api";
+import { printContent } from "../../../../utils/print-content";
 
 
 export default function ViewSubject() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<any>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, isError } = useGetAllSubjectQuery();
 
@@ -36,11 +36,17 @@ export default function ViewSubject() {
       </div>
     );
 
+      const handlePrint = () => {
+        if (contentRef.current) {
+          printContent(contentRef.current.innerHTML, "All Subject List");
+        }
+      };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex justify-end mt-5">
         <button
-          onClick={() => setIsPrintModalOpen(true)}
+          onClick={handlePrint}
           className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center cursor-pointer space-x-2 text-sm font-semibold transition-colors"
         >
           <Printer size={20} />
@@ -50,12 +56,13 @@ export default function ViewSubject() {
 
       <div className="mt-4">
         <motion.div
+          ref={contentRef}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
         >
-          <h1 className="text-xl text-gray-900 mb-2 font-inter">
+          <h1 className="text-xl text-gray-900 mb-2 font-inter no-print">
             All Subjects List
           </h1>
 
@@ -66,7 +73,7 @@ export default function ViewSubject() {
                   <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                     Subject Name
                   </th>
-                  <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider no-print">
                     Action
                   </th>
                 </tr>
@@ -79,7 +86,7 @@ export default function ViewSubject() {
                       <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
                         {subject.name}
                       </td>
-                      <td className="py-3 px-5">
+                      <td className="py-3 px-5 no-print">
                         <div className="flex items-center justify-center space-x-1">
                           <button
                             onClick={() => {
@@ -108,10 +115,6 @@ export default function ViewSubject() {
             </table>
           </div>
 
-          {isPrintModalOpen && (
-            <Print onClose={() => setIsPrintModalOpen(false)} />
-          )}
-
           {isEditOpen && (
             <EditSubject
               onClose={() => setIsEditOpen(false)}
@@ -122,7 +125,7 @@ export default function ViewSubject() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-4 flex flex-col md:flex-row items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
+            <div className="mt-4 flex flex-col md:flex-row items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50 no-print">
               <p className="text-sm text-gray-600 mb-2 md:mb-0">
                 Showing {startIndex + 1}–
                 {Math.min(startIndex + subjectsPerPage, totalSubjects)} of{" "}

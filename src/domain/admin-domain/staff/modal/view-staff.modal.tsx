@@ -44,17 +44,7 @@ export default function ViewStaffModal({
 
           {/* Loading / Error States */}
           {isLoading && <LoadingBall title="Loading staff info..." />}
-          {/* {error && (
-            <p className="text-red-500">
-              Failed to load staff details{" "}
-              <button
-                onClick={() => refetch()}
-                className="ml-2 text-red-500 underline"
-              >
-                <IoMdRefresh size={20} className="animate-spin" />
-              </button>
-            </p>
-          )} */}
+          
           {error && (
             <div className="text-center mt-4">
               <p className="text-red-500 mb-2">Failed to load staff details</p>
