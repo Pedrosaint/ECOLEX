@@ -26,73 +26,6 @@ export interface Student {
 }
 
 
-
-// Get Students
-export interface GetStudentsResponse {
-  students: Student[];
- pagination: Pagination;
-}
-
-export interface Student {
-  id: number;
-  schoolId: number;
-  campusId: number;
-  classId: number;
-  name: string;
-  surname: string;
-  otherNames: string;
-  gender: string;
-  dateOfBirth: any;
-  guardianName: string;
-  guardianNumber: string;
-  lifestyle: string;
-  session: string;
-  email: string;
-  classGroupId: number;
-  registrationNumber: string;
-  createdAt: string;
-  class: Class;
-  campus: Campus;
-}
-
-export interface Class {
-  id: number;
-  schoolId: number;
-  campusId: number;
-  name: string;
-  customName: string;
-  staffId: number;
-  createdAt: string;
-  classGroups: ClassGroup[];
-}
-
-export interface ClassGroup {
-  id: number;
-  classId: number;
-  name: string;
-  createdAt: string;
-}
-
-export interface Campus {
-  id: number;
-  schoolId: number;
-  name: string;
-  address: string;
-  phoneNumber: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface Pagination {
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
-
-
-
 // Edit Student
 export interface EditStudentResponse {
   success: boolean;
@@ -125,6 +58,14 @@ export interface Data {
   classGroupId: number;
   registrationNumber: string;
   createdAt: string;
+  campus: Campus;
+  class: Class;
+  classGroup: ClassGroup;
+}
+
+export interface Campus {
+  id: number
+  name: string
 }
 
 // Change Student Class

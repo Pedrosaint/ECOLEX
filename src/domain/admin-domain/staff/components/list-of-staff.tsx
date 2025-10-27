@@ -354,9 +354,17 @@ const handleClearFilters = () => {
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   {staff.assignments?.length ? (
                                     <ul className="list-disc ml-4">
-                                      {staff.assignments.map((a) => (
-                                        <li key={a.id}>{a.subject?.name}</li>
-                                      ))}
+                                      {staff.assignments.map((a) => {
+                                        const subjectName = a.subject?.name;
+                                        return (
+                                          <li key={a.id}>
+                                            {subjectName &&
+                                            typeof subjectName === "string"
+                                              ? subjectName
+                                              : "No subject"}
+                                          </li>
+                                        );
+                                      })}
                                     </ul>
                                   ) : (
                                     "N/A"
@@ -366,9 +374,17 @@ const handleClearFilters = () => {
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   {staff.assignments?.length ? (
                                     <ul className="list-disc ml-4">
-                                      {staff.assignments.map((a) => (
-                                        <li key={a.id}>{a.class?.name}</li>
-                                      ))}
+                                      {staff.assignments.map((a) => {
+                                        const className = a.class?.name;
+                                        return (
+                                          <li key={a.id}>
+                                            {className &&
+                                            typeof className === "string"
+                                              ? className
+                                              : "No class"}
+                                          </li>
+                                        );
+                                      })}
                                     </ul>
                                   ) : (
                                     "N/A"

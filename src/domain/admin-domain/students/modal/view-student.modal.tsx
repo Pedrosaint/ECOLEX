@@ -119,7 +119,7 @@ export default function ViewStudentFormModal({
             <Detail label="Reg. No" value={student.registrationNumber} />
             <Detail label="Student Name" value={student.name} />
             <Detail label="Surname" value={student.surname} />
-            <Detail label="Campus" value={student.campusId} />
+            <Detail label="Campus" value={student.campus.name} />
             <Detail label="Other Names" value={student.otherNames} />
             <Detail label="Email" value={student.email} />
             <Detail
@@ -131,8 +131,8 @@ export default function ViewStudentFormModal({
               }
             />
             <Detail label="Gender" value={student.gender} />
-            <Detail label="Class" value={student.classId} />
-            <Detail label="Class Group" value={student.classGroupId} />
+            <Detail label="Class" value={student.class?.name} />
+            <Detail label="Class Group" value={student.classGroup?.name} />
             <Detail label="Guardian Name" value={student.guardianName} />
             <Detail label="Guardian Number" value={student.guardianNumber} />
             <Detail label="Lifestyle" value={student.lifestyle} />

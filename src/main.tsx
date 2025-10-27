@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 
+
 const routes = createBrowserRouter(appRouter());
 
 createRoot(document.getElementById("root")!).render(

@@ -28,6 +28,7 @@ import StaffDashboardView from "../domain/teachers-domain/overview/view/staff-da
 import ComputeResultView from "../domain/teachers-domain/compute/view/compute-result.view";
 import StaffSetupRecordView from "../domain/teachers-domain/teachers-result-mark/view/staff-setup-record-view";
 import StaffViewResultView from "../domain/teachers-domain/view-class-result/view/staff-view-result.view";
+import RouteErrorBoundary from "../helper/route-error";
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -108,6 +109,7 @@ export default function appRouter(): RouteObject[] {
         {
           path: "staff",
           element: <Staffs />,
+          errorElement: <RouteErrorBoundary />,
         },
         {
           path: "classes",

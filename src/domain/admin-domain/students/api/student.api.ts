@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../../../../redux/apiConfig";
-import type { ChangeStudentClassResponse, CreateStudentResponse, EditStudentResponse, GetStudentResponse, GetStudentsResponse } from "../response/students.response";
+import type { ChangeStudentClassResponse, CreateStudentResponse, EditStudentResponse, GetStudentResponse } from "../response/students.response";
 import type { ChangeStudentClassRequest, CreateStudentRequest, EditStudentRequest } from "../request/students.request";
+import type { GetStudentsResponse } from "../response/get-student-response";
 
 
 export const studentApi = createApi({
