@@ -53,12 +53,8 @@ export function EmptyStudentState() {
         No students found
       </h3>
       <p className="text-gray-500 text-center max-w-md mb-6">
-        We couldn't find any students matching your current filters. Try
-        adjusting your search criteria or adding new students.
+        filter your students by name, class, or campus
       </p>
-      <button className="bg-[#4B0082] text-white px-6 py-2 rounded-md font-medium hover:bg-[#3a0066] transition-colors">
-        Clear Filters
-      </button>
     </motion.div>
   );
 }

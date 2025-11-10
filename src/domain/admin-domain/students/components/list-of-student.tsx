@@ -1002,7 +1002,7 @@ export default function StudentsList() {
   // ref for printable content
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // 🧠 Persist "removed" state (so it stays even after refresh)
+  //  Persist "removed" state (so it stays even after refresh)
   const [isRemoved, setIsRemoved] = useState<boolean>(() => {
     try {
       const stored = localStorage.getItem("studentTableRemoved");
@@ -1012,8 +1012,8 @@ export default function StudentsList() {
     }
   });
 
-  // 🧩 Data fetching
-  const { data, error, isLoading, isFetching } =
+  //  Data fetching
+  const { data, isLoading, isFetching } =
     useGetAllStudentQuery(filters);
 
   // Keep localStorage in sync with removed state
@@ -1025,7 +1025,7 @@ export default function StudentsList() {
     }
   }, [isRemoved]);
 
-  // 🧭 Search handler
+  //  Search handler
   const handleDisplayStudent = (newFilters: {
     campusId?: string;
     classId?: string;
@@ -1074,7 +1074,7 @@ export default function StudentsList() {
     }
   };
 
-  // 🗑️ Remove table (persist locally)
+  //  Remove table (persist locally)
   const handleRemoveTable = () => {
     setIsRemoved(true);
     try {
@@ -1142,7 +1142,7 @@ export default function StudentsList() {
 
             {/* Table or Empty State */}
             <AnimatePresence mode="wait">
-              {!isRemoved && !error && data && data.students.length > 0 ? (
+              {!isRemoved && hasFilters && data && data.students.length > 0 ? (
                 <motion.div
                   ref={contentRef}
                   initial={{ opacity: 0, y: 30 }}
