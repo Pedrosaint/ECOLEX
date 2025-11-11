@@ -352,6 +352,13 @@ export default function SchoolSetup() {
                   : "border-gray-300 focus:ring-gray-200"
               }`}
               placeholder=" "
+              onInput={(e) => {
+                e.currentTarget.value = e.currentTarget.value.replace(
+                  /\D/g,
+                  ""
+                );
+              }}
+              maxLength={11}
             />
             <label
               htmlFor="phoneNumber"
@@ -622,7 +629,7 @@ export default function SchoolSetup() {
             isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
           }`}
         >
-          {isLoading ? "Creating Account..." : "Create Account"}
+          {isLoading ? "PROCEEDING..." : "PROCEED"}
         </button>
       </form>
     </div>

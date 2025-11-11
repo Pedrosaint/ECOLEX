@@ -67,7 +67,7 @@ const ContinuousAssessmentModal = ({
                 {/* CA Title */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    CA Title
+                    {`CA ${index + 1} Title`}
                   </label>
                   <input
                     type="text"
@@ -87,9 +87,9 @@ const ContinuousAssessmentModal = ({
                 </div>
 
                 {/*weightage*/}
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                   Weight Age
+                    Weight Age
                   </label>
                   <input
                     type="text"
@@ -100,7 +100,7 @@ const ContinuousAssessmentModal = ({
                     placeholder="e.g., 20"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none"
                   />
-                </div>
+                </div> */}
 
                 {/* Max Score */}
                 <div>

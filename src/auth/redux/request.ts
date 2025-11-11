@@ -53,14 +53,12 @@ export interface CCARequest {
 export interface Assessment {
   class_id: number;
   name: string;
-  weightage: number;
   max_score: number;
 }
 
 export interface Exam {
   class_id: number[];
   name: string;
-  weightage: number;
   max_score: number;
 }
 

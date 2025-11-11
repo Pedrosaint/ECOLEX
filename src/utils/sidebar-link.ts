@@ -26,7 +26,7 @@ export const navLinks: NavLink[] = [
   { path: "/admin/campuses", icon: Building, label: "Campuses" },
   { path: "/admin/result", icon: FileText, label: "Manage Result" },
   { path: "/admin/subjects", icon: BookOpen, label: "Manage Subject" },
-  { path: "/admin/broadsheet", icon: FileText, label: "Broadsheet" },
+  { path: "/admin/generate-result", icon: FileText, label: "Generate Result" },
 ];
 
 //student navlink

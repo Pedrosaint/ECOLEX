@@ -51,7 +51,7 @@ export const schoolSetupSchema = Yup.object().shape({
 
   address: Yup.string().required("Address is required"),
 
-  prefix: Yup.string().required("Prefix is required"),
+  prefix: Yup.string().optional(),
 
   logoUrl: Yup.mixed()
     .required("Logo is required")

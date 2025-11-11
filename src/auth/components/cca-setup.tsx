@@ -22,7 +22,6 @@ interface ClassData {
 
 interface Assessment {
   title: string;
-  weightage: string;
   maxScore: string;
 }
 
@@ -109,7 +108,6 @@ const CCASetup = () => {
           const assessmentPayload = {
             class_id: classItem.id,
             name: assessment.title,
-            weightage: Number(assessment.weightage),
             max_score: Number(assessment.maxScore),
           };
           console.log("Adding assessment:", assessmentPayload);

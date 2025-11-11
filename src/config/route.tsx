@@ -129,7 +129,7 @@ export default function appRouter(): RouteObject[] {
           element: <ManageSubjectView />,
         },
         {
-          path: "broadsheet",
+          path: "generate-result",
           element: <BroadsheetView />,
         },
       ],
