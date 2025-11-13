@@ -1,4 +1,5 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BsChevronExpand } from "react-icons/bs";
@@ -8,288 +9,363 @@ import { EearlyEducationDropdown, PrimaryDropdown, JuniorSecondaryDropdown, Seni
 import { usePreviewText } from "../hooks/auth.hook";
 import { toast } from "sonner";
 import { useClassSetupMutation } from "../api/auth-api";
+import {
+  loadStepProgress,
+  saveStepProgress,
+  getSchoolCustomization,
+} from "../../utils/step-manager";
 
 interface Class {
   name: string;
 }
 
 export default function CustomizeSchoolName() {
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [isPrimaryDropdownOpen, setIsPrimaryDropdownOpen] = useState(false);
-    const [isJuniorSecondaryDropdownOpen, setIsJuniorSecondaryDropdownOpen] = useState(false);
-    const [isSeniorSecondaryDropdownOpen, setIsSeniorSecondaryDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isPrimaryDropdownOpen, setIsPrimaryDropdownOpen] = useState(false);
+  const [isJuniorSecondaryDropdownOpen, setIsJuniorSecondaryDropdownOpen] =
+    useState(false);
+  const [isSeniorSecondaryDropdownOpen, setIsSeniorSecondaryDropdownOpen] =
+    useState(false);
 
-    const [classSetup] = useClassSetupMutation();
-    const token = localStorage.getItem("token") || "";
-    const school_id = Number(localStorage.getItem("schoolId")) || 0;
-   
+  const [classSetup] = useClassSetupMutation();
+  const token = localStorage.getItem("token") || "";
+  const school_id = Number(localStorage.getItem("schoolId")) || 0;
 
-    const {
+  const {
+    isEarlyEducationActive,
+    setIsEarlyEducationActive,
+    selectedEarlyName,
+    setSelectedEarlyName,
+    earlyStartLevel,
+    setEarlyStartLevel,
+    earlyEndLevel,
+    setEarlyEndLevel,
+
+    isPrimaryActive,
+    setIsPrimaryActive,
+    selectedPrimaryName,
+    setSelectedPrimaryName,
+    primaryStartLevel,
+    setPrimaryStartLevel,
+    primaryEndLevel,
+    setPrimaryEndLevel,
+
+    isJuniorSecondaryActive,
+    setIsJuniorSecondaryActive,
+    selectedJuniorSecondaryName,
+    setSelectedJuniorSecondaryName,
+    juniorStartLevel,
+    setJuniorStartLevel,
+    juniorEndLevel,
+    setJuniorEndLevel,
+
+    isSeniorSecondaryActive,
+    setIsSeniorSecondaryActive,
+    selectedSeniorSecondaryName,
+    setSelectedSeniorSecondaryName,
+    seniorStartLevel,
+    setSeniorStartLevel,
+    seniorEndLevel,
+    setSeniorEndLevel,
+
+    generatePreviewText,
+  } = usePreviewText();
+
+  // Load saved customization data on component mount
+  useEffect(() => {
+    const savedCustomization = getSchoolCustomization();
+    if (savedCustomization) {
+      setIsEarlyEducationActive(savedCustomization.isEarlyEducationActive);
+      setSelectedEarlyName(savedCustomization.selectedEarlyName);
+      setEarlyStartLevel(savedCustomization.earlyStartLevel);
+      setEarlyEndLevel(savedCustomization.earlyEndLevel);
+
+      setIsPrimaryActive(savedCustomization.isPrimaryActive);
+      setSelectedPrimaryName(savedCustomization.selectedPrimaryName);
+      setPrimaryStartLevel(savedCustomization.primaryStartLevel);
+      setPrimaryEndLevel(savedCustomization.primaryEndLevel);
+
+      setIsJuniorSecondaryActive(savedCustomization.isJuniorSecondaryActive);
+      setSelectedJuniorSecondaryName(
+        savedCustomization.selectedJuniorSecondaryName
+      );
+      setJuniorStartLevel(savedCustomization.juniorStartLevel);
+      setJuniorEndLevel(savedCustomization.juniorEndLevel);
+
+      setIsSeniorSecondaryActive(savedCustomization.isSeniorSecondaryActive);
+      setSelectedSeniorSecondaryName(
+        savedCustomization.selectedSeniorSecondaryName
+      );
+      setSeniorStartLevel(savedCustomization.seniorStartLevel);
+      setSeniorEndLevel(savedCustomization.seniorEndLevel);
+    }
+  }, [loadStepProgress]);
+
+     // Save customization data whenever any field changes
+    useEffect(() => {
+      const saveCustomizationData = () => {
+        const customizationData = {
+          isEarlyEducationActive,
+          selectedEarlyName: selectedEarlyName ?? "",
+          earlyStartLevel,
+          earlyEndLevel,
+          isPrimaryActive,
+          selectedPrimaryName: selectedPrimaryName ?? "",
+          primaryStartLevel,
+          primaryEndLevel,
+          isJuniorSecondaryActive,
+          selectedJuniorSecondaryName: selectedJuniorSecondaryName ?? "",
+          juniorStartLevel,
+          juniorEndLevel,
+          isSeniorSecondaryActive,
+          selectedSeniorSecondaryName: selectedSeniorSecondaryName ?? "",
+          seniorStartLevel,
+          seniorEndLevel,
+        };
+
+        const currentProgress = loadStepProgress();
+        if (currentProgress) {
+          saveStepProgress(
+            currentProgress.step,
+            currentProgress.formData,
+            currentProgress.modalState,
+            customizationData
+          );
+        }
+      };
+      // Debounce the save to prevent too many writes
+      const timeoutId = setTimeout(saveCustomizationData, 500);
+      return () => clearTimeout(timeoutId);
+    }, [
       isEarlyEducationActive,
-      setIsEarlyEducationActive,
       selectedEarlyName,
-      setSelectedEarlyName,
       earlyStartLevel,
-      setEarlyStartLevel,
       earlyEndLevel,
-      setEarlyEndLevel,
-
       isPrimaryActive,
-      setIsPrimaryActive,
       selectedPrimaryName,
-      setSelectedPrimaryName,
       primaryStartLevel,
-      setPrimaryStartLevel,
       primaryEndLevel,
-      setPrimaryEndLevel,
-
       isJuniorSecondaryActive,
-      setIsJuniorSecondaryActive,
       selectedJuniorSecondaryName,
-      setSelectedJuniorSecondaryName,
       juniorStartLevel,
-      setJuniorStartLevel,
       juniorEndLevel,
-      setJuniorEndLevel,
-
       isSeniorSecondaryActive,
-      setIsSeniorSecondaryActive,
       selectedSeniorSecondaryName,
-      setSelectedSeniorSecondaryName,
       seniorStartLevel,
-      setSeniorStartLevel,
       seniorEndLevel,
-      setSeniorEndLevel,
+    ]);
 
-      generatePreviewText,
-    } = usePreviewText();
-    
   const handleBackToCampus = () => {
     navigate("/auth/input-campus");
-    };
-    
-    const dispatch = useAppDispatch();
+  };
 
-     const hasValidConfiguration = () => {
-        return (
-          (isEarlyEducationActive &&
-            selectedEarlyName &&
-            earlyStartLevel &&
-            earlyEndLevel) ||
-          (isPrimaryActive &&
-            selectedPrimaryName &&
-            primaryStartLevel &&
-            primaryEndLevel) ||
-          (isJuniorSecondaryActive &&
-            selectedJuniorSecondaryName &&
-            juniorStartLevel &&
-            juniorEndLevel) ||
-          (isSeniorSecondaryActive &&
-            selectedSeniorSecondaryName &&
-            seniorStartLevel &&
-            seniorEndLevel)
-        );
-      };
-      
+  const dispatch = useAppDispatch();
 
-    const handleNextToCCA = async() => {
-      // Validate at least one education level is active and configured
-      const isEarlyValid =
-        isEarlyEducationActive &&
+  const hasValidConfiguration = () => {
+    return (
+      (isEarlyEducationActive &&
         selectedEarlyName &&
         earlyStartLevel &&
-        earlyEndLevel;
-      const isPrimaryValid =
-        isPrimaryActive &&
+        earlyEndLevel) ||
+      (isPrimaryActive &&
         selectedPrimaryName &&
         primaryStartLevel &&
-        primaryEndLevel;
-      const isJuniorValid =
-        isJuniorSecondaryActive &&
+        primaryEndLevel) ||
+      (isJuniorSecondaryActive &&
         selectedJuniorSecondaryName &&
         juniorStartLevel &&
-        juniorEndLevel;
-      const isSeniorValid =
-        isSeniorSecondaryActive &&
+        juniorEndLevel) ||
+      (isSeniorSecondaryActive &&
         selectedSeniorSecondaryName &&
         seniorStartLevel &&
-        seniorEndLevel;
+        seniorEndLevel)
+    );
+  };
 
-      if (
-        !isEarlyValid &&
-        !isPrimaryValid &&
-        !isJuniorValid &&
-        !isSeniorValid
-      ) {
-        toast.error("Please configure at least one education level");
+  const handleNextToCCA = async () => {
+    // Validate at least one education level is active and configured
+    const isEarlyValid =
+      isEarlyEducationActive &&
+      selectedEarlyName &&
+      earlyStartLevel &&
+      earlyEndLevel;
+    const isPrimaryValid =
+      isPrimaryActive &&
+      selectedPrimaryName &&
+      primaryStartLevel &&
+      primaryEndLevel;
+    const isJuniorValid =
+      isJuniorSecondaryActive &&
+      selectedJuniorSecondaryName &&
+      juniorStartLevel &&
+      juniorEndLevel;
+    const isSeniorValid =
+      isSeniorSecondaryActive &&
+      selectedSeniorSecondaryName &&
+      seniorStartLevel &&
+      seniorEndLevel;
+
+    if (!isEarlyValid && !isPrimaryValid && !isJuniorValid && !isSeniorValid) {
+      toast.error("Please configure at least one education level");
+      return;
+    }
+
+    // Validate start/end levels for active sections
+    if (isEarlyEducationActive) {
+      if (!selectedEarlyName || !earlyStartLevel || !earlyEndLevel) {
+        toast.error("Please complete Early Education configuration");
         return;
       }
-
-      // Validate start/end levels for active sections
-      if (isEarlyEducationActive) {
-        if (!selectedEarlyName || !earlyStartLevel || !earlyEndLevel) {
-          toast.error("Please complete Early Education configuration");
-          return;
-        }
-        if (Number(earlyStartLevel) > Number(earlyEndLevel)) {
-          toast.error("Start level cannot be greater than end level");
-          return;
-        }
+      if (Number(earlyStartLevel) > Number(earlyEndLevel)) {
+        toast.error("Start level cannot be greater than end level");
+        return;
       }
+    }
 
-      if (isPrimaryActive) {
-        if (!selectedPrimaryName || !primaryStartLevel || !primaryEndLevel) {
-          toast.error("Please complete Primary configuration");
-          return;
-        }
-        if (Number(primaryStartLevel) > Number(primaryEndLevel)) {
-          toast.error("Start level cannot be greater than end level");
-          return;
-        }
+    if (isPrimaryActive) {
+      if (!selectedPrimaryName || !primaryStartLevel || !primaryEndLevel) {
+        toast.error("Please complete Primary configuration");
+        return;
       }
-
-      if (isJuniorSecondaryActive) {
-        if (
-          !selectedJuniorSecondaryName ||
-          !juniorStartLevel ||
-          !juniorEndLevel
-        ) {
-          toast.error("Please complete Junior Secondary configuration");
-          return;
-        }
-        if (Number(juniorStartLevel) > Number(juniorEndLevel)) {
-          toast.error("Start level cannot be greater than end level");
-          return;
-        }
+      if (Number(primaryStartLevel) > Number(primaryEndLevel)) {
+        toast.error("Start level cannot be greater than end level");
+        return;
       }
+    }
 
-      if (isSeniorSecondaryActive) {
-        if (
-          !selectedSeniorSecondaryName ||
-          !seniorStartLevel ||
-          !seniorEndLevel
-        ) {
-          toast.error("Please complete Senior Secondary configuration");
-          return;
-        }
-        if (Number(seniorStartLevel) > Number(seniorEndLevel)) {
-          toast.error("Start level cannot be greater than end level");
-          return;
-        }
+    if (isJuniorSecondaryActive) {
+      if (
+        !selectedJuniorSecondaryName ||
+        !juniorStartLevel ||
+        !juniorEndLevel
+      ) {
+        toast.error("Please complete Junior Secondary configuration");
+        return;
       }
-      const activatedStages = [];
-      const classes: Class[] = [];
+      if (Number(juniorStartLevel) > Number(juniorEndLevel)) {
+        toast.error("Start level cannot be greater than end level");
+        return;
+      }
+    }
 
-      if (isEarlyEducationActive && selectedEarlyName) {
-        activatedStages.push({
-          type: "early" as const,
-          name: selectedEarlyName,
-          start: earlyStartLevel,
-          end: earlyEndLevel,
+    if (isSeniorSecondaryActive) {
+      if (
+        !selectedSeniorSecondaryName ||
+        !seniorStartLevel ||
+        !seniorEndLevel
+      ) {
+        toast.error("Please complete Senior Secondary configuration");
+        return;
+      }
+      if (Number(seniorStartLevel) > Number(seniorEndLevel)) {
+        toast.error("Start level cannot be greater than end level");
+        return;
+      }
+    }
+    const activatedStages = [];
+    const classes: Class[] = [];
+
+    if (isEarlyEducationActive && selectedEarlyName) {
+      activatedStages.push({
+        type: "early" as const,
+        name: selectedEarlyName,
+        start: earlyStartLevel,
+        end: earlyEndLevel,
+      });
+
+      // Generate class names for early education
+      for (let i = Number(earlyStartLevel); i <= Number(earlyEndLevel); i++) {
+        classes.push({
+          name: `${selectedEarlyName} ${i}`,
         });
-
-        // Generate class names for early education
-        for (let i = Number(earlyStartLevel); i <= Number(earlyEndLevel); i++) {
-          classes.push({
-            name: `${selectedEarlyName} ${i}`,
-          });
-        }
       }
+    }
 
-      if (isPrimaryActive && selectedPrimaryName) {
-        activatedStages.push({
-          type: "primary" as const,
-          name: selectedPrimaryName,
-          start: primaryStartLevel,
-          end: primaryEndLevel,
+    if (isPrimaryActive && selectedPrimaryName) {
+      activatedStages.push({
+        type: "primary" as const,
+        name: selectedPrimaryName,
+        start: primaryStartLevel,
+        end: primaryEndLevel,
+      });
+
+      for (
+        let i = Number(primaryStartLevel);
+        i <= Number(primaryEndLevel);
+        i++
+      ) {
+        classes.push({
+          name: `${selectedPrimaryName} ${i}`,
         });
-
-        for (
-          let i = Number(primaryStartLevel);
-          i <= Number(primaryEndLevel);
-          i++
-        ) {
-          classes.push({
-            name: `${selectedPrimaryName} ${i}`,
-          });
-        }
       }
+    }
 
-      if (isJuniorSecondaryActive && selectedJuniorSecondaryName) {
-        activatedStages.push({
-          type: "junior" as const,
-          name: selectedJuniorSecondaryName,
-          start: juniorStartLevel,
-          end: juniorEndLevel,
+    if (isJuniorSecondaryActive && selectedJuniorSecondaryName) {
+      activatedStages.push({
+        type: "junior" as const,
+        name: selectedJuniorSecondaryName,
+        start: juniorStartLevel,
+        end: juniorEndLevel,
+      });
+
+      for (let i = Number(juniorStartLevel); i <= Number(juniorEndLevel); i++) {
+        classes.push({
+          name: `${selectedJuniorSecondaryName} ${i}`,
         });
-
-        for (
-          let i = Number(juniorStartLevel);
-          i <= Number(juniorEndLevel);
-          i++
-        ) {
-          classes.push({
-            name: `${selectedJuniorSecondaryName} ${i}`,
-          });
-        }
       }
+    }
 
-      if (isSeniorSecondaryActive && selectedSeniorSecondaryName) {
-        activatedStages.push({
-          type: "senior" as const,
-          name: selectedSeniorSecondaryName,
-          start: seniorStartLevel,
-          end: seniorEndLevel,
+    if (isSeniorSecondaryActive && selectedSeniorSecondaryName) {
+      activatedStages.push({
+        type: "senior" as const,
+        name: selectedSeniorSecondaryName,
+        start: seniorStartLevel,
+        end: seniorEndLevel,
+      });
+
+      for (let i = Number(seniorStartLevel); i <= Number(seniorEndLevel); i++) {
+        classes.push({
+          name: `${selectedSeniorSecondaryName} ${i}`,
         });
+      }
+    }
 
-        for (
-          let i = Number(seniorStartLevel);
-          i <= Number(seniorEndLevel);
-          i++
-        ) {
-          classes.push({
-            name: `${selectedSeniorSecondaryName} ${i}`,
-          });
-        }
+    dispatch(setSchoolStages(activatedStages));
+    localStorage.setItem("schoolStages", JSON.stringify(activatedStages));
+    setLoading(true);
+    try {
+      if (classes.length > 0) {
+        const response = await classSetup({
+          credentials: {
+            school_id,
+            classes,
+          },
+          token,
+        }).unwrap();
+
+        console.log("Class setup successful:", response);
+
+        // Extract class IDs from response
+        const classIds = response.data.savedClasses.map(
+          (classItem: { id: number }) => classItem.id
+        );
+
+        // Save to localStorage
+        localStorage.setItem("class_ids", JSON.stringify(classIds));
+        toast.success("Class setup completed");
       }
 
-     
-      dispatch(setSchoolStages(activatedStages));
-      localStorage.setItem("schoolStages", JSON.stringify(activatedStages));
-      setLoading(true);
-      try {
-        if (classes.length > 0) {
-          const response = await classSetup({
-            credentials: {
-              school_id,
-              classes,
-            },
-            token,
-          }).unwrap();
-
-          console.log("Class setup successful:", response);
-
-          // Extract class IDs from response
-          const classIds = response.data.savedClasses.map(
-            (classItem: { id: number }) => classItem.id
-          );
-
-          // Save to localStorage
-          localStorage.setItem("class_ids", JSON.stringify(classIds));
-          toast.success("Class setup completed");
-        }
-
-        // Navigate to next page
-        navigate("/auth/cca-setup", { replace: true });
-      } catch (error) {
-        console.error("Failed to setup classes:", error);
-        toast.error("Failed to setup classes");
-      } finally {
-        setLoading(false);
-      }
-    };
+      // Navigate to next page
+      navigate("/auth/cca-setup", { replace: true });
+    } catch (error) {
+      console.error("Failed to setup classes:", error);
+      toast.error("Failed to setup classes");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 md:px-15 md:py-10 py-5 px-5">

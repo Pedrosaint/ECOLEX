@@ -37,7 +37,7 @@ export interface SchoolSetupResponse {
 export interface School {
   id: number;
   name: string;
-  prefix: string;
+  prefix?: string;
   logoUrl: string;
   stampUrl: string;
   email: string;
@@ -71,8 +71,9 @@ export interface Admin {
   
 export interface CampusSetupResponse {
   message: string;
-  campus: number;
+  count: number;
   date: Date;
+  step: Step;
 }
 
 export interface Date {
@@ -89,10 +90,18 @@ export interface SavedCampus {
   createdAt: string;
 }
 
+export interface Step {
+  previous: number;
+  current: number;
+  incremented: boolean;
+  capped: boolean;
+}
+
 export interface ClassSetupResponse {
   message: string;
   count: number;
   data: Data;
+  step: Step;
 }
 
 export interface Data {
@@ -110,4 +119,5 @@ export interface SavedClass {
 
 export interface CCAResponse {
   message: string;
+  step: Step;
 }

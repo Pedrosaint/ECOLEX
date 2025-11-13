@@ -3,7 +3,7 @@ export type FormValues = {
   email: string;
   phoneNumber: string;
   address: string;
-  prefix: string;
+  prefix?: string;
   logoUrl?: string | FileList;
   stampUrl?: string | FileList;
 };
