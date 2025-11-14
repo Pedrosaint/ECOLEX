@@ -1,46 +1,70 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCcaData, getCurrentStep, getModalState, getSchoolCustomization } from "../utils/step-manager";
+import {
+  getCurrentStep,
+  getModalState,
+  getSchoolCustomization,
+  getCcaData,
+  loadStepProgress,
+} from "../utils/step-manager";
 
 const SetupProgressManager = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const redirectToCurrentStep = () => {
+    const determineRedirect = () => {
+      const progress = loadStepProgress();
+
+      // If no progress exists, start from beginning
+      if (!progress) {
+        navigate("/auth/auth-layout/super-admin", { replace: true });
+        return;
+      }
+
       const currentStep = getCurrentStep();
       const modalState = getModalState();
       const schoolCustomization = getSchoolCustomization();
       const ccaData = getCcaData();
 
-      const routes = {
-        1: "/auth/input-campus",
-        2: "/auth/customize-school-name",
-        3: "/cca-setup",
-      };
+      console.log("Progress check:", {
+        currentStep,
+        modalState,
+        hasSchoolCustomization: !!schoolCustomization,
+        hasCcaData: !!ccaData,
+      });
 
-      const targetRoute = routes[currentStep as keyof typeof routes];
-
-      // If user was on step 1 (input-campus) and modal was open, redirect there
-      if (currentStep === 1 && modalState?.isOpen) {
-        navigate("/auth/input-campus", { replace: true });
+      // Step 1: Input Campus (check if modal was open)
+      if (currentStep === 1) {
+        if (modalState?.isOpen) {
+          // User was in the middle of filling campus modal
+          navigate("/auth/input-campus", { replace: true });
+        } else if (progress.formData?.campuses?.length > 0) {
+          // User had filled campus data but didn't submit
+          navigate("/auth/input-campus", { replace: true });
+        } else {
+          // User was on the initial campus input page
+          navigate("/auth/input-campus", { replace: true });
+        }
+        return;
       }
 
-      // If user was on step 2 (customize-school-name), redirect there
-      else if (currentStep === 2 && schoolCustomization) {
+      // Step 2: Customize School Name
+      if (currentStep === 2) {
         navigate("/auth/customize-school-name", { replace: true });
+        return;
       }
 
-      // If user was on step 3 (cca-setup), redirect there
-      else if (currentStep === 3 && ccaData ) {
+      // Step 3: CCA Setup
+      if (currentStep === 3) {
         navigate("/auth/cca-setup", { replace: true });
+        return;
       }
-      
-      else if (targetRoute && currentStep > 1) {
-        navigate(targetRoute, { replace: true });
-      }
+
+      // If step is beyond setup process or invalid, start from beginning
+      navigate("/auth/auth-layout/super-admin", { replace: true });
     };
 
-    redirectToCurrentStep();
+    determineRedirect();
   }, [navigate]);
 
   return null;

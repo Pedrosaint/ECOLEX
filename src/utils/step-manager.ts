@@ -66,22 +66,44 @@ export const saveStepProgress = (
   formData?: any,
   modalState?: { isOpen: boolean; campusCount: number },
   schoolCustomization?: SchoolCustomizationData,
-  ccaData?: CcaData,
+  ccaData?: CcaData
 ) => {
-  const progress: SetupProgress = {
-    step,
-    formData,
-    modalState,
-    ccaData,
-    schoolCustomization,
-    timestamp: Date.now(),
-  };
-  localStorage.setItem("setupProgress", JSON.stringify(progress));
+  try {
+    const progress: SetupProgress = {
+      step,
+      formData,
+      modalState,
+      ccaData,
+      schoolCustomization,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem("setupProgress", JSON.stringify(progress));
+    console.log("Progress saved:", {
+      step: step.current,
+      modalState,
+      hasFormData: !!formData,
+    });
+  } catch (error) {
+    console.error("Failed to save progress:", error);
+  }
 };
 
 export const loadStepProgress = (): SetupProgress | null => {
-  const saved = localStorage.getItem("setupProgress");
-  return saved ? JSON.parse(saved) : null;
+  try {
+    const saved = localStorage.getItem("setupProgress");
+    if (!saved) return null;
+
+    const progress = JSON.parse(saved) as SetupProgress;
+
+    // Validate progress is not too old (24 hours max)
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+    const isRecent = Date.now() - progress.timestamp < TWENTY_FOUR_HOURS;
+
+    return isRecent ? progress : null;
+  } catch (error) {
+    console.error("Failed to load progress:", error);
+    return null;
+  }
 };
 
 export const clearStepProgress = () => {
@@ -119,4 +141,54 @@ export const getSchoolCustomization = (): SchoolCustomizationData | null => {
 export const getCcaData = (): CcaData | null => {
   const progress = loadStepProgress();
   return progress?.ccaData || null;
+};
+
+export const clearStepProgressOnCompletion = () => {
+  localStorage.removeItem("setupProgress");
+};
+
+export const shouldRedirectToSavedProgress = (): boolean => {
+  const progress = loadStepProgress();
+  if (!progress) return false;
+
+  // Consider progress valid if it's less than 24 hours old
+  const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+  const isRecent = Date.now() - progress.timestamp < TWENTY_FOUR_HOURS;
+
+  return isRecent && progress.step.current > 1;
+};
+
+export const initializeStepProgress = () => {
+  const initialStep: StepState = {
+    previous: 1,
+    current: 1,
+    incremented: false,
+    capped: false,
+  };
+
+  saveStepProgress(initialStep);
+};
+
+export const incrementStep = (): StepState => {
+  const currentProgress = loadStepProgress();
+  const currentStep = currentProgress?.step.current || 1;
+
+  const nextStep: StepState = {
+    previous: currentStep,
+    current: currentStep + 1,
+    incremented: true,
+    capped: currentStep + 1 >= 3, // Assuming 3 is the max step
+  };
+
+  if (currentProgress) {
+    saveStepProgress(
+      nextStep,
+      currentProgress.formData,
+      currentProgress.modalState,
+      currentProgress.schoolCustomization,
+      currentProgress.ccaData
+    );
+  }
+
+  return nextStep;
 };

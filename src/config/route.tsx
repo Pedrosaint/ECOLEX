@@ -1,4 +1,4 @@
-import { Navigate, type RouteObject } from "react-router-dom";
+import { type RouteObject } from "react-router-dom";
 import AuthLayout from "../auth/layout/auth-layout";
 import GenerateToken from "../auth/components/generate-token";
 import SharedLayout from "../auth/components/auth-layout";
@@ -29,12 +29,14 @@ import ComputeResultView from "../domain/teachers-domain/compute/view/compute-re
 import StaffSetupRecordView from "../domain/teachers-domain/teachers-result-mark/view/staff-setup-record-view";
 import StaffViewResultView from "../domain/teachers-domain/view-class-result/view/staff-view-result.view";
 import RouteErrorBoundary from "../helper/route-error";
+import SetupProgressManager from "../utils/set-progress-manager";
 
 export default function appRouter(): RouteObject[] {
   return [
     {
       path: "/",
-      element: <Navigate to="/auth/auth-layout/super-admin" replace />,
+      element: <SetupProgressManager />,
+      // element: <Navigate to="/auth/auth-layout/super-admin" replace />,
     },
     // {
     //   path: "/",
@@ -175,7 +177,7 @@ export default function appRouter(): RouteObject[] {
         {
           path: "view-class-results",
           element: <StaffViewResultView />,
-        }
+        },
       ],
     },
   ];

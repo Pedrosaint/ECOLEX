@@ -209,29 +209,56 @@
 
 
 
-
-
-// components/InputCampus.tsx
 import { useState, useEffect } from "react";
 import Logo from "../../assets/logo/logo.png";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import CampusModal from "../modal/campus-modal";
-import { getModalState, loadStepProgress, saveStepProgress } from "../../utils/step-manager";
+import {
+  getModalState,
+  loadStepProgress,
+  saveStepProgress,
+  initializeStepProgress,
+} from "../../utils/step-manager";
 
 const InputCampus = () => {
   const [isModal, setIsModal] = useState(false);
   const [campusCount, setCampusCount] = useState(0);
   const navigate = useNavigate();
 
-  // Check for saved modal state on component mount
+  // Initialize step progress and check for saved state on component mount
   useEffect(() => {
     const savedModalState = getModalState();
-    
+    const currentProgress = loadStepProgress();
+
+    // Initialize step progress if it doesn't exist
+    if (!currentProgress) {
+      initializeStepProgress();
+    } else if (currentProgress.step.current < 1) {
+      // Ensure step is at least 1
+      const updatedStep = {
+        ...currentProgress.step,
+        current: 1,
+        previous: 1,
+      };
+      saveStepProgress(
+        updatedStep,
+        currentProgress.formData,
+        currentProgress.modalState,
+        currentProgress.schoolCustomization
+      );
+    }
+
+    // Restore modal state if it was open
     if (savedModalState?.isOpen) {
-      // Auto-open modal with saved data
       setIsModal(true);
       setCampusCount(savedModalState.campusCount || 0);
+    } else if (currentProgress?.formData?.campuses) {
+      // If we have saved campus data but modal isn't open, restore campus count
+      const campuses = currentProgress.formData.campuses;
+      if (Array.isArray(campuses) && campuses.length > 0) {
+        setCampusCount(campuses.length);
+      }
     }
   }, []);
 
@@ -239,7 +266,7 @@ const InputCampus = () => {
     const value = parseInt(e.target.value);
     const newCount = isNaN(value) ? 0 : value;
     setCampusCount(newCount);
-    
+
     // Save campus count using saveStepProgress
     const currentProgress = loadStepProgress();
     if (currentProgress) {

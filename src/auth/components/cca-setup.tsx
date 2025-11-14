@@ -1,3 +1,259 @@
+// /* eslint-disable @typescript-eslint/no-explicit-any */
+// import { ChevronLeft } from "lucide-react";
+// import { useNavigate } from "react-router-dom";
+// import { useEffect, useState } from "react";
+// import { useAppDispatch, useAppSelector } from "../../hooks/typed.hooks";
+// import ContinuousAssessmentModal from "../modal/continous-access.modal";
+// import { setSchoolStages } from "../redux/school-slice";
+// import { toast } from "sonner";
+// import { useCcaMutation } from "../api/auth-api";
+
+// interface SchoolStage {
+//   type: "early" | "primary" | "junior" | "senior";
+//   name: string;
+//   startLevel?: string;
+//   endLevel?: string;
+// }
+
+// interface ClassData {
+//   name: string;
+//   id: number;
+// }
+
+// interface Assessment {
+//   title: string;
+//   maxScore: string;
+// }
+
+// const CCASetup = () => {
+//   const navigate = useNavigate();
+//   const dispatch = useAppDispatch();
+//   const [selectedClasses, setSelectedClasses] = useState<ClassData[]>([]);
+//   const [examMaxScore, setExamMaxScore] = useState<string>("100");
+//   const [weightScore, setWeightScore] = useState<string>("70");
+//   const [examName, setExamName] = useState<string>("Final Exam");
+//   const [showModal, setShowModal] = useState(false);
+//   const [currentClasses, setCurrentClasses] = useState<ClassData[]>([]);
+//   const [loading, setLoading] = useState(false);
+//   const [ccaAssessments, setCcaAssessments] = useState<
+//     Record<string, Assessment[]>
+//   >({});
+//   const activatedStages = useAppSelector((state) => state.school.stages);
+//   const [ccaSetup] = useCcaMutation();
+//   const token = localStorage.getItem("token") || "";
+
+//   // Get class data from localStorage
+//   const getClassData = (): ClassData[] => {
+//     const savedClasses = localStorage.getItem("class_ids");
+//     const schoolStages = localStorage.getItem("schoolStages");
+
+//     if (!savedClasses || !schoolStages) return [];
+
+//     const classIds: number[] = JSON.parse(savedClasses);
+//     const stages: SchoolStage[] = JSON.parse(schoolStages);
+
+//     const classes: ClassData[] = [];
+//     let idIndex = 0;
+
+//     stages.forEach((stage) => {
+//       const numClasses = stage.type === "primary" ? 6 : 3;
+
+//        for (let i = 1; i <= numClasses; i++) {
+//          if (idIndex < classIds.length) {
+//            classes.push({
+//              name: `${stage.name} ${i}`,
+//              id: classIds[idIndex], 
+//            });
+//            idIndex++;
+//          }
+//        }
+//     });
+
+//     return classes;
+//   };
+
+//   const handleBackToCampus = () => {
+//     navigate("/auth/customize-school-name", {replace: true});
+//   };
+//   const handleSubmit = async () => {
+//     if (!examName || !examMaxScore) {
+//       toast.error("Please fill all exam fields");
+//       return;
+//     }
+
+//     setLoading(true);
+//     try {
+//       // Debug: Check localStorage data first
+//       console.log("=== LOCALSTORAGE DATA ===");
+//       console.log("class_ids:", localStorage.getItem("class_ids"));
+//       console.log("schoolStages:", localStorage.getItem("schoolStages"));
+
+//       const allClassData = getClassData();
+//       console.log("=== ALL CLASS DATA ===", allClassData);
+
+//       const allAssessments: any[] = [];
+
+//       // Debug selected classes
+//       console.log("=== SELECTED CLASSES ===", selectedClasses);
+
+//       // Prepare CA data for all selected classes
+//       selectedClasses.forEach((classItem) => {
+//         console.log(`=== PROCESSING CLASS ${classItem.name} ===`);
+//         console.log("Class ID:", classItem.id);
+
+//         const assessments = ccaAssessments[classItem.name] || [];
+//         console.log("Assessments for this class:", assessments);
+
+//         assessments.forEach((assessment) => {
+//           const assessmentPayload = {
+//             class_id: classItem.id,
+//             name: assessment.title,
+//             max_score: Number(assessment.maxScore),
+//           };
+//           console.log("Adding assessment:", assessmentPayload);
+//           allAssessments.push(assessmentPayload);
+//         });
+//       });
+
+//       console.log("=== FINAL ASSESSMENTS ARRAY ===", allAssessments);
+
+//       // Prepare exam data (using first selected class)
+//       if (selectedClasses.length > 0) {
+//         const examData = {
+//           class_id: selectedClasses.map((c) => c.id),
+//           name: examName,
+//           weightage: Number(weightScore),
+//           max_score: Number(examMaxScore),
+//         };
+//         console.log("=== EXAM DATA ===", examData);
+
+//         console.log("=== FINAL PAYLOAD TO BE SUBMITTED ===", {
+//           assessments: allAssessments,
+//           exam: examData,
+//         });
+
+//         const response = await ccaSetup({
+//           credentials: {
+//             assessments: allAssessments,
+//             exam: examData,
+//           },
+//           token,
+//         }).unwrap();
+
+//         console.log("=== API RESPONSE ===", response);
+//         toast.success("CCA setup completed");
+//         navigate("/auth/congratulation");
+//       } else {
+//         toast.error("No classes selected");
+//       }
+//     } catch (error) {
+//       console.error("=== FULL ERROR OBJECT ===", error);
+//       console.error("Error data:", (error as any)?.data);
+//       console.error("Error status:", (error as any)?.status);
+
+//       const errorMessage =
+//         (error as any)?.data?.message || "Failed to setup CCA";
+//       toast.error(errorMessage);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const savedStages = localStorage.getItem("schoolStages");
+//     if (savedStages) {
+//       dispatch(setSchoolStages(JSON.parse(savedStages)));
+//     }
+//   }, [dispatch]);
+
+//   const handleClassToggle = (className: string) => {
+//     const allClasses = getClassData();
+//     const classItem = allClasses.find((c) => c.name === className);
+//     if (!classItem) return;
+
+//     const wasSelected = selectedClasses.some((c) => c.name === className);
+//     const newSelection = wasSelected
+//       ? selectedClasses.filter((c) => c.name !== className)
+//       : [...selectedClasses, classItem];
+
+//     setSelectedClasses(newSelection);
+
+//     if (!wasSelected) {
+//       setCurrentClasses([classItem]);
+//       setShowModal(true);
+//     }
+//   };
+
+//   const handleSelectAll = (stage: SchoolStage) => {
+//     const allClasses = getClassData();
+//     const sectionClasses = allClasses.filter((c) =>
+//       c.name.startsWith(stage.name)
+//     );
+
+//     const allSelected = sectionClasses.every((sc) =>
+//       selectedClasses.some((c) => c.name === sc.name)
+//     );
+
+//     if (allSelected) {
+//       setSelectedClasses((prev) =>
+//         prev.filter((c) => !sectionClasses.some((sc) => sc.name === c.name))
+//       );
+//     } else {
+//       setSelectedClasses((prev) => [...new Set([...prev, ...sectionClasses])]);
+//     }
+//   };
+
+//   const handleAddAll = (stage: SchoolStage) => {
+//     const allClasses = getClassData();
+//     const sectionClasses = allClasses.filter((c) =>
+//       c.name.startsWith(stage.name)
+//     );
+
+//     setSelectedClasses((prev) => [...new Set([...prev, ...sectionClasses])]);
+//     setCurrentClasses(sectionClasses);
+//     setShowModal(true);
+//   };
+
+//   const isAllSelected = (stage: SchoolStage) => {
+//     const allClasses = getClassData();
+//     const sectionClasses = allClasses.filter((c) =>
+//       c.name.startsWith(stage.name)
+//     );
+
+//     return (
+//       sectionClasses.length > 0 &&
+//       sectionClasses.every((sc) =>
+//         selectedClasses.some((c) => c.name === sc.name)
+//       )
+//     );
+//   };
+
+//   const getStageDisplayName = (type: string) => {
+//     switch (type) {
+//       case "early":
+//         return "Early Education";
+//       case "primary":
+//         return "Primary";
+//       case "junior":
+//         return "Junior Secondary";
+//       case "senior":
+//         return "Senior Secondary";
+//       default:
+//         return "";
+//     }
+//   };
+
+//   const handleAssessmentSubmit = (assessments: Assessment[]) => {
+//     currentClasses.forEach((classItem) => {
+//       setCcaAssessments((prev) => ({
+//         ...prev,
+//         [classItem.name]: assessments,
+//       }));
+//     });
+//     setShowModal(false);
+//   };
+
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +263,12 @@ import ContinuousAssessmentModal from "../modal/continous-access.modal";
 import { setSchoolStages } from "../redux/school-slice";
 import { toast } from "sonner";
 import { useCcaMutation } from "../api/auth-api";
+import {
+  loadStepProgress,
+  saveStepProgress,
+  getCcaData,
+  clearStepProgressOnCompletion
+} from "../../utils/step-manager";
 
 interface SchoolStage {
   type: "early" | "primary" | "junior" | "senior";
@@ -42,6 +304,76 @@ const CCASetup = () => {
   const [ccaSetup] = useCcaMutation();
   const token = localStorage.getItem("token") || "";
 
+  // Load saved CCA data on component mount
+  useEffect(() => {
+    const savedCcaData = getCcaData();
+    console.log("Loading saved CCA data:", savedCcaData);
+    
+    if (savedCcaData) {
+      setSelectedClasses(savedCcaData.selectedClasses || []);
+      setExamMaxScore(savedCcaData.examMaxScore || "100");
+      setWeightScore(savedCcaData.weightScore || "70");
+      setExamName(savedCcaData.examName || "Final Exam");
+      setCcaAssessments(savedCcaData.ccaAssessments || {});
+      
+      if (savedCcaData.currentClasses) {
+        setCurrentClasses(savedCcaData.currentClasses);
+      }
+      
+      if (savedCcaData.showModal) {
+        setShowModal(true);
+      }
+    }
+
+    // Ensure step progress is properly set for this component
+    const currentProgress = loadStepProgress();
+    if (currentProgress && currentProgress.step.current < 3) {
+      const updatedStep = {
+        ...currentProgress.step,
+        current: 3,
+        previous: currentProgress.step.current,
+        incremented: true
+      };
+      saveStepProgress(
+        updatedStep,
+        currentProgress.formData,
+        currentProgress.modalState,
+        currentProgress.schoolCustomization,
+        currentProgress.ccaData
+      );
+    }
+  }, []);
+
+  // Save CCA data whenever any field changes
+  useEffect(() => {
+    const saveCcaData = () => {
+      const ccaData = {
+        selectedClasses,
+        examMaxScore,
+        weightScore,
+        examName,
+        ccaAssessments,
+        currentClasses,
+        showModal
+      };
+
+      const currentProgress = loadStepProgress();
+      if (currentProgress) {
+        saveStepProgress(
+          currentProgress.step,
+          currentProgress.formData,
+          currentProgress.modalState,
+          currentProgress.schoolCustomization,
+          ccaData
+        );
+      }
+    };
+
+    // Debounce the save to prevent too many writes
+    const timeoutId = setTimeout(saveCcaData, 500);
+    return () => clearTimeout(timeoutId);
+  }, [selectedClasses, examMaxScore, weightScore, examName, ccaAssessments, currentClasses, showModal]);
+
   // Get class data from localStorage
   const getClassData = (): ClassData[] => {
     const savedClasses = localStorage.getItem("class_ids");
@@ -75,6 +407,7 @@ const CCASetup = () => {
   const handleBackToCampus = () => {
     navigate("/auth/customize-school-name", {replace: true});
   };
+
   const handleSubmit = async () => {
     if (!examName || !examMaxScore) {
       toast.error("Please fill all exam fields");
@@ -141,6 +474,10 @@ const CCASetup = () => {
         }).unwrap();
 
         console.log("=== API RESPONSE ===", response);
+        
+        // CLEAR PROGRESS ON COMPLETION
+        clearStepProgressOnCompletion();
+        
         toast.success("CCA setup completed");
         navigate("/auth/congratulation");
       } else {
@@ -362,7 +699,7 @@ const CCASetup = () => {
                 placeholder="e.g., Final Exam"
                 className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none"
               />
-              <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">
+              {/* <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">
                 Weight Age
               </label>
               <input
@@ -371,7 +708,7 @@ const CCASetup = () => {
                 onChange={(e) => setWeightScore(e.target.value)}
                 placeholder="e.g., 70"
                 className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none"
-              />
+              /> */}
 
               <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">
                 Exam Max Score

@@ -215,15 +215,17 @@
 
 
 
-
-// components/CampusModal.tsx
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSetupCampusMutation } from "../api/auth-api";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { useEffect } from "react";
-import { loadStepProgress, saveStepProgress } from "../../utils/step-manager";
+import {
+  loadStepProgress,
+  saveStepProgress,
+  incrementStep,
+} from "../../utils/step-manager";
 
 interface CampusModalProps {
   campusCount: number;
@@ -267,7 +269,7 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
   useEffect(() => {
     const savedProgress = loadStepProgress();
     console.log("Loading saved campus data:", savedProgress?.formData);
-    
+
     if (savedProgress?.formData?.campuses) {
       // Restore the saved form data
       reset(savedProgress.formData);
@@ -286,11 +288,10 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
       console.log("Form changed, saving:", value);
       const currentProgress = loadStepProgress();
       if (currentProgress) {
-        saveStepProgress(
-          currentProgress.step, 
-          value, 
-          { isOpen: true, campusCount }
-        );
+        saveStepProgress(currentProgress.step, value, {
+          isOpen: true,
+          campusCount,
+        });
       }
     });
     return () => subscription.unsubscribe();
@@ -331,9 +332,17 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
       // STORE IDs
       localStorage.setItem("campusIds", JSON.stringify(createdCampusIds));
 
-      // SAVE STEP PROGRESS FROM BACKEND RESPONSE
+      // HANDLE STEP PROGRESS - Use backend response or increment manually
       if (response.step) {
-        saveStepProgress(response.step, data, { isOpen: false, campusCount: 0 });
+        // Use step from backend response
+        saveStepProgress(response.step, data, {
+          isOpen: false,
+          campusCount: 0,
+        });
+      } else {
+        // Increment step manually if backend doesn't provide it
+        const nextStep = incrementStep();
+        saveStepProgress(nextStep, data, { isOpen: false, campusCount: 0 });
       }
 
       // SUCCESS
@@ -353,11 +362,10 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
     console.log("Closing modal, saving data:", currentData);
     const currentProgress = loadStepProgress();
     if (currentProgress) {
-      saveStepProgress(
-        currentProgress.step, 
-        currentData, 
-        { isOpen: false, campusCount: 0 }
-      );
+      saveStepProgress(currentProgress.step, currentData, {
+        isOpen: false,
+        campusCount: 0,
+      });
     }
     onClose?.();
   };
@@ -445,13 +453,28 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
                     {...register(`campuses.${index}.phoneNumber`, {
                       required: "Phone number is required",
                       minLength: {
-                        value: 10,
-                        message: "Phone number must be at least 10 digits",
+                        value: 11,
+                        message: "Phone number must be 11 digits",
+                      },
+                      maxLength: {
+                        value: 11,
+                        message: "Phone number must be 11 digits",
+                      },
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "Only digits are allowed",
                       },
                     })}
                     placeholder="Phone Number"
+                    maxLength={11}
+                    inputMode="numeric"
+                    onInput={(e) => {
+                      const input = e.currentTarget as HTMLInputElement;
+                      input.value = input.value.replace(/\D/g, "");
+                    }}
                     className="w-full border p-2 rounded outline-none"
                   />
+
                   {errors.campuses?.[index]?.phoneNumber && (
                     <p className="text-red-500 text-sm">
                       {errors.campuses[index]?.phoneNumber?.message}
