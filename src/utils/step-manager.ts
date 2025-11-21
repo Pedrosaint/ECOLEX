@@ -1,3 +1,7 @@
+import type { GetAdminSchoolsResponse, GetCampusResponse } from '../domain/admin-domain/campus/response/campuse.response';
+import type { GetClassesResponse } from '../domain/admin-domain/classes/response/get-class.response';
+import { BASE_URL } from '../redux/apiConfig';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface SchoolCustomizationData {
@@ -60,6 +64,8 @@ export interface SetupProgress {
   ccaData?: CcaData;
   schoolCustomization?: SchoolCustomizationData;
 }
+
+// ========== LOCALSTORAGE FUNCTIONS (For Components) ==========
 
 export const saveStepProgress = (
   step: StepState,
@@ -147,17 +153,6 @@ export const clearStepProgressOnCompletion = () => {
   localStorage.removeItem("setupProgress");
 };
 
-export const shouldRedirectToSavedProgress = (): boolean => {
-  const progress = loadStepProgress();
-  if (!progress) return false;
-
-  // Consider progress valid if it's less than 24 hours old
-  const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
-  const isRecent = Date.now() - progress.timestamp < TWENTY_FOUR_HOURS;
-
-  return isRecent && progress.step.current > 1;
-};
-
 export const initializeStepProgress = () => {
   const initialStep: StepState = {
     previous: 1,
@@ -191,4 +186,170 @@ export const incrementStep = (): StepState => {
   }
 
   return nextStep;
+};
+
+
+
+
+
+// =============================================================================
+// ========== BACKEND FUNCTIONS (For Login Only) ================================
+// =============================================================================
+
+
+// NEW: Get school info from backend && check if school exits using GET endpoint
+export const checkSchoolExists = async (token: string): Promise<boolean> => {
+  try {
+    const response = await fetch(`${BASE_URL}admin/my-school`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) return false;
+
+    const data: GetAdminSchoolsResponse = await response.json();
+    console.log("School check response:", data);
+
+    // A school exists if schoolId is truthy (not 0, null, undefined)
+    const hasSchool =
+      !!(data?.data && data.data.schoolId && Number(data.data.schoolId) > 0);
+
+    console.log("School exists:", hasSchool);
+    return hasSchool;
+  } catch (error) {
+    console.error("Failed to check school:", error);
+    return false;
+  }
+};
+
+
+
+// NEW: Check if campuses exist using GET endpoint
+export const checkCampusesExist = async (token: string): Promise<boolean> => {
+  try {
+    const response = await fetch(`${BASE_URL}admin/campuses`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data: GetCampusResponse = await response.json();
+      return data.success && data.campuses && data.campuses.length > 0;
+    }
+    return false;
+  } catch (error) {
+    console.error("Failed to check campuses:", error);
+    return false;
+  }
+};
+
+// NEW: Check if classes exist using GET endpoint
+export const checkClassesExist = async (token: string): Promise<boolean> => {
+  try {
+    const response = await fetch(`${BASE_URL}admin/classes`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data: GetClassesResponse = await response.json();
+      return data.success && data.classes && data.classes.length > 0;
+    }
+    return false;
+  } catch (error) {
+    console.error("Failed to check classes:", error);
+    return false;
+  }
+};
+
+// NEW: Check if CCA exists using GET endpoint
+export const checkCcaExists = async (token: string): Promise<boolean> => {
+  try {
+    const response = await fetch(`${BASE_URL}admin/assessments`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      // Handle different possible response structures
+      if (data.success && (data.cca || data.ccas)) {
+        const ccaData = data.cca || data.ccas || data.data;
+        return ccaData && ccaData.length > 0;
+      }
+      return false;
+    }
+    return false;
+  } catch (error) {
+    console.error("Failed to check CCA:", error);
+    return false;
+  }
+};
+
+// NEW: Determine current step based on what data exists
+export const getCurrentStepFromBackend = async (token: string): Promise<number> => {
+  try {
+    const hasSchools = await checkSchoolExists(token);
+    const hasCampuses = await checkCampusesExist(token);
+    const hasClasses = await checkClassesExist(token);
+    const hasCca = await checkCcaExists(token);
+
+    console.log("🔍 DATA EXISTENCE CHECK:", {
+      hasSchools,
+      hasCampuses, 
+      hasClasses,
+      hasCca
+    });
+
+    // Determine step based on what data exists
+    if (!hasSchools) {
+      console.log("➡️ Redirecting to Step 1: School Setup (no schools found)");
+      return 1; // Need to setup school
+    } else if (!hasCampuses) {
+      console.log("➡️ Redirecting to Step 2: Campus Setup (no campuses found)");
+      return 2; // Need to setup campuses
+    } else if (!hasClasses) {
+      console.log("➡️ Redirecting to Step 3: Class Setup (no classes found)");
+      return 3; // Need to setup classes
+    } else if (!hasCca) {
+      console.log("➡️ Redirecting to Step 4: CCA Setup (no CCA found)");
+      return 4; // Need to setup CCA
+    } else {
+      console.log("✅ All setup complete - proceeding to dashboard");
+      return 5; // All setup complete
+    }
+  } catch (error) {
+    console.error("Failed to get current step from backend:", error);
+    return 1;
+  }
+};
+
+// NEW: Backend version for login redirection
+export const shouldRedirectToSavedProgressFromBackend = async (token: string): Promise<boolean> => {
+  try {
+    const currentStep = await getCurrentStepFromBackend(token);
+    
+    console.log("Backend progress check for login:", {
+      currentStep,
+      shouldRedirect: currentStep < 5
+    });
+
+    // If current step is less than 4 (complete), redirect to setup
+    return currentStep < 5;
+  } catch (error) {
+    console.error("Failed to check backend progress:", error);
+    return false;
+  }
 };

@@ -63,3 +63,21 @@ export interface Campus {
   createdAt: string;
 }
 
+
+//== GET ALL SCHOOLS RESPONSE ==//
+export interface GetAdminSchoolsResponse {
+  message: string;
+  data: Data;
+}
+
+export interface Data {
+  schoolId: number;
+  school: School;
+}
+
+export interface School {
+  id: number;
+  name: string;
+  email: string;
+  prefix: string;
+}

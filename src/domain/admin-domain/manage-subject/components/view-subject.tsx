@@ -71,6 +71,9 @@ export default function ViewSubject() {
               <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
                 <tr>
                   <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                    Campus
+                  </th>
+                  <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                     Subject Name
                   </th>
                   <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider no-print">
@@ -83,6 +86,9 @@ export default function ViewSubject() {
                 {paginatedSubjects.length > 0 ? (
                   paginatedSubjects.map((subject) => (
                     <tr key={subject.id} className="hover:bg-gray-50">
+                      <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
+                        {subject.campus.name}
+                      </td>
                       <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
                         {subject.name}
                       </td>

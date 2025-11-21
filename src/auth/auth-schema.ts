@@ -51,7 +51,16 @@ export const schoolSetupSchema = Yup.object().shape({
 
   address: Yup.string().required("Address is required"),
 
-  prefix: Yup.string().optional(),
+  prefix: Yup.string()
+    .optional()
+    .test(
+      "prefix-format",
+      "Prefix must be exactly 4 uppercase letters",
+      (value) => {
+        if (!value) return true; // Optional, so empty is valid
+        return /^[A-Z]{4}$/.test(value); // Must be exactly 4 uppercase letters
+      }
+    ),
 
   logoUrl: Yup.mixed()
     .required("Logo is required")

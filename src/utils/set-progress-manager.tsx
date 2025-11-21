@@ -33,8 +33,16 @@ const SetupProgressManager = () => {
         hasCcaData: !!ccaData,
       });
 
-      // Step 1: Input Campus (check if modal was open)
+
+      
+      // Step 1: school setup
       if (currentStep === 1) {
+        navigate("/auth/auth-layout/school-setup", { replace: true });
+        return;
+      }
+
+      // Step 2: Input Campus (check if modal was open)
+      if (currentStep === 2) {
         if (modalState?.isOpen) {
           // User was in the middle of filling campus modal
           navigate("/auth/input-campus", { replace: true });
@@ -48,14 +56,14 @@ const SetupProgressManager = () => {
         return;
       }
 
-      // Step 2: Customize School Name
-      if (currentStep === 2) {
+      // Step 3: Customize School Name
+      if (currentStep === 3) {
         navigate("/auth/customize-school-name", { replace: true });
         return;
       }
 
-      // Step 3: CCA Setup
-      if (currentStep === 3) {
+      // Step 4: CCA Setup
+      if (currentStep === 4) {
         navigate("/auth/cca-setup", { replace: true });
         return;
       }

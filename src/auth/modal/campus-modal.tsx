@@ -214,7 +214,6 @@
 
 
 
-
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSetupCampusMutation } from "../api/auth-api";
@@ -226,6 +225,8 @@ import {
   saveStepProgress,
   incrementStep,
 } from "../../utils/step-manager";
+import { useSelector } from "react-redux";
+import { type RootState } from "../../redux/store";
 
 interface CampusModalProps {
   campusCount: number;
@@ -245,7 +246,18 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token") || "";
   const [setupCampus, { isLoading }] = useSetupCampusMutation();
-  const school_id = Number(localStorage.getItem("schoolId")) || 0;
+
+  // Get school_id from Redux (primary source)
+  const { schoolId, schoolName } = useSelector(
+    (state: RootState) => state.schoolSetup
+  );
+
+
+  // Fallback to localStorage if Redux doesn't have it
+  const localStorageSchoolId = Number(localStorage.getItem("schoolId")) || 0;
+
+  // Determine which schoolId to use (Redux first, then localStorage fallback)
+  const finalSchoolId = schoolId || localStorageSchoolId;
 
   const {
     register,
@@ -264,6 +276,33 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
     control,
     name: "campuses",
   });
+
+  // Check if school info is available
+  useEffect(() => {
+    if (!finalSchoolId) {
+      console.error("No school ID found in Redux store or localStorage");
+      toast.error(
+        "School information not available. Please complete school setup first."
+      );
+      // Optionally redirect to school setup
+      // navigate("/auth/school-setup");
+    } else {
+      console.log(
+        "Using school ID:",
+        finalSchoolId,
+        "from:",
+        schoolId ? "Redux" : "localStorage"
+      );
+    }
+  }, [finalSchoolId, schoolId, navigate]);
+
+  // Sync localStorage with Redux (keep both in sync)
+  useEffect(() => {
+    if (schoolId && !localStorage.getItem("schoolId")) {
+      localStorage.setItem("schoolId", schoolId.toString());
+      console.log("Synced schoolId from Redux to localStorage");
+    }
+  }, [schoolId]);
 
   // Load saved progress on component mount
   useEffect(() => {
@@ -298,9 +337,17 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
   }, [watch, campusCount]);
 
   const onSubmit = async (data: FormValues) => {
+    // Validate school_id is available
+    if (!finalSchoolId) {
+      toast.error(
+        "School information not available. Please complete school setup first."
+      );
+      return;
+    }
+
     try {
       const payload = {
-        school_id,
+        school_id: finalSchoolId, // Use the final schoolId (Redux or localStorage)
         campuses: data.campuses.map((campus) => ({
           name: campus.name,
           email: campus.email,
@@ -308,6 +355,10 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
           phoneNumber: String(campus.phoneNumber),
         })),
       };
+
+      console.log("Submitting campus data with school_id:", finalSchoolId);
+      console.log("Source:", schoolId ? "Redux" : "localStorage");
+      console.log("School name:", schoolName);
 
       const response = await setupCampus({
         credentials: payload,
@@ -329,7 +380,7 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
         throw new Error("No campus IDs were created");
       }
 
-      // STORE IDs
+      // STORE IDs in localStorage for backward compatibility
       localStorage.setItem("campusIds", JSON.stringify(createdCampusIds));
 
       // HANDLE STEP PROGRESS - Use backend response or increment manually
@@ -370,12 +421,43 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
     onClose?.();
   };
 
+  // Show loading state if school data is not available
+  if (!finalSchoolId) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm bg-opacity-50">
+        <div className="bg-white rounded-xl p-6 w-full max-w-sm md:max-w-4xl max-h-[90vh] overflow-auto relative">
+          <div className="flex flex-col items-center justify-center py-8">
+            <div className="text-lg text-gray-600 mb-4">
+              School information not found
+            </div>
+            <p className="text-sm text-gray-500 mb-4 text-center">
+              Please complete the school setup first to create campuses.
+            </p>
+            <button
+              onClick={() => navigate("/auth/school-setup")}
+              className="px-4 py-2 bg-[#8000BD] text-white rounded hover:bg-[#6a00a3] transition-colors"
+            >
+              Go to School Setup
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm bg-opacity-50">
       <div className="bg-white rounded-xl p-6 w-full max-w-sm md:max-w-4xl max-h-[90vh] overflow-auto relative">
         <div className="flex justify-between items-start mb-6">
           <div>
             <h2 className="text-3xl font-semibold text-gray-800">Campus</h2>
+            <p className="text-sm text-gray-500">
+              Creating campuses for:{" "}
+              <strong>{schoolName || "Your School"}</strong>
+            </p>
+            <p className="text-sm text-gray-500">
+              School ID: {finalSchoolId} ({schoolId ? "Redux" : "localStorage"})
+            </p>
             <p className="text-sm text-gray-500">
               ({campusCount}) {campusCount === 1 ? "campus" : "campuses"}
             </p>
@@ -488,9 +570,11 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
           <div className="flex justify-center">
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !finalSchoolId}
               className={`md:w-1/3 w-1/2 py-3.5 bg-[#8000BD] text-white font-medium rounded-sm text-base transition-colors cursor-pointer ${
-                isLoading ? "opacity-70 cursor-not-allowed" : ""
+                isLoading || !finalSchoolId
+                  ? "opacity-70 cursor-not-allowed"
+                  : ""
               }`}
             >
               {isLoading ? "Processing..." : "Next"}

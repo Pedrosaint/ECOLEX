@@ -27,9 +27,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import appRouter from "./config/route";
 import { Toaster } from "sonner";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { store, persistor } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
 import Loader from "./page-loader";
-
 
 const routes = createBrowserRouter(appRouter());
 
@@ -54,7 +54,9 @@ export const Root = () => {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <Root />
+      <PersistGate loading={<Loader />} persistor={persistor}>
+        <Root />
+      </PersistGate>
     </Provider>
   </StrictMode>
 );

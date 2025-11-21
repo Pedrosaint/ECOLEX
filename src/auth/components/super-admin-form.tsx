@@ -8,6 +8,7 @@ import { useCreateAdminMutation } from "../api/auth-api";
 import { toast } from "sonner";
 import { useAppDispatch } from "../../hooks/typed.hooks";
 import { markTokenAsUsed } from "../redux/auth-slice";
+import { initializeStepProgress } from "../../utils/step-manager";
 
 export const SuperAdminForm = () => {
   const navigate = useNavigate();
@@ -47,6 +48,8 @@ export const SuperAdminForm = () => {
       localStorage.setItem("registeredName", data.name);
       localStorage.setItem("registeredEmail", data.email);
 
+      initializeStepProgress();
+      
       const response = await createAdmin(formData).unwrap();
       const token = response.data.token;
       dispatch(markTokenAsUsed(data.uniqueKey));

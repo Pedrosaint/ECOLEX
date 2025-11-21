@@ -11,6 +11,12 @@ export interface Subject {
   name: string;
   code: string;
   createdAt: string;
+  campus: Campus;
+}
+
+export interface Campus {
+  id: number;
+  name: string;
 }
 
 

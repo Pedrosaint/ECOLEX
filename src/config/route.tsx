@@ -30,6 +30,7 @@ import StaffSetupRecordView from "../domain/teachers-domain/teachers-result-mark
 import StaffViewResultView from "../domain/teachers-domain/view-class-result/view/staff-view-result.view";
 import RouteErrorBoundary from "../helper/route-error";
 import SetupProgressManager from "../utils/set-progress-manager";
+import { ProtectedRoute } from "../auth/components/protected-route";
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -102,7 +103,11 @@ export default function appRouter(): RouteObject[] {
       children: [
         {
           path: "dashboard",
-          element: <Overview />,
+          element: (
+            <ProtectedRoute>
+              <Overview />
+            </ProtectedRoute>
+          ),
         },
         {
           path: "student's",

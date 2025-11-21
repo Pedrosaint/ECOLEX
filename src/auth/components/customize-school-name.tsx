@@ -369,9 +369,26 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BsChevronExpand } from "react-icons/bs";
 import { useAppDispatch } from "../../hooks/typed.hooks";
@@ -549,9 +566,9 @@ export default function CustomizeSchoolName() {
     seniorEndLevel,
   ]);
 
-  const handleBackToCampus = () => {
-    navigate("/auth/input-campus");
-  };
+  // const handleBackToCampus = () => {
+  //   navigate("/auth/input-campus");
+  // };
 
   const dispatch = useAppDispatch();
 
@@ -777,13 +794,13 @@ export default function CustomizeSchoolName() {
     <div className="min-h-screen bg-gray-50 md:px-15 md:py-10 py-5 px-5">
       <div className="">
         {/* Back to campus link */}
-        <button
+        {/* <button
           onClick={handleBackToCampus}
           className="flex items-center text-gray-600 cursor-pointer mb-3"
         >
           <ChevronLeft className="w-4 h-4 mr-1" />
           <span className="text-sm">Back to campus</span>
-        </button>
+        </button> */}
 
         {/* Main heading */}
         <div className="w-full max-w-md">
