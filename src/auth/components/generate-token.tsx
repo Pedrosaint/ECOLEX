@@ -54,7 +54,7 @@ const GenerateToken = () => {
 
       <div className="">
         <div className="">
-          <div className="relative p-2 animate-bounce">
+          <div className="relative p-2">
             <img src={Logo} alt=" " />
             <p className="absolute top-5 left-22 text-[#313131] text-3xl font-semibold">
               COLEX

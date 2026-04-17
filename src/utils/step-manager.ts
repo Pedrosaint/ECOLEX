@@ -1,4 +1,5 @@
 import type { GetAdminSchoolsResponse, GetCampusResponse } from '../domain/admin-domain/campus/response/campuse.response';
+import type { CCAResponse } from '../domain/admin-domain/classes/response/cca_response';
 import type { GetClassesResponse } from '../domain/admin-domain/classes/response/get-class.response';
 import { BASE_URL } from '../redux/apiConfig';
 
@@ -282,21 +283,33 @@ export const checkCcaExists = async (token: string): Promise<boolean> => {
       },
     });
 
+    console.log("=== CCA EXISTENCE CHECK RESPONSE ===");
+    console.log("Response status:", response.status);
+    console.log("Response ok:", response.ok);
+
     if (response.ok) {
-      const data = await response.json();
+      const data: CCAResponse = await response.json();
+      console.log("CCA response data:", data);
+
       // Handle different possible response structures
-      if (data.success && (data.cca || data.ccas)) {
-        const ccaData = data.cca || data.ccas || data.data;
-        return ccaData && ccaData.length > 0;
+      if (data.success && data.assessments) {
+        const hasAssessments = Array.isArray(data.assessments) && data.assessments.length > 0;
+        console.log("Has assessments:", hasAssessments, "Count:", data.assessments.length);
+        return hasAssessments;
       }
+
+      console.log("CCA check failed: success =", data.success, "assessments =", data.assessments);
+      return false;
+    } else {
+      console.log("CCA check failed: response not ok, status =", response.status);
       return false;
     }
-    return false;
   } catch (error) {
     console.error("Failed to check CCA:", error);
     return false;
   }
 };
+
 
 // NEW: Determine current step based on what data exists
 export const getCurrentStepFromBackend = async (token: string): Promise<number> => {

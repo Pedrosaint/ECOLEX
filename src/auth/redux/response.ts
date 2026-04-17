@@ -67,6 +67,7 @@ export interface Admin {
   steps: number;
   role: string;
   createdAt: string;
+  hasLoggedIn: boolean;
 }
   
 export interface CampusSetupResponse {

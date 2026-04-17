@@ -21,7 +21,7 @@
 //     <section className="h-screen bg-gray-100 relative">
 //       {/* Auth Modal */}
 
-//       <div className="relative p-2 animate-bounce pt-6">
+//       <div className="relative p-2 pt-6">
 //         <img src={Logo} alt=" " />
 //         <p className="absolute top-5 left-22 text-[#313131] text-3xl font-semibold">
 //           COLEX
@@ -325,7 +325,7 @@ const InputCampus = () => {
 
   return (
     <section className="h-screen bg-gray-100 relative">
-      <div className="relative p-2 animate-bounce pt-6">
+      <div className="relative p-2 pt-6">
         <img src={Logo} alt=" " />
         <p className="absolute top-5 left-22 text-[#313131] text-3xl font-semibold">
           COLEX

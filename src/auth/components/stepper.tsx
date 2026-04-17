@@ -1,3 +1,4 @@
+import React from "react";
 import { Check } from "lucide-react";
 import { cn } from "../../utils/cn";
 
@@ -12,33 +13,38 @@ interface StepperProps {
 
 export function Stepper({ steps, currentStep }: StepperProps) {
   return (
-    <div className="flex items-center justify-between w-full  xl:max-w-2xl 2xl:max-w-4xl mx-auto mb-4 xl:mb-9">
+    <div className="flex items-center w-full mx-auto mb-4 xl:mb-9 px-2">
       {steps.map((step, index) => (
-        <div key={step.id} className="flex items-center">
-          <div className="flex gap-1 items-center">
+        <React.Fragment key={step.id}>
+          <div className="flex items-center gap-1 flex-shrink-0">
             <div
               className={cn(
-                "xl:w-8 xl:h-8 md:w-5 md:h-5 h-3 w-3 rounded-full flex items-center justify-center text-[10px] md:text-sm font-medium transition-colors",
+                "w-6 h-6 sm:w-7 sm:h-7 xl:w-8 xl:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-xs xl:text-sm font-medium transition-colors flex-shrink-0",
                 step.id <= currentStep
                   ? "bg-white text-black"
                   : "bg-gray-600 text-gray-300"
               )}
             >
-              {step.completed ? <Check className="xl:w-4 xl:h-4" /> : step.id}
+              {step.completed ? (
+                <Check className="w-3 h-3 sm:w-4 sm:h-4" />
+              ) : (
+                step.id
+              )}
             </div>
-            <p className="xl:text-xs lg:text-[10px] text-[6px] text-gray-300 xl:mt-1">
+            <p className="hidden sm:block text-[9px] md:text-[10px] xl:text-xs text-gray-300 whitespace-nowrap">
               {step.label}
             </p>
-            {index < steps.length - 1 && (
-              <div
-                className={cn(
-                  "xl:w-3 xl:h-0.5 w-2 h-0.5 xl:mt-1 xl:mx-1 transition-colors",
-                  step.id < currentStep ? "bg-white" : "bg-gray-600"
-                )}
-              />
-            )}
           </div>
-        </div>
+
+          {index < steps.length - 1 && (
+            <div
+              className={cn(
+                "flex-1 min-w-[8px] h-px mx-1 sm:mx-2 transition-colors",
+                step.id < currentStep ? "bg-white" : "bg-gray-600"
+              )}
+            />
+          )}
+        </React.Fragment>
       ))}
     </div>
   );

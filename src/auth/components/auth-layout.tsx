@@ -22,7 +22,7 @@ const SharedLayout = () => {
       }}
     >
       <div className="">
-        <div className="relative p-2 animate-bounce">
+        <div className="relative p-2">
           <img src={Logo} alt=" " loading="lazy" />
           <p className="absolute top-5 left-22 text-[#f0eeee] text-3xl font-semibold">
             COLEX

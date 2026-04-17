@@ -259,6 +259,7 @@ export const AdminLogin = () => {
           ? String(response.data.admin.campusId)
           : ""
       );
+      localStorage.setItem("hasLoggedIn", String(response.data.admin.hasLoggedIn));
 
 
       // Check backend for incomplete setup progress - PASS THE TOKEN

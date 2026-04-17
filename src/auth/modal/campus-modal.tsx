@@ -456,9 +456,6 @@ const CampusModal = ({ campusCount, onClose }: CampusModalProps) => {
               <strong>{schoolName || "Your School"}</strong>
             </p>
             <p className="text-sm text-gray-500">
-              School ID: {finalSchoolId} ({schoolId ? "Redux" : "localStorage"})
-            </p>
-            <p className="text-sm text-gray-500">
               ({campusCount}) {campusCount === 1 ? "campus" : "campuses"}
             </p>
           </div>
