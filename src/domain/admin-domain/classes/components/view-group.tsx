@@ -58,7 +58,7 @@ export default function ViewGroup() {
                 </h1>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-white overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">

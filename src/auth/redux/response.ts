@@ -26,8 +26,9 @@ export interface Admin {
   steps: number;
   role: string;
   createdAt: string;
+  hasLoggedIn: boolean;
 }
-  
+
 
 export interface SchoolSetupResponse {
   message: string;
@@ -45,7 +46,7 @@ export interface School {
   address: string;
   createdAt: string;
 }
-  
+
 
 export interface AdminLoginResponse {
   message: string;
@@ -69,7 +70,7 @@ export interface Admin {
   createdAt: string;
   hasLoggedIn: boolean;
 }
-  
+
 export interface CampusSetupResponse {
   message: string;
   count: number;
@@ -114,6 +115,7 @@ export interface SavedClass {
   schoolId: number;
   campusId: number;
   name: string;
+  customName: string | any;
   teacherId: any | string;
   createdAt: string;
 }

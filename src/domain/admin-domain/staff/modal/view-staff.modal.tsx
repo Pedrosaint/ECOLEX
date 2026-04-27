@@ -112,7 +112,7 @@ export default function ViewStaffModal({
                     Date Employed
                   </label>
                   <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
-                    {data.staff.dateEmployed}
+                    {data.staff.dateEmployed ? new Date(data.staff.dateEmployed).toLocaleDateString("en-GB") : "—"}
                   </div>
                 </div>
 

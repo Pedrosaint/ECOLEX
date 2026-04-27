@@ -16,16 +16,43 @@ const groupedCategories = {
   "Senior Secondary": SeniorSecondaryDropdown,
 };
 
+const allCategories = [
+  ...EearlyEducationDropdown,
+  ...PrimaryDropdown,
+  ...JuniorSecondaryDropdown,
+  ...SeniorSecondaryDropdown,
+].sort((a, b) => b.length - a.length);
+
 const EditClass = ({
   onClose,
   classId,
+  initialName,
+  initialCustomName,
 }: {
   onClose: () => void;
   classId: number;
+  initialName?: string;
+  initialCustomName?: string;
 }) => {
-  const [category, setCategory] = useState("Select Category");
-  const [className, setClassName] = useState("");
-  const [customName, setCustomName] = useState("");
+  // Find category from initialName
+  let initialCategory = "Select Category";
+  let initialClassNamePart = "";
+
+  if (initialName) {
+    const foundCategory = allCategories.find((cat) =>
+      initialName.startsWith(cat)
+    );
+    if (foundCategory) {
+      initialCategory = foundCategory;
+      initialClassNamePart = initialName.slice(foundCategory.length).trim();
+    } else {
+      initialClassNamePart = initialName;
+    }
+  }
+
+  const [category, setCategory] = useState(initialCategory);
+  const [className, setClassName] = useState(initialClassNamePart);
+  const [customName, setCustomName] = useState(initialCustomName || "");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -34,10 +61,13 @@ const EditClass = ({
   useEffect(() => {
     if (isSuccess) {
       setShowSuccess(true);
-      const timer = setTimeout(() => setShowSuccess(false), 3000);
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+        onClose();
+      }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [isSuccess]);
+  }, [isSuccess, onClose]);
 
   const handleCategorySelect = (cat: string) => {
     setCategory(cat);
@@ -49,13 +79,10 @@ const EditClass = ({
       await editClass({
         id: classId,
         payload: {
-          name: `${category} ${className}`,
+          name: `${category} ${className}`.trim(),
           customName,
         },
       }).unwrap();
-
-      setClassName("");
-      setCustomName("");
     } catch (err) {
       console.error("Failed to update class:", err);
     }

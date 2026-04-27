@@ -42,6 +42,7 @@ export default function AddSubject() {
   const [filteredSubjects, setFilteredSubjects] = useState(subjectsInNigeria);
   const [isSubjectDropdownOpen, setIsSubjectDropdownOpen] = useState(false);
   const [campusId, setCampusId] = useState("");
+  const [code, setCode] = useState("");
   const [isCampusOpen, setIsCampusOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const subjectDropdownRef = useRef<HTMLDivElement>(null);
@@ -84,17 +85,19 @@ export default function AddSubject() {
     };
   }, []);
 
-  const isFormComplete = subject.trim() !== "" && campusId !== "";
+  const isFormComplete = subject.trim() !== "";
 
   const handleSubmit = async () => {
     try {
       const payload = {
         name: subject,
-        campusId: Number(campusId),
+        campusId: campusId ? Number(campusId) : undefined,
+        code: code || undefined,
       };
       await createSubject(payload).unwrap();
       setSubject("");
       setCampusId("");
+      setCode("");
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to add subject");
       console.error("Add subject error:", error);
@@ -108,7 +111,7 @@ export default function AddSubject() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="w-full border border-gray-300 rounded-lg p-6 bg-white shadow-md"
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 items-end">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-end">
         {/* Subject Dropdown with Filter */}
         <div className="flex flex-col relative" ref={subjectDropdownRef}>
           <div className="flex items-center gap-1 mb-1">
@@ -159,9 +162,8 @@ export default function AddSubject() {
         <div className="flex flex-col relative">
           <div className="flex items-center gap-1 mb-1">
             <label className="text-sm font-bold text-[#120D1C] font-poppins">
-              Campus
+              Campus (Optional)
             </label>
-            <span className="text-red-400">*</span>
           </div>
           <button
             type="button"
@@ -184,6 +186,17 @@ export default function AddSubject() {
 
           {isCampusOpen && (
             <div className="absolute z-10 w-full mt-22 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+              <div
+                onClick={() => {
+                  setCampusId("");
+                  setIsCampusOpen(false);
+                }}
+                className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                  campusId === "" ? "bg-gray-100 font-medium" : ""
+                }`}
+              >
+                All Campuses
+              </div>
               {campusData?.campuses?.map((campus: any) => (
                 <div
                   key={campus.id}
@@ -202,6 +215,21 @@ export default function AddSubject() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Code Input */}
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1 mb-1">
+            <label className="text-sm font-bold text-[#120D1C] font-poppins">
+              Subject Code (Optional)
+            </label>
+          </div>
+          <input
+            value={code}
+            placeholder="e.g. ENG"
+            onChange={(e) => setCode(e.target.value)}
+            className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm focus:outline-none"
+          />
         </div>
 
         {/* Submit Button */}

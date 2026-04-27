@@ -9,8 +9,8 @@ interface RegistrationState {
 }
 
 const initialState: RegistrationState = {
-  registeredEmail: localStorage.getItem('registeredEmail') || '',
-  registeredName: localStorage.getItem('registeredName') || '',
+  registeredEmail: '',
+  registeredName: '',
   generatedToken: localStorage.getItem('generatedToken') || '',
   usedTokens: JSON.parse(localStorage.getItem('usedTokens') || "[]"),
 };
@@ -31,8 +31,6 @@ export const authRegistrationSlice = createSlice({
       state.registeredName = action.payload.name;
       state.generatedToken = action.payload.token;
 
-      localStorage.setItem("registeredEmail", action.payload.email);
-      localStorage.setItem("registeredName", action.payload.name);
       localStorage.setItem("generatedToken", action.payload.token || "");
     },
     markTokenAsUsed: (state, action: PayloadAction<string>) => {

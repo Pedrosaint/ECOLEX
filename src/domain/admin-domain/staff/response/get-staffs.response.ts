@@ -22,7 +22,7 @@ export interface Staff {
   duty: string;
   nextOfKin: string;
   dateEmployed: string;
-  payroll: string;
+  payroll: number;
   createdAt: string;
   registrationNumber: string;
   campus: Campus;

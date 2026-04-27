@@ -1,20 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { motion } from "framer-motion";
-import { Printer, ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Printer, ChevronLeft, ChevronRight, Edit, Trash2, AlertTriangle } from "lucide-react";
 import { useRef, useState } from "react";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import EditSubject from "../modal/edit-subject.modal";
-import { useGetAllSubjectQuery } from "../api/subject.api";
+import { useGetAllSubjectQuery, useDeleteSubjectMutation } from "../api/subject.api";
 import { printContent } from "../../../../utils/print-content";
+import { toast } from "sonner";
 
 
 export default function ViewSubject() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<any>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, isError } = useGetAllSubjectQuery();
+  const [deleteSubject, { isLoading: isDeleting }] = useDeleteSubjectMutation();
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await deleteSubject({ id: deleteTarget.id }).unwrap();
+      toast.success("Subject deleted successfully");
+      setDeleteTarget(null);
+    } catch {
+      toast.error("Failed to delete subject");
+    }
+  };
 
   const subjects = data?.subjects || [];
   const totalSubjects = data?.count || 0;
@@ -36,11 +50,11 @@ export default function ViewSubject() {
       </div>
     );
 
-      const handlePrint = () => {
-        if (contentRef.current) {
-          printContent(contentRef.current.innerHTML, "All Subject List");
-        }
-      };
+  const handlePrint = () => {
+    if (contentRef.current) {
+      printContent(contentRef.current.innerHTML, "All Subject List");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -60,7 +74,7 @@ export default function ViewSubject() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
+          className="bg-white overflow-hidden p-5"
         >
           <h1 className="text-xl text-gray-900 mb-2 font-inter no-print">
             All Subjects List
@@ -76,6 +90,9 @@ export default function ViewSubject() {
                   <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                     Subject Name
                   </th>
+                  <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
+                    Code
+                  </th>
                   <th className="text-center py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider no-print">
                     Action
                   </th>
@@ -87,21 +104,27 @@ export default function ViewSubject() {
                   paginatedSubjects.map((subject) => (
                     <tr key={subject.id} className="hover:bg-gray-50">
                       <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
-                        {subject.campus.name}
+                        {subject.campus?.name || "-"}
                       </td>
                       <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
                         {subject.name}
                       </td>
+                      <td className="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">
+                        {subject.code || "-"}
+                      </td>
                       <td className="py-3 px-5 no-print">
                         <div className="flex items-center justify-center space-x-1">
                           <button
-                            onClick={() => {
-                              setSelectedSubject(subject);
-                              setIsEditOpen(true);
-                            }}
-                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                            onClick={() => { setSelectedSubject(subject); setIsEditOpen(true); }}
+                            className="p-1 hover:bg-gray-100 rounded transition-colors cursor-pointer"
                           >
-                            <Edit size={20} className="text-gray-400" />
+                            <Edit size={18} className="text-gray-400 hover:text-amber-500" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteTarget({ id: subject.id, name: subject.name })}
+                            className="p-1 hover:bg-red-50 rounded transition-colors cursor-pointer"
+                          >
+                            <Trash2 size={18} className="text-gray-400 hover:text-red-500" />
                           </button>
                         </div>
                       </td>
@@ -110,7 +133,7 @@ export default function ViewSubject() {
                 ) : (
                   <tr>
                     <td
-                      colSpan={3}
+                      colSpan={4}
                       className="text-center py-6 text-gray-500 italic"
                     >
                       No subjects found.
@@ -126,8 +149,53 @@ export default function ViewSubject() {
               onClose={() => setIsEditOpen(false)}
               subjectId={selectedSubject?.id}
               initialName={selectedSubject?.name}
+              initialCampusId={selectedSubject?.campusId}
+              initialCode={selectedSubject?.code}
             />
           )}
+
+          <AnimatePresence>
+            {deleteTarget && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center text-center"
+                >
+                  <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                    <AlertTriangle className="w-6 h-6 text-red-500" />
+                  </div>
+                  <h2 className="text-lg font-bold text-gray-900 mb-1">Delete Subject</h2>
+                  <p className="text-sm text-gray-500 mb-6">
+                    Are you sure you want to delete <span className="font-semibold text-gray-700">"{deleteTarget.name}"</span>? This action cannot be undone.
+                  </p>
+                  <div className="flex gap-3 w-full">
+                    <button
+                      onClick={() => setDeleteTarget(null)}
+                      disabled={isDeleting}
+                      className="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      {isDeleting ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Pagination */}
           {totalPages > 1 && (
@@ -155,11 +223,10 @@ export default function ViewSubject() {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page + 1)}
-                    className={`w-8 h-8 rounded text-sm font-semibold transition-colors ${
-                      currentPage === page + 1
-                        ? "bg-[#8000BD] text-white"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
+                    className={`w-8 h-8 rounded text-sm font-semibold transition-colors ${currentPage === page + 1
+                      ? "bg-[#8000BD] text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                      }`}
                   >
                     {page + 1}
                   </button>

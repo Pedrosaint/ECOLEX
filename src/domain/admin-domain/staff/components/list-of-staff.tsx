@@ -6,7 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Edit,
-  X,
+  UserPlus,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -114,7 +114,7 @@ const handleClearFilters = () => {
     pageSize: 9,
   });
 
-  
+
   setShowTable(false);
 };
 
@@ -198,59 +198,59 @@ const handleClearFilters = () => {
             />
           </div>
 
-          {/* Print button */}
-          <div className="flex justify-end mt-4 mx-4">
-            <button
-              onClick={handlePrint}
-              className="bg-[#4B0082] text-white px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
-            >
-              <Printer size={20} />
-              <span>PRINT RECORD</span>
-            </button>
-          </div>
-
           <div className="mt-5">
-            {/* Top Section */}
-            <div className="flex items-center justify-end mb-2">
-              <div className="flex items-center">
+            {/* Header: title + actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 px-1">
+              <div>
+                <h1 className="text-xl font-bold text-gray-800">Staff Management</h1>
+                {data && (
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {data.pagination?.total ?? data.staff.length} staff member{(data.pagination?.total ?? data.staff.length) !== 1 ? "s" : ""} found
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handlePrint}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-100 transition-colors cursor-pointer"
+                >
+                  <Printer size={15} />
+                  <span className="hidden sm:inline">Print</span>
+                </button>
                 <button
                   onClick={() => setIsAssignTeacherModalOpen(true)}
-                  className="bg-[#E8EDF5] text-[#6E6D71] font-inter px-3 py-2 rounded-lg border border-gray-300 shadow-md text-[10px] md:text-sm font-semibold cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#8000BD] text-[#8000BD] text-sm font-medium hover:bg-purple-50 transition-colors cursor-pointer"
                 >
-                  <h1>Assign Teacher to Class</h1>
+                  <UserPlus size={15} />
+                  <span className="hidden sm:inline">Assign Teacher</span>
                 </button>
-                <div className="text-[#000000] px-2 py-2 rounded-lg text-[15px] md:text-lg font-medium font-inter transition-colors">
-                  <span>Register New Staff</span>
-                </div>
-                <div
+                <button
                   onClick={() => setIsAddStaffModalOpen(true)}
-                  className="bg-white shadow-2xl p-1 rounded-lg flex items-center border border-gray-300 justify-center cursor-pointer hover:bg-[#4b0082] hover:text-white"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#8000BD] text-white text-sm font-semibold hover:bg-[#6a00a1] transition-colors cursor-pointer"
                 >
-                  <Plus size={20} />
-                </div>
+                  <Plus size={15} />
+                  <span>New Staff</span>
+                </button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="p-5">
-              <div className="flex items-center space-x-6 md:space-x-8 border-b border-gray-200 relative">
+            <div className="border-b border-gray-200 overflow-x-auto scrollbar-hide">
+              <div className="flex min-w-max">
                 {tabs.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`
-                      relative pb-3 text-lg font-medium font-inter transition-colors duration-200
-                      ${
-                        activeTab === tab
-                          ? "text-gray-900 font-semibold"
-                          : "text-gray-500 hover:text-gray-700"
-                      }
-                    `}
                     disabled={isFetching || isTabLoading}
+                    className={`relative px-4 py-3 text-sm font-medium font-inter transition-colors duration-200 whitespace-nowrap disabled:opacity-50 cursor-pointer ${
+                      activeTab === tab
+                        ? "text-gray-900 font-semibold"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
                   >
                     {tab}
                     {activeTab === tab && (
-                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#8000BD] rounded-full"></div>
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#8000BD] rounded-full" />
                     )}
                   </button>
                 ))}
@@ -283,21 +283,14 @@ const handleClearFilters = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5 mt-4"
+                    className="bg-white overflow-hidden p-5 mt-4"
                   >
                     <div className="flex items-center justify-between mb-2 no-print">
                       <h1 className="text-xl text-gray-900 mb-2 font-inter">
                         All Staff List
                       </h1>
-                      <button
-                        onClick={() => setShowTable(false)}
-                        className="bg-[#ED294A] text-white px-5 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors cursor-pointer"
-                      >
-                        <X size={20} />
-                        <h1> REMOVE</h1>
-                      </button>
                     </div>
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-white overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full border-collapse">
                           <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
@@ -401,10 +394,10 @@ const handleClearFilters = () => {
                                   {staff.registrationNumber}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                                  {staff.dateEmployed}
+                                  {staff.dateEmployed ? new Date(staff.dateEmployed).toLocaleDateString("en-GB") : "—"}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                                  ₦ {staff.payroll}
+                                  ₦{Number(staff.payroll).toLocaleString()}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   {staff.campus?.name}

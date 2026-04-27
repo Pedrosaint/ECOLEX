@@ -6,7 +6,7 @@ import { SuperAdminForm } from "../auth/components/super-admin-form";
 import SchoolSetup from "../auth/components/school-setup";
 import InputCampus from "../auth/components/input-campus";
 import CustomizeSchoolName from "../auth/components/customize-school-name";
-import CCASetup from "../auth/components/cca-setup";
+// import CCASetup from "../auth/components/cca-setup";
 // import UsersLogin from "../auth/components/users-login";
 import { AdminLogin } from "../auth/components/admin-login";
 import { TeachersLogin } from "../auth/components/teachers-login";
@@ -19,6 +19,7 @@ import Staffs from "../domain/admin-domain/staff/view/staffs";
 import ClassesView from "../domain/admin-domain/classes/view/classes.view";
 import CampusView from "../domain/admin-domain/campus/view/campus.view";
 import ManageSubjectView from "../domain/admin-domain/manage-subject/view/manage-subject.view";
+import CATemplateView from "../domain/admin-domain/ca-template/view/ca-template.view";
 import ResultView from "../domain/admin-domain/result/view/result.view";
 import BroadsheetView from "../domain/admin-domain/broadcast/view/broadsheet.view";
 import StudentResultView from "../domain/student-domain/check-result/view/student-result.view";
@@ -61,7 +62,7 @@ export default function appRouter(): RouteObject[] {
             },
             {
               path: "school-setup",
-              element: <SchoolSetup />,
+              element: <ProtectedRoute><SchoolSetup /></ProtectedRoute>,
             },
             {
               path: "admin-login",
@@ -79,16 +80,16 @@ export default function appRouter(): RouteObject[] {
         },
         {
           path: "input-campus",
-          element: <InputCampus />,
+          element: <ProtectedRoute><InputCampus /></ProtectedRoute>,
         },
         {
           path: "customize-school-name",
-          element: <CustomizeSchoolName />,
+          element: <ProtectedRoute><CustomizeSchoolName /></ProtectedRoute>,
         },
-        {
-          path: "cca-setup",
-          element: <CCASetup />,
-        },
+        // {
+        //   path: "cca-setup",
+        //   element: <CCASetup />,
+        // },
         {
           path: "congratulation",
           element: <Congratulation />,
@@ -138,6 +139,10 @@ export default function appRouter(): RouteObject[] {
         {
           path: "generate-result",
           element: <BroadsheetView />,
+        },
+        {
+          path: "ca-template",
+          element: <CATemplateView />,
         },
       ],
     },

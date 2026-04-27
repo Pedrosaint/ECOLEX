@@ -204,12 +204,15 @@ import { useAdminLoginMutation } from "../api/auth-api";
 import { superAdminLoginSchema } from "../auth-schema";
 import { toast } from "sonner";
 import { getCurrentStepFromBackend, shouldRedirectToSavedProgressFromBackend } from "../../utils/step-manager";
+import { useAppDispatch } from "../../hooks/typed.hooks";
+import { setRegistrationData } from "../redux/auth-slice";
 
 export const AdminLogin = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [adminLogin] = useAdminLoginMutation();
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -246,12 +249,15 @@ export const AdminLogin = () => {
       const token = response.data.token;
       localStorage.setItem("token", token);
 
-      // Save to localStorage before submission
-      localStorage.setItem("registeredName", response.data.admin.name);
-      localStorage.setItem("registeredEmail", response.data.admin.email);
+      dispatch(setRegistrationData({
+        email: response.data.admin.email,
+        name: response.data.admin.name,
+        token: token,
+      }));
+
       localStorage.setItem(
-      "schoolId",
-      response.data.admin?.schoolId ? String(response.data.admin.schoolId) : ""
+        "schoolId",
+        response.data.admin?.schoolId ? String(response.data.admin.schoolId) : ""
       );
       localStorage.setItem(
         "campusId",
@@ -286,11 +292,11 @@ export const AdminLogin = () => {
           case 3:
             navigate("/auth/customize-school-name", { replace: true });
             break;
-          case 4:
-            navigate("/auth/cca-setup", { replace: true });
-            break;
+          // case 4:
+          //   navigate("/auth/cca-setup", { replace: true });
+          //   break;
           default:
-            navigate("/auth/input-campus", { replace: true });
+            navigate("/admin/dashboard", { replace: true });
         }
         toast.info("Please complete your setup to continue");
       } else {
@@ -330,11 +336,10 @@ export const AdminLogin = () => {
                 name="email"
                 id="email"
                 required
-                className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${
-                  errors.email
+                className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${errors.email
                     ? "border-[#FF8682] focus:ring-[#FF8682]"
                     : "border-gray-300 focus:ring-gray-200"
-                }`}
+                  }`}
                 placeholder=" "
               />
               <label
@@ -421,9 +426,8 @@ export const AdminLogin = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-xm shadow-sm text-sm font-medium mt-15 text-white bg-[#8000BD] ${
-                isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
-              }`}
+              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-xm shadow-sm text-sm font-medium mt-15 text-white bg-[#8000BD] ${isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
+                }`}
             >
               {isLoading ? "Logging in..." : "Login"}
             </button>

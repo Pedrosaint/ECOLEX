@@ -56,12 +56,18 @@ export const studentApi = createApi({
         method: "GET",
         params: {
           campusId: params.campusId,
+          campus_id: params.campusId, // Snake case redundancy
           classId: params.classId,
+          class_id: params.classId, // Snake case redundancy
           classGroupId: params.classGroupId,
+          class_group_id: params.classGroupId, // Snake case redundancy
+          groupId: params.classGroupId,
+          group_id: params.classGroupId, // Snake case redundancy
           gender: params.gender,
           page: params.page || 1,
-          pageSize: params.pageSize || 7,
+          pageSize: params.pageSize || 10,
           name: params.name,
+          search: params.name,
         },
       }),
       providesTags: ["Student"],
@@ -88,9 +94,9 @@ export const studentApi = createApi({
 
     changeClass: builder.mutation<
       ChangeStudentClassResponse,
-      ChangeStudentClassRequest 
+      ChangeStudentClassRequest
     >({
-      query: ( payload ) => ({
+      query: (payload) => ({
         url: `admin/student/change-class`,
         method: "PATCH",
         body: payload,

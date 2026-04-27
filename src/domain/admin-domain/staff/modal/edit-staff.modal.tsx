@@ -252,7 +252,9 @@ export default function EditStaffModal({
     dateEmployed: initialData?.dateEmployed
       ? new Date(initialData.dateEmployed).toISOString().split("T")[0]
       : "",
-    payroll: initialData?.payroll || "",
+    payroll: initialData?.payroll
+      ? String(initialData.payroll).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      : "",
     address: initialData?.address || "",
     duty: initialData?.duty || "",
     email: initialData?.email || "",
@@ -266,7 +268,15 @@ export default function EditStaffModal({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "payroll") {
+      // Allow only digits and format with commas
+      const numericValue = value.replace(/\D/g, "");
+      const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      setForm((prev) => ({ ...prev, [name]: formattedValue }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const filteredCampuses = campuses.filter((c) =>
@@ -280,7 +290,7 @@ export default function EditStaffModal({
        dateEmployed: form.dateEmployed
          ? new Date(form.dateEmployed).toISOString()
          : null,
-       payroll: Number(form.payroll),
+       payroll: Number(String(form.payroll).replace(/,/g, "")),
        campusId: Number(form.campusId),
      };
 

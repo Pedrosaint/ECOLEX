@@ -33,14 +33,14 @@ export default function SetupGradesTab() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5"
+        className="bg-white overflow-hidden p-5"
       >
         <h2 className="text-lg  text-gray-900 mb-2 font-inter">
           Grading Setup
         </h2>
 
         {/* Grading Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-x-auto">
+        <div className="overflow-x-auto">
           <table className="w-full border-collapse min-w-[600px]">
             <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
               <tr>

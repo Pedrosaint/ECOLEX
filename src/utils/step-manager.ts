@@ -311,37 +311,27 @@ export const checkCcaExists = async (token: string): Promise<boolean> => {
 };
 
 
-// NEW: Determine current step based on what data exists
+// Determine current step based on what data exists in backend
 export const getCurrentStepFromBackend = async (token: string): Promise<number> => {
   try {
     const hasSchools = await checkSchoolExists(token);
     const hasCampuses = await checkCampusesExist(token);
     const hasClasses = await checkClassesExist(token);
-    const hasCca = await checkCcaExists(token);
 
-    console.log("🔍 DATA EXISTENCE CHECK:", {
-      hasSchools,
-      hasCampuses, 
-      hasClasses,
-      hasCca
-    });
+    console.log("🔍 DATA EXISTENCE CHECK:", { hasSchools, hasCampuses, hasClasses });
 
-    // Determine step based on what data exists
     if (!hasSchools) {
-      console.log("➡️ Redirecting to Step 1: School Setup (no schools found)");
-      return 1; // Need to setup school
+      console.log("➡️ Step 1: School Setup");
+      return 1;
     } else if (!hasCampuses) {
-      console.log("➡️ Redirecting to Step 2: Campus Setup (no campuses found)");
-      return 2; // Need to setup campuses
+      console.log("➡️ Step 2: Campus Setup");
+      return 2;
     } else if (!hasClasses) {
-      console.log("➡️ Redirecting to Step 3: Class Setup (no classes found)");
-      return 3; // Need to setup classes
-    } else if (!hasCca) {
-      console.log("➡️ Redirecting to Step 4: CCA Setup (no CCA found)");
-      return 4; // Need to setup CCA
+      console.log("➡️ Step 3: Class Setup");
+      return 3;
     } else {
-      console.log("✅ All setup complete - proceeding to dashboard");
-      return 5; // All setup complete
+      console.log("✅ Setup complete — proceeding to dashboard");
+      return 5;
     }
   } catch (error) {
     console.error("Failed to get current step from backend:", error);

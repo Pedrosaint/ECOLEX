@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useCreateAdminMutation } from "../api/auth-api";
 import { toast } from "sonner";
 import { useAppDispatch } from "../../hooks/typed.hooks";
-import { markTokenAsUsed } from "../redux/auth-slice";
+import { markTokenAsUsed, setRegistrationData } from "../redux/auth-slice";
 import { initializeStepProgress } from "../../utils/step-manager";
 
 export const SuperAdminForm = () => {
@@ -15,7 +15,7 @@ export const SuperAdminForm = () => {
   const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [createAdmin] = useCreateAdminMutation();
+  const [createAdmin] = useCreateAdminMutation({ fixedCacheKey: 'admin-create' });
 
   const {
     register,
@@ -44,14 +44,20 @@ export const SuperAdminForm = () => {
         role: "super_admin",
       };
 
-      // Save to localStorage before submission
-      localStorage.setItem("registeredName", data.name);
-      localStorage.setItem("registeredEmail", data.email);
+      // We no longer save to localStorage here
 
       initializeStepProgress();
-      
+
       const response = await createAdmin(formData).unwrap();
       const token = response.data.token;
+
+      // Dispatch to Redux store instead of localStorage
+      dispatch(setRegistrationData({
+        email: response.data.admin.email,
+        name: response.data.admin.name,
+        token: token,
+      }));
+
       dispatch(markTokenAsUsed(data.uniqueKey));
       localStorage.setItem("token", token);
 
@@ -59,11 +65,11 @@ export const SuperAdminForm = () => {
       console.log("Response:", response);
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      navigate("/auth/auth-layout/school-setup", {replace: true});
+      navigate("/auth/auth-layout/school-setup", { replace: true });
       toast.success("Super admin created successfully");
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Failed to create admin");
+      toast.error((error as { data: { message: string } }).data.message);
     } finally {
       setIsLoading(false);
     }
@@ -93,11 +99,10 @@ export const SuperAdminForm = () => {
                 name="name"
                 id="name"
                 required
-                className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${
-                  errors.name
-                    ? "border-[#FF8682] focus:ring-[#FF8682]"
-                    : "border-gray-300 focus:ring-gray-200"
-                }`}
+                className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${errors.name
+                  ? "border-[#FF8682] focus:ring-[#FF8682]"
+                  : "border-gray-300 focus:ring-gray-200"
+                  }`}
                 placeholder=" "
               />
               <label
@@ -139,11 +144,10 @@ export const SuperAdminForm = () => {
                 name="email"
                 id="email"
                 required
-                className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${
-                  errors.email
-                    ? "border-[#FF8682] focus:ring-[#FF8682]"
-                    : "border-gray-300 focus:ring-gray-200"
-                }`}
+                className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${errors.email
+                  ? "border-[#FF8682] focus:ring-[#FF8682]"
+                  : "border-gray-300 focus:ring-gray-200"
+                  }`}
                 placeholder=" "
               />
               <label
@@ -282,9 +286,8 @@ export const SuperAdminForm = () => {
               type="submit"
               disabled={isLoading}
               onClick={() => console.log("Submit button clicked")}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-xm shadow-sm text-sm font-medium mt-15 text-white bg-[#8000BD] ${
-                isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
-              }`}
+              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-xm shadow-sm text-sm font-medium mt-15 text-white bg-[#8000BD] ${isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
+                }`}
             >
               {isLoading ? "Creating..." : "Create Account"}
             </button>

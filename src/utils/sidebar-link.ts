@@ -6,6 +6,7 @@ import {
   FileText,
   ClipboardCheck,
   Tag,
+  ClipboardList,
 } from "lucide-react";
 import { GoHomeFill } from "react-icons/go";
 import { SlPlus } from "react-icons/sl";
@@ -27,6 +28,7 @@ export const navLinks: NavLink[] = [
   { path: "/admin/result", icon: FileText, label: "Manage Result" },
   { path: "/admin/subjects", icon: BookOpen, label: "Manage Subject" },
   { path: "/admin/generate-result", icon: FileText, label: "Generate Result" },
+  { path: "/admin/ca-template", icon: ClipboardList, label: "CA Template" },
 ];
 
 //student navlink

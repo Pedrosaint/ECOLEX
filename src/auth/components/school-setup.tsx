@@ -15,6 +15,7 @@ import { X } from "lucide-react";
 import { useSchoolSetupMutation } from "../api/auth-api";
 import { toast } from "sonner";
 import { type FormValues } from "../models/types";
+import { useAppSelector } from "../../hooks/typed.hooks";
 
 const saveFormData = (data: FormValues) => {
   localStorage.setItem("schoolSetupFormData", JSON.stringify(data));
@@ -36,8 +37,7 @@ export default function SchoolSetup() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [stampPreview, setStampPreview] = useState<string | null>(null);
   const [SchoolSetup] = useSchoolSetupMutation();
-  const registeredName = localStorage.getItem("registeredName") || "";
-  const registeredEmail = localStorage.getItem("registeredEmail") || "";
+  const { registeredEmail, registeredName } = useAppSelector((state) => state.authRegistration);
   const [, setLogoFile] = useState<File | null>(null);
   const [, setStampFile] = useState<File | null>(null);
 
@@ -194,7 +194,7 @@ export default function SchoolSetup() {
       }).unwrap();
       console.log("Response:", response);
       clearFormData();
-      
+
       localStorage.setItem("schoolId", response.school.id.toString());
       toast.success("School setup successful");
       navigate("/auth/input-campus", { replace: true });
@@ -248,11 +248,10 @@ export default function SchoolSetup() {
               id="name"
               disabled
               required
-              className={`w-full px-3 py-2 text-gray-400 border rounded-sm focus:outline-none focus:ring-1  peer ${
-                errors.name
-                  ? "border-[#FF8682] focus:ring-[#FF8682]"
-                  : "border-gray-300 focus:ring-gray-200"
-              }`}
+              className={`w-full px-3 py-2 text-gray-400 border rounded-sm focus:outline-none focus:ring-1  peer ${errors.name
+                ? "border-[#FF8682] focus:ring-[#FF8682]"
+                : "border-gray-300 focus:ring-gray-200"
+                }`}
               placeholder=" "
             />
             <label
@@ -295,11 +294,10 @@ export default function SchoolSetup() {
               id="email"
               disabled
               required
-              className={`w-full px-3 py-2 text-gray-400 border rounded-sm focus:outline-none focus:ring-1  peer ${
-                errors.email
-                  ? "border-[#FF8682] focus:ring-[#FF8682]"
-                  : "border-gray-300 focus:ring-gray-200"
-              }`}
+              className={`w-full px-3 py-2 text-gray-400 border rounded-sm focus:outline-none focus:ring-1  peer ${errors.email
+                ? "border-[#FF8682] focus:ring-[#FF8682]"
+                : "border-gray-300 focus:ring-gray-200"
+                }`}
               placeholder=" "
             />
             <label
@@ -341,11 +339,10 @@ export default function SchoolSetup() {
               name="phoneNumber"
               id="phoneNumber"
               required
-              className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${
-                errors.email
-                  ? "border-[#FF8682] focus:ring-[#FF8682]"
-                  : "border-gray-300 focus:ring-gray-200"
-              }`}
+              className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${errors.email
+                ? "border-[#FF8682] focus:ring-[#FF8682]"
+                : "border-gray-300 focus:ring-gray-200"
+                }`}
               placeholder=" "
               onInput={(e) => {
                 e.currentTarget.value = e.currentTarget.value.replace(
@@ -573,9 +570,8 @@ export default function SchoolSetup() {
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full bg-[#8000BD] text-white rounded-sm font-medium py-3 px-4 mb-3 transition-colors ${
-            isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
-          }`}
+          className={`w-full bg-[#8000BD] text-white rounded-sm font-medium py-3 px-4 mb-3 transition-colors ${isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
+            }`}
         >
           {isLoading ? "PROCEEDING..." : "PROCEED"}
         </button>

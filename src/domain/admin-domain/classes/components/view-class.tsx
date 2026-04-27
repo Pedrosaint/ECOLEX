@@ -9,7 +9,7 @@ import { printContent } from "../../../../utils/print-content";
 export default function ViewClass() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+  const [selectedClass, setSelectedClass] = useState<{ id: number; name: string; customName: string } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
 
@@ -62,7 +62,7 @@ export default function ViewClass() {
                   All Classes List
                 </h1>
               </div>
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-white overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
@@ -102,13 +102,17 @@ export default function ViewClass() {
                             </td>
                             <td className="py-3 px-5 no-print">
                               <div className="flex items-center justify-center space-x-1">
-                                <button
-                                  onClick={() => {
-                                    setIsEditOpen(true);
-                                    setSelectedClassId(classItem.id);
-                                  }}
-                                  className="p-1 cursor-pointer"
-                                >
+                                  <button
+                                    onClick={() => {
+                                      setIsEditOpen(true);
+                                      setSelectedClass({
+                                        id: classItem.id,
+                                        name: classItem.name,
+                                        customName: classItem.customName,
+                                      });
+                                    }}
+                                    className="p-1 cursor-pointer"
+                                  >
                                   <Edit
                                     size={20}
                                     className="text-gray-400 hover:text-gray-600"
@@ -191,10 +195,12 @@ export default function ViewClass() {
             </motion.div>
           </div>
 
-          {isEditOpen && selectedClassId !== null && (
+          {isEditOpen && selectedClass !== null && (
             <EditClass
               onClose={() => setIsEditOpen(false)}
-              classId={selectedClassId}
+              classId={selectedClass.id}
+              initialName={selectedClass.name}
+              initialCustomName={selectedClass.customName}
             />
           )}
         </div>

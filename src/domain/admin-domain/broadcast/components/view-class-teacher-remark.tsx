@@ -74,9 +74,9 @@ export default function ViewClassTeacherRemarkTab() {
         to get your grading.
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-5">
+      <div className="bg-white overflow-hidden p-5">
         {/* Grading Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-x-auto">
+        <div className="overflow-x-auto">
           <table className="w-full border-collapse min-w-[600px]">
             <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
               <tr>

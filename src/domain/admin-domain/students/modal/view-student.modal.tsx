@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { X, Check } from "lucide-react";
 import { useGetStudentQuery } from "../api/student.api";
+import { useGetClassesQuery } from "../../classes/api/class-api";
+import type { Class } from "../../classes/response/get-class.response";
 import LoadingBall from "../../staff/components/loading-ball";
 
 
@@ -18,20 +20,21 @@ export default function ViewStudentFormModal({
   // const [selectedImage] = useState<string | null>(null);
 
   const { data, isLoading, isError } = useGetStudentQuery({ id: studentId });
+  const { data: classesData } = useGetClassesQuery();
 
 
-    if (isLoading) {
-      return (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex justify-center items-center"
-        >
-          <LoadingBall title="Loading student details..." />
-        </motion.div>
-      );
-    }
+  if (isLoading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex justify-center items-center"
+      >
+        <LoadingBall title="Loading student details..." />
+      </motion.div>
+    );
+  }
 
 
   // Handle error state
@@ -131,12 +134,22 @@ export default function ViewStudentFormModal({
               }
             />
             <Detail label="Gender" value={student.gender} />
-            <Detail label="Class" value={student.class?.name} />
+            <Detail
+              label="Class"
+              value={
+                student.class?.name ||
+                classesData?.classes?.find((c: Class) => c.id === student.classId)?.name ||
+                (student.classId ? `Class #${student.classId}` : "-")
+              }
+            />
             <Detail label="Class Group" value={student.classGroup?.name} />
             <Detail label="Guardian Name" value={student.guardianName} />
             <Detail label="Guardian Number" value={student.guardianNumber} />
             <Detail label="Lifestyle" value={student.lifestyle} />
-            <Detail label="Session" value={student.session} />
+            <Detail
+              label="Session"
+              value={student.academicSessionId}
+            />
           </div>
         </div>
       </div>
@@ -156,7 +169,7 @@ function Detail({
     <div>
       <label className="font-medium text-gray-600">{label}</label>
       <div className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
-        {value ?? "N/A"}
+        {value ?? "-"}
       </div>
     </div>
   );

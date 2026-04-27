@@ -36,10 +36,12 @@ export default function AddGroup() {
 
   const classOptions: DropdownOption[] = [
     { value: "", label: "Select Class" },
-    ...(data?.classes?.map((c: any) => ({
-      value: String(c.id),
-      label: c.name,
-    })) || []),
+    ...(data?.classes
+      ?.filter((c: any) => c.classGroups?.length === 0)
+      ?.map((c: any) => ({
+        value: String(c.id),
+        label: c.name,
+      })) || []),
   ];
 
   const getSelectedLabel = (value: string, options: DropdownOption[]): string => {
@@ -162,22 +164,31 @@ export default function AddGroup() {
 
                 {group.isClassOpen && !isDisabled && (
                   <div className="absolute z-10 w-full mt-25 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
-                    {classOptions.map((option) => (
-                      <div
-                        key={option.value}
-                        onClick={() => {
-                          handleChange(index, "classId", option.value);
-                          handleChange(index, "isClassOpen", false);
-                        }}
-                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                          group.classId === option.value
-                            ? "bg-gray-100 font-medium"
-                            : ""
-                        }`}
-                      >
-                        {option.label}
-                      </div>
-                    ))}
+                    {classOptions
+                      .filter((option) => {
+                        if (option.value === "") return true;
+                        // Check if this class is already selected in ANY other row
+                        const isSelectedElsewhere = groups.some(
+                          (g, i) => i !== index && g.classId === option.value
+                        );
+                        return !isSelectedElsewhere;
+                      })
+                      .map((option) => (
+                        <div
+                          key={option.value}
+                          onClick={() => {
+                            handleChange(index, "classId", option.value);
+                            handleChange(index, "isClassOpen", false);
+                          }}
+                          className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                            group.classId === option.value
+                              ? "bg-gray-100 font-medium"
+                              : ""
+                          }`}
+                        >
+                          {option.label}
+                        </div>
+                      ))}
                   </div>
                 )}
               </div>

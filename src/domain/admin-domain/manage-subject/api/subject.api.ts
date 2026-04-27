@@ -1,7 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../../../../redux/apiConfig";
-import type { CreateSubjectRequest } from "../request";
-import type { CreateSubjectResponse, GetSubjectResponse } from "../response";
+import type { AssignSubjectToClassRequest, CreateSubjectRequest } from "../request";
+import type {
+  AssignSubjectToClassResponse,
+  CreateSubjectResponse,
+  GetClassSubjectsResponse,
+  GetSubjectResponse,
+} from "../response";
 
 
 export const subjectApi = createApi({
@@ -16,7 +21,7 @@ export const subjectApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Subject"],
+  tagTypes: ["Subject", "ClassSubject"],
   endpoints: (builder) => ({
     addSubject: builder.mutation<CreateSubjectResponse, CreateSubjectRequest>({
       query: (credentials) => ({
@@ -29,7 +34,7 @@ export const subjectApi = createApi({
 
     getAllSubject: builder.query<GetSubjectResponse, void>({
       query: () => ({
-        url: `admin/subjects`,
+        url: "admin/subjects",
         method: "GET",
       }),
       providesTags: ["Subject"],
@@ -47,11 +52,41 @@ export const subjectApi = createApi({
       invalidatesTags: ["Subject"],
     }),
 
+    assignSubjectToClass: builder.mutation<
+      AssignSubjectToClassResponse,
+      AssignSubjectToClassRequest
+    >({
+      query: (body) => ({
+        url: "admin/class-subject/assign",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["ClassSubject"],
+    }),
+
+    getClassSubjects: builder.query<GetClassSubjectsResponse, number>({
+      query: (classId) => ({
+        url: `admin/class-subject/${classId}`,
+        method: "GET",
+      }),
+      providesTags: ["ClassSubject"],
+    }),
+
+    deleteSubject: builder.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `admin/subject/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Subject"],
+    }),
   }),
 });
 
 export const {
-    useAddSubjectMutation,
-    useGetAllSubjectQuery,
-    useEditSubjectMutation,
+  useAddSubjectMutation,
+  useGetAllSubjectQuery,
+  useEditSubjectMutation,
+  useAssignSubjectToClassMutation,
+  useGetClassSubjectsQuery,
+  useDeleteSubjectMutation,
 } = subjectApi;

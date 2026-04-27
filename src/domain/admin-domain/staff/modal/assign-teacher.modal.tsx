@@ -147,11 +147,10 @@ export default function AssignStaffModal({ onClose }: { onClose: () => void }) {
                 handleChange(name, String(opt.id));
                 document.getElementById(name)?.classList.add("hidden");
               }}
-              className={`px-3 py-2 text-sm hover:bg-[#4B0082] hover:text-white cursor-pointer ${
-                value === String(opt.id)
-                  ? "bg-[#F3E8FF] text-[#4B0082] font-medium"
-                  : ""
-              }`}
+              className={`px-3 py-2 text-sm hover:bg-[#4B0082] hover:text-white cursor-pointer ${value === String(opt.id)
+                ? "bg-[#F3E8FF] text-[#4B0082] font-medium"
+                : ""
+                }`}
             >
               {opt.name}
             </div>
@@ -187,14 +186,16 @@ export default function AssignStaffModal({ onClose }: { onClose: () => void }) {
           {/* Dropdown Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Dropdown
-              label="Staff"
+              label="Staff (Only Teachers)"
               name="staffId"
               value={form.staffId}
               options={
-                staffData?.staff?.map((staff: any) => ({
-                  id: staff.id,
-                  name: staff.name,
-                })) || []
+                staffData?.staff
+                  ?.filter((staff: any) => staff.duty === "Teacher")
+                  ?.map((staff: any) => ({
+                    id: staff.id,
+                    name: staff.name,
+                  })) || []
               }
             />
           </div>

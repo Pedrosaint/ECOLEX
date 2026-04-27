@@ -45,10 +45,10 @@ export default function Sidebar({
                   }
                 }}
                 className={({ isActive }) =>
-                  `flex items-center space-x-2 p-2 rounded ${
+                  `flex items-center space-x-2 px-3 py-2 transition-colors ${
                     isActive
-                      ? "text-[#8000BD] bg-gray-50 rounded-4xl"
-                      : "hover:text-[#dfcfe6]"
+                      ? "bg-white text-gray-600 font-semibold border-l-[8px] border-[#6f079f] pl-[9px]"
+                      : "text-white/70 hover:text-white hover:bg-white/10 border-l-[3px] border-transparent pl-[9px]"
                   }`
                 }
               >

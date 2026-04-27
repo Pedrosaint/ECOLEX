@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { motion } from "framer-motion";
 import { X, Check, ChevronDown } from "lucide-react";
 import { useRef, useState } from "react";
@@ -9,20 +10,24 @@ import {
   useGetClassesQuery,
   useGetClassGroupsQuery,
 } from "../../classes/api/class-api";
+import type { Student } from "../response/students.response";
+import type { Class } from "../../classes/response/get-class.response";
+import type { Group } from "../../classes/response/get-group.response";
+import type { Campuse as Campus } from "../../campus/response/campuse.response";
 
 interface DropdownOption {
   value: string;
   label: string;
 }
 
-export default function EditStaffModal({
+export default function EditStudentModal({
   onClose,
   studentId,
   initialData,
 }: {
   onClose: () => void;
   studentId: number;
-  initialData?: any;
+  initialData?: Student;
 }) {
   const [isCampusOpen, setIsCampusOpen] = useState(false);
   const [isClassOpen, setIsClassOpen] = useState(false);
@@ -39,35 +44,35 @@ export default function EditStaffModal({
   const { data: groupData } = useGetClassGroupsQuery({});
 
 
-    const [form, setForm] = useState({
-      name: initialData?.name || "",
-      surname: initialData?.surname || "",
-      otherNames: initialData?.otherNames || "",
-      gender: initialData?.gender || "",
-      campusId: initialData?.campusId || "",
-      classId: initialData?.classId || "",
-      email: initialData?.email || "",
-      session: initialData?.session || "",
-      guardianNumber: initialData?.guardianNumber || "",
-      guardianName: initialData?.guardianName || "",
-      dateOfBirth: initialData?.dateOfBirth || "",
-      lifestyle: initialData?.lifestyle || "",
-      classGroupId: initialData?.classGroupId || "",
-    });
+  const [form, setForm] = useState({
+    name: initialData?.name || "",
+    surname: initialData?.surname || "",
+    otherNames: initialData?.otherNames || "",
+    gender: initialData?.gender || "",
+    campusId: initialData?.campusId ? String(initialData.campusId) : "",
+    classId: initialData?.classId ? String(initialData.classId) : "",
+    email: initialData?.email || "",
+    session: initialData?.academicSessionId || "",
+    guardianNumber: initialData?.guardianNumber || "",
+    guardianName: initialData?.guardianName || "",
+    dateOfBirth: initialData?.dateOfBirth ? initialData.dateOfBirth.split('T')[0] : "",
+    lifestyle: initialData?.lifestyle || "",
+    classGroupId: initialData?.classGroupId ? String(initialData.classGroupId) : "",
+  });
 
   // Filter dependent data
   const filteredClasses = classData?.classes?.filter(
-    (cls: any) => !form.campusId || cls.campusId === Number(form.campusId)
+    (cls: Class) => !form.campusId || cls.campusId === Number(form.campusId)
   );
 
   const filteredGroups = groupData?.groups?.filter(
-    (grp: any) => !form.classId || grp.classId === Number(form.classId)
+    (grp: Group) => !form.classId || grp.classId === Number(form.classId)
   );
 
   // Dropdown options
   const campusOptions: DropdownOption[] = [
     { value: "", label: "Select Campus" },
-    ...(campusData?.campuses?.map((c: any) => ({
+    ...(campusData?.campuses?.map((c: Campus) => ({
       value: String(c.id),
       label: c.name,
     })) || []),
@@ -75,7 +80,7 @@ export default function EditStaffModal({
 
   const classOptions: DropdownOption[] = [
     { value: "", label: "Select Class" },
-    ...(filteredClasses?.map((c: any) => ({
+    ...(filteredClasses?.map((c: Class) => ({
       value: String(c.id),
       label: c.name,
     })) || []),
@@ -83,7 +88,7 @@ export default function EditStaffModal({
 
   const groupOptions: DropdownOption[] = [
     { value: "", label: "Select Group" },
-    ...(filteredGroups?.map((g: any) => ({
+    ...(filteredGroups?.map((g: Group) => ({
       value: String(g.id),
       label: g.name,
     })) || []),
@@ -104,7 +109,7 @@ export default function EditStaffModal({
   ) => {
     const { name, value } = e.target;
     if (["campusId", "classId", "classGroupId"].includes(name)) {
-      setForm({ ...form, [name]: value === "" ? "" : Number(value) });
+      setForm({ ...form, [name]: value === "" ? "" : value });
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -117,7 +122,7 @@ export default function EditStaffModal({
       [name]: ["campusId", "classId", "classGroupId"].includes(name)
         ? value === ""
           ? ""
-          : Number(value)
+          : String(value)
         : value,
     }));
   };
@@ -127,16 +132,20 @@ export default function EditStaffModal({
       const payload = {
         ...form,
         dateOfBirth: form.dateOfBirth
-          ? new Date(form.dateOfBirth).toISOString()
+          ? new Date(form.dateOfBirth).toISOString().split('T')[0]
           : null,
         classId: Number(form.classId),
-        classGroupId: Number(form.classGroupId),
+        classGroupId: form.classGroupId ? Number(form.classGroupId) : null,
         campusId: Number(form.campusId),
       };
 
+      // Remove the session field if it exists in form state but not in interface
+      const { ...finalPayload } = payload as any;
+      // delete (finalPayload as any).session; // Keep session as name if backend guy handles it
+
       await editStudent({
         id: studentId,
-        payload,
+        payload: finalPayload,
       }).unwrap();
 
       toast.success("Student details updated successfully!");
@@ -192,7 +201,6 @@ export default function EditStaffModal({
               { label: "Surname", name: "surname", type: "text" },
               { label: "Other Names", name: "otherNames", type: "text" },
               { label: "Email", name: "email", type: "email" },
-              { label: "Session", name: "session", type: "text" },
               { label: "Guardian Name", name: "guardianName", type: "text" },
               {
                 label: "Guardian Number",
@@ -229,6 +237,29 @@ export default function EditStaffModal({
                 />
               </div>
             ))}
+
+            {/* Session Dropdown */}
+            <div className="flex flex-col">
+              <label htmlFor="session" className="text-sm font-medium text-gray-700 mb-1">
+                Academic Session
+              </label>
+              <select
+                id="session"
+                name="session"
+                value={form.session}
+                onChange={handleChange}
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-[#4B0082]"
+              >
+                <option value="">Select Session</option>
+                {["2023/2024", "2024/2025", "2025/2026", "2026/2027"].map(
+                  (year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
 
             {/* Gender */}
             <div className="flex flex-col">
@@ -276,9 +307,8 @@ export default function EditStaffModal({
                   {getSelectedLabel(String(form.campusId), campusOptions)}
                   <ChevronDown
                     size={16}
-                    className={`transition-transform ${
-                      isCampusOpen ? "rotate-180" : ""
-                    }`}
+                    className={`transition-transform ${isCampusOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 {isCampusOpen && (
@@ -290,11 +320,10 @@ export default function EditStaffModal({
                           handleCustomSelect("campusId", option.value);
                           setIsCampusOpen(false);
                         }}
-                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                          String(form.campusId) === option.value
-                            ? "bg-gray-100 font-medium"
-                            : ""
-                        }`}
+                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${String(form.campusId) === option.value
+                          ? "bg-gray-100 font-medium"
+                          : ""
+                          }`}
                       >
                         {option.label}
                       </div>
@@ -319,9 +348,8 @@ export default function EditStaffModal({
                   {getSelectedLabel(String(form.classId), classOptions)}
                   <ChevronDown
                     size={16}
-                    className={`transition-transform ${
-                      isClassOpen ? "rotate-180" : ""
-                    }`}
+                    className={`transition-transform ${isClassOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 {isClassOpen && (
@@ -333,11 +361,10 @@ export default function EditStaffModal({
                           handleCustomSelect("classId", option.value);
                           setIsClassOpen(false);
                         }}
-                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                          String(form.classId) === option.value
-                            ? "bg-gray-100 font-medium"
-                            : ""
-                        }`}
+                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${String(form.classId) === option.value
+                          ? "bg-gray-100 font-medium"
+                          : ""
+                          }`}
                       >
                         {option.label}
                       </div>
@@ -362,9 +389,8 @@ export default function EditStaffModal({
                   {getSelectedLabel(String(form.classGroupId), groupOptions)}
                   <ChevronDown
                     size={16}
-                    className={`transition-transform ${
-                      isGroupOpen ? "rotate-180" : ""
-                    }`}
+                    className={`transition-transform ${isGroupOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 {isGroupOpen && (
@@ -376,11 +402,10 @@ export default function EditStaffModal({
                           handleCustomSelect("classGroupId", option.value);
                           setIsGroupOpen(false);
                         }}
-                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                          String(form.classGroupId) === option.value
-                            ? "bg-gray-100 font-medium"
-                            : ""
-                        }`}
+                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${String(form.classGroupId) === option.value
+                          ? "bg-gray-100 font-medium"
+                          : ""
+                          }`}
                       >
                         {option.label}
                       </div>

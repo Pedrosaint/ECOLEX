@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 //Create Student
 export interface CreateStudentResponse {
@@ -16,13 +15,19 @@ export interface Student {
   surname: string;
   otherNames: string;
   gender: string;
-  dateOfBirth: any;
+  dateOfBirth: string;
   guardianName: string;
   guardianNumber: string;
   lifestyle: string;
-  session: string;
+  academicSessionId: number;
   email: string;
+  classGroupId: number | null;
+  registrationNumber: string;
   createdAt: string;
+  class?: Class;
+  classGroup?: ClassGroup | null;
+  academicSession?: AcademicSession | null;
+  campus?: Campus;
 }
 
 
@@ -53,14 +58,15 @@ export interface Data {
   guardianName: string;
   guardianNumber: string;
   lifestyle: string;
-  session: string;
+  academicSessionId: number;
   email: string;
-  classGroupId: number;
+  classGroupId: number | null;
   registrationNumber: string;
   createdAt: string;
   campus: Campus;
-  class: Class;
-  classGroup: ClassGroup;
+  class?: Class; // Optional as it might be missing
+  classGroup?: ClassGroup | null; // Optional as it might be missing
+  academicSession?: AcademicSession | null; // Optional as it might be missing
 }
 
 export interface Campus {
@@ -80,11 +86,10 @@ export interface Class {
   schoolId: number;
   campusId: number;
   name: string;
-  customName: string;
-  staffId: number;
+  customName: string | null;
+  staffId: number | null;
   createdAt: string;
   classGroups: ClassGroup[];
-  campus: Campus;
 }
 
 export interface ClassGroup {
@@ -104,3 +109,8 @@ export interface Campus {
   createdAt: string;
 }
 
+export interface AcademicSession {
+  id: number;
+  name: string;
+  isActive: boolean;
+}

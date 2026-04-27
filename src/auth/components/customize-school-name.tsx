@@ -781,7 +781,7 @@ export default function CustomizeSchoolName() {
       }
 
       // Navigate to next page
-      navigate("/auth/cca-setup", { replace: true });
+      navigate("/auth/congratulation", { replace: true });
     } catch (error) {
       console.error("Failed to setup classes:", error);
       toast.error("Failed to setup classes");

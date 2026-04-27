@@ -35,10 +35,22 @@ export default function AddStaffFormModal({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+    
+    if (id === "payroll") {
+      // Remove all non-digits
+      const numericValue = value.replace(/\D/g, "");
+      // Format with commas
+      const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      setFormData((prev) => ({
+        ...prev,
+        [id]: formattedValue,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [id]: value,
+      }));
+    }
   };
 
   const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -123,6 +135,7 @@ export default function AddStaffFormModal({
                 value={formData.name}
                 onChange={handleChange}
                 type="text"
+                placeholder="e.g. John Doe"
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
@@ -140,13 +153,12 @@ export default function AddStaffFormModal({
               >
                 {formData.campusId
                   ? campuses.find((c) => c.id === Number(formData.campusId))
-                      ?.name
+                    ?.name
                   : "Select a campus"}
                 <ChevronDown
                   size={16}
-                  className={`transition-transform ${
-                    campusDropdown ? "rotate-180" : ""
-                  }`}
+                  className={`transition-transform ${campusDropdown ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
@@ -203,6 +215,7 @@ export default function AddStaffFormModal({
                 value={formData.dateEmployed}
                 onChange={handleChange}
                 type="date"
+                placeholder="2026-12-20"
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
@@ -221,6 +234,7 @@ export default function AddStaffFormModal({
                   value={formData.payroll}
                   onChange={handleChange}
                   type="text"
+                  placeholder="100,000"
                   className="h-10 w-full rounded-md border-2 pl-7 px-3 py-2 text-sm outline-none border-gray-200"
                 />
               </div>
@@ -236,6 +250,7 @@ export default function AddStaffFormModal({
                 value={formData.duty}
                 onChange={handleChange}
                 type="text"
+                placeholder="e.g. Teacher"
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
@@ -250,6 +265,7 @@ export default function AddStaffFormModal({
                 value={formData.email}
                 onChange={handleChange}
                 type="email"
+                placeholder="[EMAIL_ADDRESS]"
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
@@ -264,6 +280,7 @@ export default function AddStaffFormModal({
                 value={formData.address}
                 onChange={handleChange}
                 type="text"
+                placeholder="e.g. 123 Main St"
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
@@ -283,6 +300,7 @@ export default function AddStaffFormModal({
                   }))
                 }
                 type="text"
+                placeholder="08000000000"
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
@@ -297,6 +315,7 @@ export default function AddStaffFormModal({
                 value={formData.nextOfKin}
                 onChange={handleChange}
                 type="text"
+                placeholder="e.g. John Doe"
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
