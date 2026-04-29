@@ -84,7 +84,6 @@ const FilterSection = ({
   isClassLoading,
   isGroupLoading,
   onFilter,
-  isLoading,
 }: any) => {
   const [campusId, setCampusId] = useState("");
   const [classId, setClassId] = useState("");
