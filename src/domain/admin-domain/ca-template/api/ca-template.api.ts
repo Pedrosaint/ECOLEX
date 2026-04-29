@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../../../../redux/apiConfig";
 import type { SetDefaultCATemplateRequest, SetClassCATemplateRequest } from "../request/ca-template.request";
-import type { SetCATemplateResponse } from "../response/ca-template.response";
+import type { SetCATemplateResponse, GetCATemplateResponse } from "../response/ca-template.response";
 
 export const caTemplateApi = createApi({
   reducerPath: "caTemplateApi",
@@ -17,6 +17,15 @@ export const caTemplateApi = createApi({
   }),
   tagTypes: ["CATemplate"],
   endpoints: (builder) => ({
+    getCATemplate: builder.query<GetCATemplateResponse, { classId?: number }>({
+      query: ({ classId } = {}) => ({
+        url: "admin/ca-template",
+        method: "GET",
+        params: classId ? { classId } : undefined,
+      }),
+      providesTags: ["CATemplate"],
+    }),
+
     setDefaultCATemplate: builder.mutation<SetCATemplateResponse, SetDefaultCATemplateRequest>({
       query: (body) => ({
         url: "admin/ca-template",
@@ -38,6 +47,7 @@ export const caTemplateApi = createApi({
 });
 
 export const {
+  useGetCATemplateQuery,
   useSetDefaultCATemplateMutation,
   useSetClassCATemplateMutation,
 } = caTemplateApi;

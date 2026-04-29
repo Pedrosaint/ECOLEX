@@ -7,7 +7,7 @@ import SchoolSetup from "../auth/components/school-setup";
 import InputCampus from "../auth/components/input-campus";
 import CustomizeSchoolName from "../auth/components/customize-school-name";
 // import CCASetup from "../auth/components/cca-setup";
-// import UsersLogin from "../auth/components/users-login";
+import UsersLogin from "../auth/components/users-login";
 import { AdminLogin } from "../auth/components/admin-login";
 import { TeachersLogin } from "../auth/components/teachers-login";
 import { StudentLogin } from "../auth/components/student-login";
@@ -29,6 +29,7 @@ import StaffDashboardView from "../domain/teachers-domain/overview/view/staff-da
 import ComputeResultView from "../domain/teachers-domain/compute/view/compute-result.view";
 import StaffSetupRecordView from "../domain/teachers-domain/teachers-result-mark/view/staff-setup-record-view";
 import StaffViewResultView from "../domain/teachers-domain/view-class-result/view/staff-view-result.view";
+import GradingSchemeView from "../domain/teachers-domain/grading-scheme/view/grading-scheme.view";
 import RouteErrorBoundary from "../helper/route-error";
 import SetupProgressManager from "../utils/set-progress-manager";
 import { ProtectedRoute } from "../auth/components/protected-route";
@@ -37,13 +38,12 @@ export default function appRouter(): RouteObject[] {
   return [
     {
       path: "/",
-      element: <SetupProgressManager />,
-      // element: <Navigate to="/auth/auth-layout/super-admin" replace />,
+      element: <UsersLogin />,
     },
-    // {
-    //   path: "/",
-    //   element: <UsersLogin />,
-    // },
+    {
+      path: "setup",
+      element: <SetupProgressManager />,
+    },
     {
       path: "auth",
       element: <AuthLayout />,
@@ -187,6 +187,10 @@ export default function appRouter(): RouteObject[] {
         {
           path: "view-class-results",
           element: <StaffViewResultView />,
+        },
+        {
+          path: "grading-scheme",
+          element: <GradingSchemeView />,
         },
       ],
     },

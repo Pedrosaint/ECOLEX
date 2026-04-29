@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { motion } from "framer-motion";
-import { X, Check, ChevronDown } from "lucide-react";
+import { X, Check, ChevronDown, CameraIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { getImageUrl } from "../../../../utils/get-image-url";
 import { useEditStudentMutation } from "../api/student.api";
 import { useGetCampusQuery } from "../../campus/api/campus.api";
 import {
@@ -32,6 +31,8 @@ export default function EditStudentModal({
   const [isCampusOpen, setIsCampusOpen] = useState(false);
   const [isClassOpen, setIsClassOpen] = useState(false);
   const [isGroupOpen, setIsGroupOpen] = useState(false);
+  const [passportFile, setPassportFile] = useState<File | null>(null);
+  const [passportPreview, setPassportPreview] = useState<string | null>(null);
   const [editStudent, { isLoading }] = useEditStudentMutation();
 
   const campusRef = useRef<HTMLDivElement>(null);
@@ -48,11 +49,11 @@ export default function EditStudentModal({
     name: initialData?.name || "",
     surname: initialData?.surname || "",
     otherNames: initialData?.otherNames || "",
-    gender: initialData?.gender || "",
+    gender: initialData?.gender?.toLowerCase() || "",
     campusId: initialData?.campusId ? String(initialData.campusId) : "",
     classId: initialData?.classId ? String(initialData.classId) : "",
     email: initialData?.email || "",
-    session: initialData?.academicSessionId || "",
+    session: initialData?.academicSession?.name || "",
     guardianNumber: initialData?.guardianNumber || "",
     guardianName: initialData?.guardianName || "",
     dateOfBirth: initialData?.dateOfBirth ? initialData.dateOfBirth.split('T')[0] : "",
@@ -104,6 +105,14 @@ export default function EditStudentModal({
   };
 
 
+  const handlePassportChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPassportFile(file);
+      setPassportPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -129,29 +138,29 @@ export default function EditStudentModal({
 
   const handleSubmit = async () => {
     try {
-      const payload = {
-        ...form,
-        dateOfBirth: form.dateOfBirth
-          ? new Date(form.dateOfBirth).toISOString().split('T')[0]
-          : null,
-        classId: Number(form.classId),
-        classGroupId: form.classGroupId ? Number(form.classGroupId) : null,
-        campusId: Number(form.campusId),
-      };
+      const fd = new FormData();
+      fd.append("name", form.name);
+      fd.append("surname", form.surname);
+      fd.append("otherNames", form.otherNames);
+      fd.append("gender", form.gender);
+      fd.append("email", form.email);
+      fd.append("session", form.session);
+      fd.append("guardianNumber", form.guardianNumber);
+      fd.append("guardianName", form.guardianName);
+      fd.append("lifestyle", form.lifestyle);
+      fd.append("campusId", form.campusId);
+      fd.append("classId", form.classId);
+      if (form.classGroupId) fd.append("classGroupId", form.classGroupId);
+      if (form.dateOfBirth) {
+        fd.append("dateOfBirth", new Date(form.dateOfBirth).toISOString().split("T")[0]);
+      }
+      if (passportFile) fd.append("passport", passportFile);
 
-      // Remove the session field if it exists in form state but not in interface
-      const { ...finalPayload } = payload as any;
-      // delete (finalPayload as any).session; // Keep session as name if backend guy handles it
-
-      await editStudent({
-        id: studentId,
-        payload: finalPayload,
-      }).unwrap();
-
+      await editStudent({ id: studentId, payload: fd }).unwrap();
       toast.success("Student details updated successfully!");
       onClose();
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update student.");
+    } catch (error) {
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to update student.");
     }
   };
 
@@ -164,7 +173,7 @@ export default function EditStudentModal({
       className="fixed inset-0 bg-black/50 backdrop-blur-md z-50 p-3 overflow-y-auto"
     >
       <div className="flex justify-center items-center min-h-full">
-        <div className="relative w-full max-w-3xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-8 my-8">
+        <div className="relative w-full max-w-3xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-8 my-8 max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
             <h2 className="text-2xl font-medium text-gray-900">
@@ -193,8 +202,67 @@ export default function EditStudentModal({
             </button>
           </div>
 
+          {/* Passport Upload */}
+          <div className="flex justify-start mb-6">
+            <div className="flex flex-col items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                Passport Photo
+              </label>
+              <label
+                htmlFor="editPassportUpload"
+                className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-[#4B0082] transition-colors bg-gray-50 overflow-hidden"
+              >
+                {passportPreview ? (
+                  <img
+                    src={passportPreview}
+                    alt="Passport"
+                    className="w-full h-full object-cover"
+                  />
+                ) : initialData?.passportUrl ? (
+                  <img
+                    src={getImageUrl(initialData.passportUrl)}
+                    alt="Current passport"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 p-2">
+                    <CameraIcon size={30} className="text-gray-400" />
+                    <span className="text-xs text-gray-400 text-center">
+                      Upload photo
+                    </span>
+                  </div>
+                )}
+              </label>
+              <input
+                type="file"
+                id="editPassportUpload"
+                accept=".jpeg,.jpg,.png,.webp"
+                className="hidden"
+                onChange={handlePassportChange}
+              />
+              {passportPreview ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPassportFile(null);
+                    setPassportPreview(null);
+                  }}
+                  className="text-xs text-red-500 hover:text-red-700"
+                >
+                  Remove new photo
+                </button>
+              ) : (
+                <span className="text-xs text-gray-400 text-center">
+                  {initialData?.passportUrl
+                    ? "Click photo to change passport"
+                    : "Click to upload passport"}
+                </span>
+              )}
+            </div>
+          </div>
+
           {/* === FORM GRID === */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
             {/* === Text Inputs === */}
             {[
               { label: "First Name", name: "name", type: "text" },
@@ -213,7 +281,7 @@ export default function EditStudentModal({
               <div key={field.name} className="flex flex-col">
                 <label
                   htmlFor={field.name}
-                  className="text-sm font-medium text-gray-700 mb-1"
+                 className="text-sm font-bold text-[#120D1C] mb-2"
                 >
                   {field.label}
                 </label>
@@ -240,7 +308,7 @@ export default function EditStudentModal({
 
             {/* Session Dropdown */}
             <div className="flex flex-col">
-              <label htmlFor="session" className="text-sm font-medium text-gray-700 mb-1">
+              <label className="text-sm font-bold text-[#120D1C] mb-2">
                 Academic Session
               </label>
               <select
@@ -256,14 +324,14 @@ export default function EditStudentModal({
                     <option key={year} value={year}>
                       {year}
                     </option>
-                  )
+                  ),
                 )}
               </select>
             </div>
 
             {/* Gender */}
             <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
+              <label className="text-sm font-bold text-[#120D1C] mb-2">
                 Gender
               </label>
               <select
@@ -280,7 +348,7 @@ export default function EditStudentModal({
 
             {/* Date of Birth */}
             <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
+              <label className="text-sm font-bold text-[#120D1C] mb-2">
                 Date of Birth
               </label>
               <input
@@ -307,8 +375,9 @@ export default function EditStudentModal({
                   {getSelectedLabel(String(form.campusId), campusOptions)}
                   <ChevronDown
                     size={16}
-                    className={`transition-transform ${isCampusOpen ? "rotate-180" : ""
-                      }`}
+                    className={`transition-transform ${
+                      isCampusOpen ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
                 {isCampusOpen && (
@@ -320,10 +389,11 @@ export default function EditStudentModal({
                           handleCustomSelect("campusId", option.value);
                           setIsCampusOpen(false);
                         }}
-                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${String(form.campusId) === option.value
-                          ? "bg-gray-100 font-medium"
-                          : ""
-                          }`}
+                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                          String(form.campusId) === option.value
+                            ? "bg-gray-100 font-medium"
+                            : ""
+                        }`}
                       >
                         {option.label}
                       </div>
@@ -348,8 +418,9 @@ export default function EditStudentModal({
                   {getSelectedLabel(String(form.classId), classOptions)}
                   <ChevronDown
                     size={16}
-                    className={`transition-transform ${isClassOpen ? "rotate-180" : ""
-                      }`}
+                    className={`transition-transform ${
+                      isClassOpen ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
                 {isClassOpen && (
@@ -361,10 +432,11 @@ export default function EditStudentModal({
                           handleCustomSelect("classId", option.value);
                           setIsClassOpen(false);
                         }}
-                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${String(form.classId) === option.value
-                          ? "bg-gray-100 font-medium"
-                          : ""
-                          }`}
+                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                          String(form.classId) === option.value
+                            ? "bg-gray-100 font-medium"
+                            : ""
+                        }`}
                       >
                         {option.label}
                       </div>
@@ -389,8 +461,9 @@ export default function EditStudentModal({
                   {getSelectedLabel(String(form.classGroupId), groupOptions)}
                   <ChevronDown
                     size={16}
-                    className={`transition-transform ${isGroupOpen ? "rotate-180" : ""
-                      }`}
+                    className={`transition-transform ${
+                      isGroupOpen ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
                 {isGroupOpen && (
@@ -402,10 +475,11 @@ export default function EditStudentModal({
                           handleCustomSelect("classGroupId", option.value);
                           setIsGroupOpen(false);
                         }}
-                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${String(form.classGroupId) === option.value
-                          ? "bg-gray-100 font-medium"
-                          : ""
-                          }`}
+                        className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                          String(form.classGroupId) === option.value
+                            ? "bg-gray-100 font-medium"
+                            : ""
+                        }`}
                       >
                         {option.label}
                       </div>

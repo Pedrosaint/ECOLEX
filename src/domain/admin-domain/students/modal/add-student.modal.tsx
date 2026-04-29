@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { motion } from "framer-motion";
-import { X, Check, ChevronDown } from "lucide-react";
+import { X, Check, ChevronDown, CameraIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useCreateStudentMutation } from "../api/student.api";
@@ -45,6 +45,8 @@ export default function AddStudentFormModal({
     session: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [passportFile, setPassportFile] = useState<File | null>(null);
+  const [passportPreview, setPassportPreview] = useState<string | null>(null);
 
   // API hooks
   const { data: campusData } = useGetCampusQuery();
@@ -84,6 +86,14 @@ export default function AddStudentFormModal({
     return found ? found.label : options[0].label;
   };
 
+  const handlePassportChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPassportFile(file);
+      setPassportPreview(URL.createObjectURL(file));
+    }
+  };
+
   // Handle input change + clear error
   const handleChange = (
     e: React.ChangeEvent<
@@ -120,17 +130,25 @@ export default function AddStudentFormModal({
     if (!isValid) return;
 
     try {
-      const payload = {
-        ...formData,
-        classId: Number(formData.classId),
-        campusId: Number(formData.campusId),
-      };
+      const fd = new FormData();
+      fd.append("surname", formData.surname);
+      fd.append("name", formData.name);
+      fd.append("otherNames", formData.otherNames);
+      fd.append("gender", formData.gender);
+      fd.append("dateOfBirth", formData.dateOfBirth);
+      fd.append("email", formData.email);
+      fd.append("guardianName", formData.guardianName);
+      fd.append("guardianNumber", formData.guardianNumber);
+      fd.append("campusId", formData.campusId);
+      fd.append("classId", formData.classId);
+      fd.append("lifestyle", formData.lifestyle);
+      fd.append("session", formData.session);
+      if (passportFile) fd.append("passport", passportFile);
 
-      await createStudent(payload).unwrap();
+      await createStudent(fd).unwrap();
       toast.success("Student created successfully!");
       onClose();
 
-      // Reset form
       setFormData({
         surname: "",
         name: "",
@@ -145,8 +163,10 @@ export default function AddStudentFormModal({
         lifestyle: "",
         session: "",
       });
+      setPassportFile(null);
+      setPassportPreview(null);
     } catch (err) {
-      toast.error("Failed to create student. Please try again.");
+      toast.error((err as { data?: { message?: string } })?.data?.message || "Failed to create student.");
       console.error("Error creating student:", err);
     }
   };
@@ -166,6 +186,7 @@ export default function AddStudentFormModal({
     onSelect,
     error,
     disabled,
+    emptyMessage,
   }: {
     label: string;
     isOpen: boolean;
@@ -175,47 +196,55 @@ export default function AddStudentFormModal({
     onSelect: (value: string) => void;
     error?: string;
     disabled?: boolean;
-  }) => (
-    <div className="flex flex-col">
-      <label className="text-sm font-bold text-[#120D1C] mb-2">{label}</label>
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          disabled={disabled}
-          className={`w-full px-3 py-3 border rounded bg-white text-sm text-left flex items-center justify-between ${error ? "border-red-500" : "border-gray-300"
-            } disabled:opacity-50`}
-        >
-          {getSelectedLabel(selectedValue, options)}
-          <ChevronDown
-            size={16}
-            className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-          />
-        </button>
+    emptyMessage?: string;
+  }) => {
+    const realOptions = options.filter((o) => o.value !== "");
+    return (
+      <div className="flex flex-col">
+        <label className="text-sm font-bold text-[#120D1C] mb-2">{label}</label>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            disabled={disabled}
+            className={`w-full px-3 py-2 border rounded bg-white text-sm text-left flex items-center justify-between ${error ? "border-red-500" : "border-gray-300"
+              } disabled:opacity-50`}
+          >
+            {getSelectedLabel(selectedValue, options)}
+            <ChevronDown
+              size={16}
+              className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+            />
+          </button>
 
-        {isOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
-            {options.map((option) => (
-              <div
-                key={option.value}
-                onClick={() => {
-                  onSelect(option.value);
-                  setIsOpen(false);
-                }}
-                className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${selectedValue === option.value
-                  ? "bg-gray-100 font-medium"
-                  : ""
-                  }`}
-              >
-                {option.label}
-              </div>
-            ))}
-          </div>
-        )}
+          {isOpen && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+              {emptyMessage && realOptions.length === 0 ? (
+                <div className="px-3 py-3 text-sm text-gray-400 italic">{emptyMessage}</div>
+              ) : (
+                options.map((option) => (
+                  <div
+                    key={option.value}
+                    onClick={() => {
+                      onSelect(option.value);
+                      setIsOpen(false);
+                    }}
+                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${selectedValue === option.value
+                      ? "bg-gray-100 font-medium"
+                      : ""
+                      }`}
+                  >
+                    {option.label}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
       </div>
-      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-    </div>
-  );
+    );
+  };
 
   // ==========================================================
   // ======================== UI ==============================
@@ -244,8 +273,44 @@ export default function AddStudentFormModal({
             </button>
           </div>
 
+          {/* Passport Upload */}
+          <div className="flex justify-end mb-6">
+            <div className="flex flex-col items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">Passport Photo</label>
+              <label
+                htmlFor="passportUpload"
+                className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-[#4B0082] transition-colors bg-gray-50 overflow-hidden"
+              >
+                {passportPreview ? (
+                  <img src={passportPreview} alt="Passport" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 p-2">
+                   <CameraIcon size={30} className="text-gray-400" />
+                    <span className="text-xs text-gray-400 text-center">Upload photo</span>
+                  </div>
+                )}
+              </label>
+              <input
+                type="file"
+                id="passportUpload"
+                accept=".jpeg,.jpg,.png,.webp"
+                className="hidden"
+                onChange={handlePassportChange}
+              />
+              {passportPreview && (
+                <button
+                  type="button"
+                  onClick={() => { setPassportFile(null); setPassportPreview(null); }}
+                  className="text-xs text-red-500 hover:text-red-700"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Form Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-h-[60vh] overflow-y-auto pr-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6 max-h-[60vh] overflow-y-auto pr-2">
             {[
               { id: "surname", label: "Surname", type: "text" },
               { id: "name", label: "First Name", type: "text" },

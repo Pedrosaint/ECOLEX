@@ -3,16 +3,19 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, AlertTriangle, CheckSquare, Square } from "lucide-react";
 import { toast } from "sonner";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetClassesQuery } from "../../classes/api/class-api";
-import { useGetAllSubjectQuery, useAssignSubjectToClassMutation } from "../api/subject.api";
+import { useGetAllSubjectQuery, useAssignSubjectToClassMutation, useGetClassSubjectsQuery } from "../api/subject.api";
+import { useGetCATemplateQuery } from "../../ca-template/api/ca-template.api";
 
 export default function AssignSubject() {
   const [classId, setClassId] = useState<number | null>(null);
   const [selectedSubjectIds, setSelectedSubjectIds] = useState<number[]>([]);
   const [classDropdownOpen, setClassDropdownOpen] = useState(false);
   const [subjectDropdownOpen, setSubjectDropdownOpen] = useState(false);
+  const [subjectSearch, setSubjectSearch] = useState("");
   const [caError, setCaError] = useState(false);
-  const [result, setResult] = useState<{
+  const [, setResult] = useState<{
     assigned: number;
     skipped: number;
     casCreated: number;
@@ -21,9 +24,16 @@ export default function AssignSubject() {
 
   const { data: classesData, isLoading: classesLoading } = useGetClassesQuery();
   const { data: subjectsData, isLoading: subjectsLoading } = useGetAllSubjectQuery();
+  const { data: classSubjectsData } = useGetClassSubjectsQuery(classId ?? skipToken);
+  const { data: caTemplateData } = useGetCATemplateQuery(classId ? { classId } : skipToken);
   const [assignSubject, { isLoading }] = useAssignSubjectToClassMutation();
 
   const selectedClass = classesData?.classes.find((c) => c.id === classId);
+
+  const assignedSubjectIds = new Set(classSubjectsData?.data?.subjects.map((s) => s.id) ?? []);
+  const availableSubjects = (subjectsData?.subjects ?? [])
+    .filter((s) => !assignedSubjectIds.has(s.id))
+    .filter((s) => s.name.toLowerCase().includes(subjectSearch.toLowerCase()));
 
   const toggleSubject = (id: number) => {
     setSelectedSubjectIds((prev) =>
@@ -31,7 +41,7 @@ export default function AssignSubject() {
     );
   };
 
-  const selectedSubjectNames = subjectsData?.subjects
+  const selectedSubjectNames = availableSubjects
     .filter((s) => selectedSubjectIds.includes(s.id))
     .map((s) => s.name)
     .join(", ");
@@ -48,7 +58,13 @@ export default function AssignSubject() {
       setResult(res.data);
       setSelectedSubjectIds([]);
       setClassId(null);
-      toast.success(res.message);
+      const hasClassTemplate = !!(caTemplateData?.data?.classSpecific && caTemplateData.data.classSpecific.templates.length > 0);
+
+      if (hasClassTemplate) {
+        toast.success(res.message);
+      } else {
+        toast.success(`Subjects assigned to ${selectedClass?.name} uses the default CA template.`);
+      }
     } catch (err: any) {
       const message: string = err?.data?.message || "";
       if (message.toLowerCase().includes("ca") || message.toLowerCase().includes("template")) {
@@ -89,7 +105,7 @@ export default function AssignSubject() {
       )}
 
       {/* Success result card */}
-      {result && (
+      {/* {result && (
         <div className="mb-5 bg-green-50 border border-green-200 rounded-xl px-4 py-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           {[
             { label: "Assigned", value: result.assigned },
@@ -103,7 +119,7 @@ export default function AssignSubject() {
             </div>
           ))}
         </div>
-      )}
+      )} */}
 
       <div className="flex flex-col gap-4">
         {/* Dropdowns row */}
@@ -131,7 +147,7 @@ export default function AssignSubject() {
                   {classesData?.classes.map((cls) => (
                     <div
                       key={cls.id}
-                      onClick={() => { setClassId(cls.id); setClassDropdownOpen(false); setCaError(false); setResult(null); }}
+                      onClick={() => { setClassId(cls.id); setClassDropdownOpen(false); setCaError(false); setResult(null); setSelectedSubjectIds([]); setSubjectSearch(""); }}
                       className={`px-3 py-2 cursor-pointer text-sm hover:bg-[#6a00a1] hover:text-white ${
                         classId === cls.id ? "bg-purple-50 font-medium text-[#8000BD]" : "text-gray-700"
                       }`}
@@ -152,7 +168,7 @@ export default function AssignSubject() {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => { setSubjectDropdownOpen((v) => !v); setClassDropdownOpen(false); }}
+                onClick={() => { setSubjectDropdownOpen((v) => { if (v) setSubjectSearch(""); return !v; }); setClassDropdownOpen(false); }}
                 disabled={subjectsLoading}
                 className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm text-left flex items-center justify-between focus:outline-none"
               >
@@ -167,11 +183,25 @@ export default function AssignSubject() {
               </button>
 
               {subjectDropdownOpen && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-52 overflow-y-auto">
-                  {subjectsData?.subjects.length === 0 && (
-                    <p className="text-sm text-gray-400 px-3 py-2">No subjects found</p>
+                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg">
+                  <div className="p-2 border-b border-gray-200">
+                    <input
+                      type="text"
+                      value={subjectSearch}
+                      onChange={(e) => setSubjectSearch(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      placeholder="Search subjects..."
+                      className="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD]"
+                      autoFocus
+                    />
+                  </div>
+                  <div className="max-h-48 overflow-y-auto">
+                  {availableSubjects.length === 0 && (
+                    <p className="text-sm text-gray-400 px-3 py-2">
+                      {classId ? "All subjects already assigned to this class" : "No subjects found"}
+                    </p>
                   )}
-                  {subjectsData?.subjects.map((subject) => {
+                  {availableSubjects.map((subject) => {
                     const checked = selectedSubjectIds.includes(subject.id);
                     return (
                       <div
@@ -187,6 +217,7 @@ export default function AssignSubject() {
                       </div>
                     );
                   })}
+                  </div>
                 </div>
               )}
             </div>

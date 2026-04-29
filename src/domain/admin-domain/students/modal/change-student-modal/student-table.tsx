@@ -69,8 +69,16 @@ const StudentTable: React.FC<StudentTableProps> = ({
         <tbody>
           {students.length === 0 ? (
             <tr>
-              <td colSpan={6} className="text-center text-gray-500 py-6">
-                No students found for this filter.
+              <td colSpan={6} className="py-12">
+                <div className="flex flex-col items-center justify-center gap-3">
+                  <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-[#8000BD]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2h5M12 12a4 4 0 100-8 4 4 0 000 8z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-700">No students found</p>
+                  <p className="text-xs text-gray-400">Try adjusting the campus, class, or group filter.</p>
+                </div>
               </td>
             </tr>
           ) : (

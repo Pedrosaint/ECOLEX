@@ -146,8 +146,8 @@ const handleClearFilters = () => {
       await deleteStaff({ id: staffId }).unwrap();
       toast.success("Staff deleted successfully!");
     } catch (error) {
-      toast.error("Failed to delete staff!");
       console.error("Failed to delete staff:", error);
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to delete staff!");
     }
     setTimeout(() => {
       setIsDeleteStaffModalOpen({
@@ -390,7 +390,7 @@ const handleClearFilters = () => {
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   {staff.phoneNumber}
                                 </td>
-                                <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                                <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 whitespace-nowrap">
                                   {staff.registrationNumber}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">

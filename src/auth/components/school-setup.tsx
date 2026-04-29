@@ -199,8 +199,8 @@ export default function SchoolSetup() {
       toast.success("School setup successful");
       navigate("/auth/input-campus", { replace: true });
     } catch (error) {
-      toast.error("Failed to submit form");
       console.error("Error:", error);
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to submit form");
     } finally {
       setIsLoading(false);
     }

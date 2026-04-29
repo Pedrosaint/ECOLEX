@@ -26,6 +26,7 @@ import ChangeStudentModal from "../modal/change-student-modal/change-student.mod
 import { useGetAllStudentQuery } from "../api/student.api";
 import type { Student } from "../response/get-student-response";
 import { printContent } from "../../../../utils/print-content";
+import { getImageUrl } from "../../../../utils/get-image-url";
 
 export default function StudentsList() {
   const [filters, setFilters] = useState({
@@ -198,19 +199,15 @@ export default function StudentsList() {
                             "Reg. No",
                             "Surname",
                             "Name",
-                            "Other name",
                             "Gender",
                             "DOB",
-                            "Guardian Name",
-                            "Guardian No.",
-                            "Lifestyle",
                             "Class",
                             "Passport",
                             "Action",
                           ].map((th) => (
                             <th
                               key={th}
-                              className="text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200"
+                              className={`text-left py-3 px-2 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200${th === "Action" ? " no-print" : ""}`}
                             >
                               {th}
                             </th>
@@ -229,7 +226,7 @@ export default function StudentsList() {
                             <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                               {student.campus?.name ?? "—"}
                             </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 whitespace-nowrap">
                               {student.registrationNumber ?? "—"}
                             </td>
                             <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
@@ -239,22 +236,10 @@ export default function StudentsList() {
                               {student.name ?? "—"}
                             </td>
                             <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {student.otherNames ?? "—"}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                               {student.gender ?? "—"}
                             </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 whitespace-nowrap">
                               {student.dateOfBirth ?? "—"}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {student.guardianName ?? "—"}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {student.guardianNumber ?? "—"}
-                            </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                              {student.lifestyle ?? "—"}
                             </td>
                             <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                               {student.class?.name ?? "—"}
@@ -262,9 +247,9 @@ export default function StudentsList() {
                             <td className="py-3 px-2 text-sm border-r border-gray-200">
                               <div className="flex flex-col items-center">
                                 <div className="rounded-full flex items-center justify-center w-10 h-10 bg-gray-100 border border-gray-200 overflow-hidden">
-                                  {student.passport ? (
+                                  {student.passportUrl ? (
                                     <img
-                                      src={student.passport}
+                                      src={getImageUrl(student.passportUrl) ?? ""}
                                       alt="passport"
                                       className="w-full h-full object-cover"
                                     />

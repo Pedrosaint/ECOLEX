@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
-import DotLoader from "../../../../../general/ui/dot-loader";
 
 // 🧩 Reusable Dropdown Component
 const Dropdown = ({
@@ -11,6 +10,7 @@ const Dropdown = ({
   onSelect,
   disabled,
   onResetDependents,
+  emptyMessage,
 }: {
   label: string;
   options: { value: string; label: string }[];
@@ -18,11 +18,14 @@ const Dropdown = ({
   onSelect: (val: string) => void;
   disabled?: boolean;
   onResetDependents?: () => void;
+  emptyMessage?: string;
 }) => {
   const [open, setOpen] = useState(false);
 
   const selectedLabel =
     options.find((opt) => opt.value === selectedValue)?.label || label;
+
+  const realOptions = options.slice(1);
 
   return (
     <div className="relative w-full">
@@ -47,21 +50,25 @@ const Dropdown = ({
       {/* Dropdown Menu */}
       {open && (
         <ul className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-md max-h-48 overflow-auto text-sm">
-          {options.slice(1).map((opt) => (
-            <li
-              key={opt.value}
-              onClick={() => {
-                onSelect(opt.value);
-                setOpen(false);
-                if (onResetDependents) onResetDependents(); // Reset dependent dropdowns
-              }}
-              className={`px-3 py-2 hover:bg-gray-100 cursor-pointer ${
-                opt.value === selectedValue ? "bg-gray-100 font-semibold" : ""
-              }`}
-            >
-              {opt.label}
-            </li>
-          ))}
+          {emptyMessage && realOptions.length === 0 ? (
+            <li className="px-3 py-3 text-gray-400 italic">{emptyMessage}</li>
+          ) : (
+            realOptions.map((opt) => (
+              <li
+                key={opt.value}
+                onClick={() => {
+                  onSelect(opt.value);
+                  setOpen(false);
+                  if (onResetDependents) onResetDependents();
+                }}
+                className={`px-3 py-2 hover:bg-gray-100 cursor-pointer ${
+                  opt.value === selectedValue ? "bg-gray-100 font-semibold" : ""
+                }`}
+              >
+                {opt.label}
+              </li>
+            ))
+          )}
         </ul>
       )}
     </div>
@@ -137,6 +144,7 @@ const FilterSection = ({
           onSelect={setClassId}
           onResetDependents={() => setGroupId("")}
           disabled={isClassLoading}
+          emptyMessage={campusId ? "No class created for this campus" : undefined}
         />
 
         {/* Group Dropdown */}
@@ -146,6 +154,7 @@ const FilterSection = ({
           selectedValue={groupId}
           onSelect={setGroupId}
           disabled={isGroupLoading}
+          emptyMessage={classId ? "No group created for this class" : undefined}
         />
 
         {/* Filter Button */}
@@ -153,13 +162,13 @@ const FilterSection = ({
           <button
             onClick={handleFilterClick}
             disabled={!campusId && !classId && !groupId}
-            className={`w-full px-6 py-3 flex items-center justify-center rounded transition-all duration-150 ${
+            className={`w-full px-6 py-3 flex items-center justify-center gap-2 rounded transition-all duration-150 ${
               !campusId && !classId && !groupId
                 ? "bg-gray-400 cursor-not-allowed text-white"
                 : "bg-[#8000BD] hover:bg-[#590085] text-white"
             }`}
           >
-            {isLoading ? <DotLoader /> : <Search className="h-4 w-4 mr-2" />}
+            <Search className="h-4 w-4" />
             FILTER
           </button>
         </div>

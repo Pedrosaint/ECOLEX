@@ -23,6 +23,7 @@ export interface Student {
   email: string;
   classGroupId: number | null;
   registrationNumber: string;
+  passportUrl?: string | null;
   createdAt: string;
   class?: Class;
   classGroup?: ClassGroup | null;
@@ -62,11 +63,12 @@ export interface Data {
   email: string;
   classGroupId: number | null;
   registrationNumber: string;
+  passportUrl?: string | null;
   createdAt: string;
   campus: Campus;
-  class?: Class; // Optional as it might be missing
-  classGroup?: ClassGroup | null; // Optional as it might be missing
-  academicSession?: AcademicSession | null; // Optional as it might be missing
+  class?: Class;
+  classGroup?: ClassGroup | null;
+  academicSession?: AcademicSession | null;
 }
 
 export interface Campus {

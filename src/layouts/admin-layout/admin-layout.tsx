@@ -1,7 +1,7 @@
 import { navLinks, studentNavLinks, staffNavLinks } from "../../utils/sidebar-link";
 import Sidebar from "../admin-layout/sidebar";
 import Header from "../admin-layout/header";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import LogoutModal from "../../domain/admin-domain/logout/modal/logout.modal";
 import { toast } from "sonner";
@@ -28,7 +28,7 @@ export default function DashboardLayout() {
      // await api.post("/logout");
 
      // redirect to login page
-     navigate("/auth/auth-layout/admin-login");
+     navigate("/");
    } catch (error) {
     toast.error("Failed to logout!");
      console.error("Logout failed:", error);
@@ -40,8 +40,12 @@ export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showSensitiveData, setShowSensitiveData] = useState(false);
 
-// Temporary dummy role
-  const userRole = "admin"; // change to "student" to test student sidebar
+  const { pathname } = useLocation();
+  const userRole = pathname.startsWith("/admin")
+    ? "admin"
+    : pathname.startsWith("/student")
+    ? "student"
+    : "staff";
 
   const linksToShow =
     userRole === "admin"

@@ -9,7 +9,6 @@ import { useGetClassesQuery, useGetClassGroupsQuery } from "../../../classes/api
 import FilterSection from "./filter-section";
 import UpdateSection from "./update-section";
 import StudentTable from "./student-table"
-import DotLoader from "../../../../../general/ui/dot-loader";
 import students from "../../../../../assets/image/emptystate_filter.png";
 
 const ChangeStudentModal = ({ onClose }: { onClose: () => void }) => {
@@ -92,8 +91,9 @@ const ChangeStudentModal = ({ onClose }: { onClose: () => void }) => {
             <p className="text-center text-gray-500 text-sm mb-9">Please select a campus, class, and group to view students.</p>
           </>
         ) : isLoading || isFetching ? (
-          <div className="text-center py-10 text-gray-500 flex justify-center">
-            <DotLoader />
+          <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
+            <div className="w-10 h-10 border-4 border-[#8000BD] border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm font-medium text-gray-500">Fetching students...</p>
           </div>
         ) : (
           <>

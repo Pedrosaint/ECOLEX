@@ -25,8 +25,8 @@ export default function ViewSubject() {
       await deleteSubject({ id: deleteTarget.id }).unwrap();
       toast.success("Subject deleted successfully");
       setDeleteTarget(null);
-    } catch {
-      toast.error("Failed to delete subject");
+    } catch (error) {
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to delete subject");
     }
   };
 

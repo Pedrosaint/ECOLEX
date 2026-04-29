@@ -784,7 +784,7 @@ export default function CustomizeSchoolName() {
       navigate("/auth/congratulation", { replace: true });
     } catch (error) {
       console.error("Failed to setup classes:", error);
-      toast.error("Failed to setup classes");
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to setup classes");
     } finally {
       setLoading(false);
     }

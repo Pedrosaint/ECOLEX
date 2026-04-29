@@ -1,50 +1,47 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { superAdminSchema } from "../auth-schema";
+import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { useAdminLoginMutation } from "../api/auth-api";
+import { useStudentLoginMutation } from "../api/auth-api";
 import { toast } from "sonner";
+import { useState } from "react";
+
+const studentLoginSchema = Yup.object().shape({
+  registrationNumber: Yup.string().required("Registration number is required"),
+});
+
+interface StudentLoginForm {
+  registrationNumber: string;
+}
 
 export const StudentLogin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [adminLogin] = useAdminLoginMutation(); //change later
+  const [studentLogin] = useStudentLoginMutation();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<StudentLoginForm>({
     mode: "onChange",
-    resolver: yupResolver(superAdminSchema()),
+    resolver: yupResolver(studentLoginSchema),
   });
 
-  interface SuperAdminLogin {
-    email: string;
-    password: string;
-  }
-
-  const onSubmit = async (data: SuperAdminLogin) => {
-    console.log("Form submission started with data:", data);
+  const onSubmit = async (data: StudentLoginForm) => {
     setIsLoading(true);
-
     try {
-      const formData = {
-        ...data,
-      };
-      const response = await adminLogin(formData).unwrap();
-      console.log("Response:", response);
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(null);
-        }, 1000);
-      });
-      navigate("/auth/auth-layout/school-setup");
-      toast.success("Super admin created successfully");
+      const response = await studentLogin(data).unwrap();
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("studentId", String(response.data.student.id));
+      localStorage.setItem("schoolId", String(response.data.student.school.id));
+      localStorage.setItem("campusId", String(response.data.student.campus.id));
+      localStorage.setItem("classId", String(response.data.student.class.id));
+      toast.success("Login successful");
+      navigate("/student/dashboard", { replace: true });
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Failed to create admin");
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to login");
     } finally {
       setIsLoading(false);
     }
@@ -55,60 +52,52 @@ export const StudentLogin = () => {
       <div className="md:pt-35 pt-15">
         <h2 className="text-3xl font-bold text-gray-50">Student</h2>
         <p className="text-[12px] text-[#FFFFFF]">
-          Login so you can access the admin account.
+          Login so you can access the student account.
         </p>
       </div>
 
       <div className="mt-6">
-        <form
-          className="space-y-3"
-          onSubmit={handleSubmit(onSubmit)}
-          noValidate
-        >
-          {/* Email */}
-          <div className="">
-            <div className="input-group relative my-4">
-              <input
-                {...register("email")}
-                type="text"
-                name="registrationNumber"
-                id="registrationNumber"
-                required
-                className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1  peer ${
-                  errors.email
-                    ? "border-[#FF8682] focus:ring-[#FF8682]"
-                    : "border-gray-300 focus:ring-gray-200"
-                }`}
-                placeholder=" "
-              />
-              <label
-                htmlFor="registrationNumber"
-                className="absolute left-3 top-2 text-white text-sm transition-all 
-                      peer-placeholder-shown:text-base 
-                      peer-placeholder-shown:text-gray-300 
-                      peer-placeholder-shown:top-2 
-                      peer-focus:top-[-12px] 
-                      peer-focus:text-sm 
-                      peer-focus:text-gray-100 
-                        peer-not-placeholder-shown:top-[-11px]
-                         peer-not-placeholder-shown:bg-black/100
-                         peer-not-placeholder-shown:px-2
-                      peer-focus:bg-black/90 
-                      peer-focus:px-2
-                      peer-focus:backdrop-blur-4xl"
-              >
-                {errors.email ? (
-                  <span className="text-[#FF8682]">Registration Number</span>
-                ) : (
-                  <span className="text-gray-400">Registration Number</span>
-                )}
-              </label>
-              {errors.email && (
-                <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
-                  {errors.email.message}
-                </p>
+        <form className="space-y-3" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <div className="input-group relative my-4">
+            <input
+              {...register("registrationNumber")}
+              type="text"
+              id="registrationNumber"
+              required
+              className={`w-full px-3 py-2 text-white border rounded-sm focus:outline-none focus:ring-1 peer ${
+                errors.registrationNumber
+                  ? "border-[#FF8682] focus:ring-[#FF8682]"
+                  : "border-gray-300 focus:ring-gray-200"
+              }`}
+              placeholder=" "
+            />
+            <label
+              htmlFor="registrationNumber"
+              className="absolute left-3 top-2 text-white text-sm transition-all
+                    peer-placeholder-shown:text-base
+                    peer-placeholder-shown:text-gray-300
+                    peer-placeholder-shown:top-2
+                    peer-focus:top-[-12px]
+                    peer-focus:text-sm
+                    peer-focus:text-gray-100
+                    peer-not-placeholder-shown:top-[-11px]
+                    peer-not-placeholder-shown:bg-black/100
+                    peer-not-placeholder-shown:px-2
+                    peer-focus:bg-black/90
+                    peer-focus:px-2
+                    peer-focus:backdrop-blur-4xl"
+            >
+              {errors.registrationNumber ? (
+                <span className="text-[#FF8682]">Registration Number</span>
+              ) : (
+                <span className="text-gray-400">Registration Number</span>
               )}
-            </div>
+            </label>
+            {errors.registrationNumber && (
+              <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
+                {errors.registrationNumber.message}
+              </p>
+            )}
           </div>
 
           <div>

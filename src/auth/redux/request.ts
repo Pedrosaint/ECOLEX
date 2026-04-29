@@ -45,6 +45,14 @@ export interface Class {
   name: string;
 }
 
+export interface TeacherLoginRequest {
+  registrationNumber: string;
+}
+
+export interface StudentLoginRequest {
+  registrationNumber: string;
+}
+
 export interface CCARequest {
   assessments: Assessment[];
   exam: Exam;

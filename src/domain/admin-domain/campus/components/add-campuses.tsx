@@ -137,7 +137,7 @@ export default function AddCampuses() {
           <button
             type="submit"
             disabled={!isFormComplete || isLoading}
-            className={`text-white w-full px-4 py-4 rounded text-lg font-semibold transition-colors duration-200 ${
+            className={`text-white w-full px-4 py-2 rounded text-lg font-semibold transition-colors duration-200 ${
               isFormComplete && !isLoading
                 ? "bg-[#8000BD] cursor-pointer"
                 : "bg-[#D9D9D9] cursor-not-allowed"

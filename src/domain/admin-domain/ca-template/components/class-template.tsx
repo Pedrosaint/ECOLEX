@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Trash2, Plus, ChevronDown, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { useSetClassCATemplateMutation } from "../api/ca-template.api";
+import { useGetCATemplateQuery, useSetClassCATemplateMutation } from "../api/ca-template.api";
 import { useGetClassesQuery } from "../../classes/api/class-api";
 import type { CATemplateItem } from "../request/ca-template.request";
+import { skipToken } from "@reduxjs/toolkit/query";
 import ConfirmCancelModal from "../../../../general/common/confirm-cancel.modal";
 
 const EMPTY_ROW: CATemplateItem = { name: "", maxScore: 10, isExam: false };
@@ -17,9 +18,32 @@ export default function ClassTemplate() {
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const { data: classesData, isLoading: classesLoading } = useGetClassesQuery();
+  const { data: templateData, isLoading: isLoadingTemplate } = useGetCATemplateQuery(
+    selectedClassId ? { classId: selectedClassId } : skipToken
+  );
   const [setClassCATemplate, { isLoading }] = useSetClassCATemplateMutation();
 
   const selectedClass = classesData?.classes.find((c) => c.id === selectedClassId);
+
+  useEffect(() => {
+    if (!templateData) return;
+    const { classSpecific } = templateData.data;
+
+    if (classSpecific && classSpecific.templates.length > 0) {
+      const loaded: CATemplateItem[] = classSpecific.templates.map((t) => ({
+        name: t.name,
+        maxScore: t.maxScore,
+        isExam: t.isExam,
+      }));
+      setSavedRows(loaded);
+      setRows(loaded);
+      setIsEditing(false);
+    } else {
+      setSavedRows(null);
+      setRows([{ ...EMPTY_ROW }]);
+      setIsEditing(true);
+    }
+  }, [templateData]);
 
   const handleSelectClass = (id: number) => {
     setSelectedClassId(id);
@@ -31,6 +55,10 @@ export default function ClassTemplate() {
 
   const updateRow = (index: number, field: keyof CATemplateItem, value: string | number | boolean) => {
     setRows((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
+  };
+
+  const toggleExam = (index: number) => {
+    setRows((prev) => prev.map((row, i) => ({ ...row, isExam: i === index ? !row.isExam : false })));
   };
 
   const addRow = () => setRows((prev) => [...prev, { ...EMPTY_ROW }]);
@@ -48,8 +76,8 @@ export default function ClassTemplate() {
       toast.success(savedRows ? "Class CA template updated" : "Class CA template set successfully");
       setSavedRows(rows);
       setIsEditing(false);
-    } catch {
-      toast.error("Failed to save class CA template");
+    } catch (error) {
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to save class CA template");
     }
   };
 
@@ -122,17 +150,53 @@ export default function ClassTemplate() {
           </div>
         </div>
 
+        {selectedClassId && isLoadingTemplate && (
+          <div className="overflow-hidden rounded-xl border border-gray-100 mt-2">
+            <div className="grid grid-cols-3 bg-gray-50 px-4 py-3 gap-4">
+              {[1, 2, 3].map((i) => <div key={i} className="h-3 bg-gray-200 rounded animate-pulse" />)}
+            </div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="grid grid-cols-3 px-4 py-4 gap-4 border-t border-gray-100">
+                <div className="h-3 bg-gray-100 rounded animate-pulse" />
+                <div className="h-3 w-12 mx-auto bg-gray-100 rounded animate-pulse" />
+                <div className="h-5 w-10 mx-auto bg-gray-100 rounded-full animate-pulse" />
+              </div>
+            ))}
+          </div>
+        )}
+
         {!selectedClassId && (
-          <p className="text-sm text-gray-400 text-center py-8">Select a class above to set its CA template</p>
+          <div className="flex flex-col items-center justify-center py-14 px-4">
+            <div className="relative mb-5">
+              <div className="w-20 h-20 rounded-2xl bg-purple-50 border-2 border-dashed border-purple-200 flex items-center justify-center">
+                <svg className="w-9 h-9 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="9" y1="9" x2="15" y2="9" />
+                  <line x1="9" y1="12" x2="15" y2="12" />
+                  <line x1="9" y1="15" x2="12" y2="15" />
+                </svg>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#8000BD]/10 border border-[#8000BD]/20 flex items-center justify-center">
+                <svg className="w-3 h-3 text-[#8000BD]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                </svg>
+              </div>
+            </div>
+            <h4 className="text-sm font-semibold text-gray-700 mb-1">No class selected</h4>
+            <p className="text-xs text-gray-400 text-center max-w-[210px] leading-relaxed">
+              Choose a class from the dropdown above to set up its CA template
+            </p>
+          </div>
         )}
 
         {/* Read-only summary after save */}
-        {selectedClassId && savedRows && !isEditing && (
+        {selectedClassId && !isLoadingTemplate && savedRows && !isEditing && (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
                 <tr>
-                  {["CA Name", "Max Score", "Is Exam?"].map((h) => (
+                  {["Assessment Name", "Max Score", "Is Exam?"].map((h) => (
                     <th key={h} className="text-center py-3 px-4 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r last:border-r-0 border-gray-200">
                       {h}
                     </th>
@@ -157,20 +221,34 @@ export default function ClassTemplate() {
         )}
 
         {/* Form */}
-        {selectedClassId && isEditing && (
+        {selectedClassId && !isLoadingTemplate && isEditing && (
           <>
-            <div className="hidden md:grid grid-cols-[1fr_140px_120px_40px] gap-3 px-2 mb-2">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">CA Name</span>
+            {/* Info note */}
+            <div className="mb-4 flex items-start gap-2 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2.5">
+              <span className="text-purple-400 mt-0.5 flex-shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </span>
+              <p className="text-xs text-purple-700 leading-relaxed">
+                Only <span className="font-semibold">one entry</span> can be marked as <span className="font-semibold">Final Exam</span>. All other entries are treated as <span className="font-semibold">Continuous Assessment (CA)</span>. Toggling one as Final Exam will automatically disable the others.
+              </p>
+            </div>
+
+            <div className="hidden md:grid grid-cols-[1fr_140px_160px_40px] gap-3 px-2 mb-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Assessment Name</span>
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Max Score</span>
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Is Exam?</span>
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Type</span>
               <span />
             </div>
 
             <div className="space-y-3">
-              {rows.map((row, index) => (
+              {rows.map((row, index) => {
+                const examExists = rows.some((r, i) => r.isExam && i !== index);
+                return (
                 <div
                   key={index}
-                  className="grid grid-cols-1 md:grid-cols-[1fr_140px_120px_40px] gap-3 items-center bg-gray-50 rounded-xl p-3 md:p-2 md:bg-transparent"
+                  className="grid grid-cols-1 md:grid-cols-[1fr_140px_160px_40px] gap-3 items-center bg-gray-50 rounded-xl p-3 md:p-2 md:bg-transparent"
                 >
                   <input
                     type="text"
@@ -187,14 +265,16 @@ export default function ClassTemplate() {
                     placeholder="e.g. 20"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD]"
                   />
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <label className={`flex items-center gap-2 select-none ${examExists ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}>
                     <div
-                      onClick={() => updateRow(index, "isExam", !row.isExam)}
-                      className={`w-11 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0 ${row.isExam ? "bg-[#8000BD]" : "bg-gray-300"}`}
+                      onClick={() => !examExists && toggleExam(index)}
+                      className={`w-11 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0 ${row.isExam ? "bg-[#8000BD]" : "bg-gray-300"} ${examExists ? "pointer-events-none" : ""}`}
                     >
                       <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${row.isExam ? "translate-x-5" : "translate-x-0"}`} />
                     </div>
-                    <span className="text-sm text-gray-600">{row.isExam ? "Yes" : "No"}</span>
+                    <span className={`text-xs font-medium ${row.isExam ? "text-[#8000BD]" : "text-gray-500"}`}>
+                      {row.isExam ? "Final Exam" : "Continuous Assessment"}
+                    </span>
                   </label>
                   <button
                     onClick={() => removeRow(index)}
@@ -204,7 +284,8 @@ export default function ClassTemplate() {
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             <button

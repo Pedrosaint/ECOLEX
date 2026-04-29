@@ -54,7 +54,7 @@ export function TableSkeleton() {
         >
           <div className="w-48 h-6 bg-gray-200 rounded mb-4 animate-pulse"></div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white border border-gray-200 overflow-hidden">
             {/* Table Header Skeleton */}
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">

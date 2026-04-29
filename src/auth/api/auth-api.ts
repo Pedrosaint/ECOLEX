@@ -6,6 +6,8 @@ import type {
   CCAResponse,
   ClassSetupResponse,
   SchoolSetupResponse,
+  StudentLoginResponse,
+  TeacherLoginResponse,
   TokenResponse,
 } from "../redux/response";
 import type {
@@ -14,6 +16,8 @@ import type {
   CampusSetupRequest,
   CCARequest,
   ClassSetupRequest,
+  StudentLoginRequest,
+  TeacherLoginRequest,
   TokenRequest,
 } from "../redux/request";
 import { BASE_URL } from "../../redux/apiConfig";
@@ -100,6 +104,22 @@ export const authApi = createApi({
       }),
     }),
 
+    teacherLogin: builder.mutation<TeacherLoginResponse, TeacherLoginRequest>({
+      query: (credentials) => ({
+        url: "teacher/login",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+
+    studentLogin: builder.mutation<StudentLoginResponse, StudentLoginRequest>({
+      query: (credentials) => ({
+        url: "student/login",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+
   }),
 });
 
@@ -111,4 +131,6 @@ export const {
   useSetupCampusMutation,
   useClassSetupMutation,
   useCcaMutation,
+  useTeacherLoginMutation,
+  useStudentLoginMutation,
 } = authApi;

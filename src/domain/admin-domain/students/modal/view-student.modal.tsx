@@ -4,6 +4,7 @@ import { useGetStudentQuery } from "../api/student.api";
 import { useGetClassesQuery } from "../../classes/api/class-api";
 import type { Class } from "../../classes/response/get-class.response";
 import LoadingBall from "../../staff/components/loading-ball";
+import { getImageUrl } from "../../../../utils/get-image-url";
 
 
 interface ViewStudentFormModalProps {
@@ -17,8 +18,6 @@ export default function ViewStudentFormModal({
   onEdit,
   studentId,
 }: ViewStudentFormModalProps) {
-  // const [selectedImage] = useState<string | null>(null);
-
   const { data, isLoading, isError } = useGetStudentQuery({ id: studentId });
   const { data: classesData } = useGetClassesQuery();
 
@@ -88,25 +87,24 @@ export default function ViewStudentFormModal({
           </div>
 
           {/* Profile Section */}
-          <div className="flexjustify-end md:items-center gap-6 mb-8">
-            {/* <div>
-              <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                {selectedImage ? (
+          <div className="flex items-center gap-6 mb-8">
+            {/* Passport Photo */}
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-24 h-24 rounded-md border border-gray-200 bg-gray-100 overflow-hidden flex items-center justify-center">
+                {student.passportUrl ? (
                   <img
-                    src={selectedImage}
+                    src={getImageUrl(student.passportUrl) ?? ""}
                     alt="Passport"
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="text-gray-500 text-sm">No image</div>
+                  <span className="text-gray-400 text-xs">No photo</span>
                 )}
               </div>
-              <div className="flex justify-center">
-                <h1>Passport</h1>
-              </div>
-            </div> */}
+              <span className="text-xs text-gray-500">Passport</span>
+            </div>
 
-            <div className="flex flex-col justify-end md:flex-row  md:items-center gap-2 mt-4">
+            <div className="flex flex-col justify-end md:flex-row md:items-center gap-2 mt-4 ml-auto">
               <button
                 onClick={onEdit}
                 className="ml-auto inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none bg-gray-200 text-black cursor-pointer h-9 px-4 py-2"
@@ -118,7 +116,7 @@ export default function ViewStudentFormModal({
           </div>
 
           {/* Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-5">
             <Detail label="Reg. No" value={student.registrationNumber} />
             <Detail label="Student Name" value={student.name} />
             <Detail label="Surname" value={student.surname} />
@@ -148,7 +146,7 @@ export default function ViewStudentFormModal({
             <Detail label="Lifestyle" value={student.lifestyle} />
             <Detail
               label="Session"
-              value={student.academicSessionId}
+              value={student.academicSession?.name}
             />
           </div>
         </div>

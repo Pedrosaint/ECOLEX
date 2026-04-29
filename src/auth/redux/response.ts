@@ -124,3 +124,42 @@ export interface CCAResponse {
   message: string;
   step: Step;
 }
+
+export interface TeacherLoginResponse {
+  success: boolean;
+  message: string;
+  data: TeacherLoginData;
+}
+
+export interface TeacherLoginData {
+  token: string;
+  teacher: Teacher;
+}
+
+export interface Teacher {
+  id: number;
+  name: string;
+  registrationNumber: string;
+  school: { id: number; name: string };
+  campus: { id: number; name: string } | null;
+}
+
+export interface StudentLoginResponse {
+  success: boolean;
+  message: string;
+  data: StudentLoginData;
+}
+
+export interface StudentLoginData {
+  token: string;
+  student: Student;
+}
+
+export interface Student {
+  id: number;
+  name: string;
+  registrationNumber: string;
+  school: { id: number; name: string };
+  campus: { id: number; name: string };
+  class: { id: number; name: string };
+}

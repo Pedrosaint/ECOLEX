@@ -20,11 +20,13 @@ export interface Student {
   lifestyle: string
   academicSessionId: number
   email: string
-  classGroupId: number | null;
+  classGroupId: number | null
   registrationNumber: string
+  passportUrl: string | null
   createdAt: string
   class?: Class
   campus?: Campus
+  academicSession?: AcademicSession
 }
 
 export interface Class {
@@ -32,10 +34,16 @@ export interface Class {
   schoolId: number
   campusId: number
   name: string
-  customName: string
-  staffId: number
+  customName: string | null
+  staffId: number | null
   createdAt: string
   classGroups: ClassGroup[]
+}
+
+export interface AcademicSession {
+  id: number
+  name: string
+  isActive: boolean
 }
 
 export interface Campus {

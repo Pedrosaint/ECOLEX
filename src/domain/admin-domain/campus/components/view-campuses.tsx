@@ -42,7 +42,7 @@ export default function ViewCampuses() {
           <div className="flex justify-end mt-10">
             <button
               onClick={handlePrint}
-              className="bg-[#4B0082] text-white cursor-pointer px-2 py-2 rounded-sm flex items-center space-x-2 text-sm font-semibold transition-colors"
+              className="bg-[#4B0082] text-white cursor-pointer px-2 py-2  flex items-center space-x-2 text-sm font-semibold transition-colors"
             >
               <Printer size={20} />
               <span>PRINT RECORD</span>

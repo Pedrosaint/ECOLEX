@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../../../../redux/apiConfig";
 import type { ChangeStudentClassResponse, CreateStudentResponse, EditStudentResponse, GetStudentResponse } from "../response/students.response";
-import type { ChangeStudentClassRequest, CreateStudentRequest, EditStudentRequest } from "../request/students.request";
+import type { ChangeStudentClassRequest } from "../request/students.request";
 import type { GetStudentsResponse } from "../response/get-student-response";
 
 
@@ -19,14 +19,11 @@ export const studentApi = createApi({
   }),
   tagTypes: ["Student"],
   endpoints: (builder) => ({
-    createStudent: builder.mutation<
-      CreateStudentResponse,
-      CreateStudentRequest
-    >({
-      query: (credentials) => ({
+    createStudent: builder.mutation<CreateStudentResponse, FormData>({
+      query: (formData) => ({
         url: "admin/student/create",
         method: "POST",
-        body: credentials,
+        body: formData,
       }),
       invalidatesTags: ["Student"],
     }),
@@ -80,10 +77,7 @@ export const studentApi = createApi({
     //   }),
     // }),
 
-    editStudent: builder.mutation<
-      EditStudentResponse,
-      { id: number; payload: EditStudentRequest }
-    >({
+    editStudent: builder.mutation<EditStudentResponse, { id: number; payload: FormData }>({
       query: ({ id, payload }) => ({
         url: `admin/student/${id}`,
         method: "PUT",

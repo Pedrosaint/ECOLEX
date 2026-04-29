@@ -1,15 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Trash2, Plus, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { useSetDefaultCATemplateMutation } from "../api/ca-template.api";
+import { useGetCATemplateQuery, useSetDefaultCATemplateMutation } from "../api/ca-template.api";
 import type { CATemplateItem } from "../request/ca-template.request";
 import ConfirmCancelModal from "../../../../general/common/confirm-cancel.modal";
 
 const DEFAULT_ROWS: CATemplateItem[] = [
-  { name: "CA1", maxScore: 10, isExam: false },
-  { name: "CA2", maxScore: 10, isExam: false },
-  { name: "CA3", maxScore: 10, isExam: false },
-  { name: "Final Exam", maxScore: 100, isExam: true },
+  { name: "", maxScore: 10, isExam: false },
 ];
 
 export default function DefaultTemplate() {
@@ -18,10 +15,29 @@ export default function DefaultTemplate() {
   const [isEditing, setIsEditing] = useState(true);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
+  const { data: templateData, isLoading: isLoadingTemplate } = useGetCATemplateQuery({});
   const [setDefaultCATemplate, { isLoading }] = useSetDefaultCATemplateMutation();
+
+  useEffect(() => {
+    const schoolWide = templateData?.data?.schoolWide;
+    if (schoolWide && schoolWide.length > 0) {
+      const loaded: CATemplateItem[] = schoolWide.map((t) => ({
+        name: t.name,
+        maxScore: t.maxScore,
+        isExam: t.isExam,
+      }));
+      setSavedRows(loaded);
+      setRows(loaded);
+      setIsEditing(false);
+    }
+  }, [templateData]);
 
   const updateRow = (index: number, field: keyof CATemplateItem, value: string | number | boolean) => {
     setRows((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
+  };
+
+  const toggleExam = (index: number) => {
+    setRows((prev) => prev.map((row, i) => ({ ...row, isExam: i === index ? !row.isExam : false })));
   };
 
   const addRow = () => setRows((prev) => [...prev, { name: "", maxScore: 10, isExam: false }]);
@@ -38,8 +54,8 @@ export default function DefaultTemplate() {
       toast.success(savedRows ? "Default CA template updated" : "Default CA template set successfully");
       setSavedRows(rows);
       setIsEditing(false);
-    } catch {
-      toast.error("Failed to save default CA template");
+    } catch (error) {
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to save default CA template");
     }
   };
 
@@ -47,6 +63,27 @@ export default function DefaultTemplate() {
     setRows(savedRows ?? DEFAULT_ROWS);
     setIsEditing(savedRows === null);
   };
+
+  if (isLoadingTemplate) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div className="h-4 w-48 bg-gray-200 rounded animate-pulse mb-2" />
+        <div className="h-3 w-72 bg-gray-100 rounded animate-pulse mb-6" />
+        <div className="overflow-hidden rounded-xl border border-gray-100">
+          <div className="grid grid-cols-3 bg-gray-50 px-4 py-3 gap-4">
+            {[1, 2, 3].map((i) => <div key={i} className="h-3 bg-gray-200 rounded animate-pulse" />)}
+          </div>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="grid grid-cols-3 px-4 py-4 gap-4 border-t border-gray-100">
+              <div className="h-3 bg-gray-100 rounded animate-pulse" />
+              <div className="h-3 w-12 mx-auto bg-gray-100 rounded animate-pulse" />
+              <div className="h-5 w-10 mx-auto bg-gray-100 rounded-full animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -83,7 +120,7 @@ export default function DefaultTemplate() {
             <table className="w-full border-collapse">
               <thead className="bg-[#EDF9FD] border-b border-[#D1D1D1]">
                 <tr>
-                  {["CA Name", "Max Score", "Is Exam?"].map((h) => (
+                  {["Assessment Name", "Max Score", "Is Exam?"].map((h) => (
                     <th key={h} className="text-center py-3 px-4 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r last:border-r-0 border-gray-200">
                       {h}
                     </th>
@@ -110,18 +147,32 @@ export default function DefaultTemplate() {
         {/* Form */}
         {isEditing && (
           <>
-            <div className="hidden md:grid grid-cols-[1fr_140px_120px_40px] gap-3 px-2 mb-2">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">CA Name</span>
+            {/* Info note */}
+            <div className="mb-4 flex items-start gap-2 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2.5">
+              <span className="text-purple-400 mt-0.5 flex-shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </span>
+              <p className="text-xs text-purple-700 leading-relaxed">
+                Only <span className="font-semibold">one entry</span> can be marked as <span className="font-semibold">Final Exam</span>. All other entries are treated as <span className="font-semibold">Continuous Assessment (CA)</span>. Toggling one as Final Exam will automatically disable the others.
+              </p>
+            </div>
+
+            <div className="hidden md:grid grid-cols-[1fr_140px_160px_40px] gap-3 px-2 mb-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Assessment Name</span>
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Max Score</span>
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Is Exam?</span>
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Type</span>
               <span />
             </div>
 
             <div className="space-y-3">
-              {rows.map((row, index) => (
+              {rows.map((row, index) => {
+                const examExists = rows.some((r, i) => r.isExam && i !== index);
+                return (
                 <div
                   key={index}
-                  className="grid grid-cols-1 md:grid-cols-[1fr_140px_120px_40px] gap-3 items-center bg-gray-50 rounded-xl p-3 md:p-2 md:bg-transparent"
+                  className="grid grid-cols-1 md:grid-cols-[1fr_140px_160px_40px] gap-3 items-center bg-gray-50 rounded-xl p-3 md:p-2 md:bg-transparent"
                 >
                   <input
                     type="text"
@@ -138,14 +189,16 @@ export default function DefaultTemplate() {
                     placeholder="e.g. 10"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD]"
                   />
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <label className={`flex items-center gap-2 select-none ${examExists ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}>
                     <div
-                      onClick={() => updateRow(index, "isExam", !row.isExam)}
-                      className={`w-11 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0 ${row.isExam ? "bg-[#8000BD]" : "bg-gray-300"}`}
+                      onClick={() => !examExists && toggleExam(index)}
+                      className={`w-11 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0 ${row.isExam ? "bg-[#8000BD]" : "bg-gray-300"} ${examExists ? "pointer-events-none" : ""}`}
                     >
                       <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${row.isExam ? "translate-x-5" : "translate-x-0"}`} />
                     </div>
-                    <span className="text-sm text-gray-600">{row.isExam ? "Yes" : "No"}</span>
+                    <span className={`text-xs font-medium ${row.isExam ? "text-[#8000BD]" : "text-gray-500"}`}>
+                      {row.isExam ? "Final Exam" : "Continuous Assessment"}
+                    </span>
                   </label>
                   <button
                     onClick={() => removeRow(index)}
@@ -155,7 +208,8 @@ export default function DefaultTemplate() {
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             <button

@@ -6,40 +6,11 @@ import { useGetCampusQuery } from "../../campus/api/campus.api";
 import { toast } from "sonner";
 import { ChevronDown } from "lucide-react";
 
-// ✅ Common Subjects in Nigeria
-const subjectsInNigeria = [
-  "Mathematics",
-  "English Language",
-  "Biology",
-  "Chemistry",
-  "Physics",
-  "Civic Education",
-  "Economics",
-  "Geography",
-  "Government",
-  "Agricultural Science",
-  "Commerce",
-  "Accounting",
-  "Literature in English",
-  "Christian Religious Studies",
-  "Islamic Religious Studies",
-  "History",
-  "Computer Studies",
-  "Fine Art",
-  "Home Economics",
-  "Technical Drawing",
-  "Further Mathematics",
-  "Physical and Health Education",
-  "Music",
-  "French",
-  "Yoruba",
-  "Igbo",
-  "Hausa",
-];
+import { NIGERIA_SUBJECTS } from "../data/nigeria-subjects";
 
 export default function AddSubject() {
   const [subject, setSubject] = useState("");
-  const [filteredSubjects, setFilteredSubjects] = useState(subjectsInNigeria);
+  const [subjectSearch, setSubjectSearch] = useState("");
   const [isSubjectDropdownOpen, setIsSubjectDropdownOpen] = useState(false);
   const [campusId, setCampusId] = useState("");
   const [code, setCode] = useState("");
@@ -59,16 +30,6 @@ export default function AddSubject() {
     }
   }, [isSuccess]);
 
-  // Filter subjects dynamically as user types
-  useEffect(() => {
-    const query = subject.toLowerCase();
-    const filtered = subjectsInNigeria.filter((s) =>
-      s.toLowerCase().startsWith(query)
-    );
-    setFilteredSubjects(filtered);
-  }, [subject]);
-
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -76,6 +37,7 @@ export default function AddSubject() {
         !subjectDropdownRef.current.contains(event.target as Node)
       ) {
         setIsSubjectDropdownOpen(false);
+        setSubjectSearch("");
       }
     };
 
@@ -84,6 +46,10 @@ export default function AddSubject() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const filteredSubjects = NIGERIA_SUBJECTS.filter((s) =>
+    s.toLowerCase().includes(subjectSearch.toLowerCase())
+  );
 
   const isFormComplete = subject.trim() !== "";
 
@@ -96,6 +62,7 @@ export default function AddSubject() {
       };
       await createSubject(payload).unwrap();
       setSubject("");
+      setSubjectSearch("");
       setCampusId("");
       setCode("");
     } catch (error: any) {
@@ -112,7 +79,7 @@ export default function AddSubject() {
       className="w-full border border-gray-300 rounded-lg p-6 bg-white shadow-md"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-end">
-        {/* Subject Dropdown with Filter */}
+        {/* Subject Dropdown */}
         <div className="flex flex-col relative" ref={subjectDropdownRef}>
           <div className="flex items-center gap-1 mb-1">
             <label className="text-sm font-bold text-[#120D1C] font-poppins">
@@ -121,38 +88,82 @@ export default function AddSubject() {
             <span className="text-red-400">*</span>
           </div>
 
-          <input
-            value={subject}
-            placeholder="Type to search or add new..."
-            onChange={(e) => {
-              setSubject(e.target.value);
-              setIsSubjectDropdownOpen(true);
+          <button
+            type="button"
+            onClick={() => {
+              setIsSubjectDropdownOpen((v) => {
+                if (v) setSubjectSearch("");
+                return !v;
+              });
+              setIsCampusOpen(false);
             }}
-            onFocus={() => setIsSubjectDropdownOpen(true)}
-            className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm focus:outline-none"
-          />
+            className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm text-left flex items-center justify-between focus:outline-none"
+          >
+            <span className={subject ? "text-gray-800 truncate max-w-[85%]" : "text-gray-400"}>
+              {subject || "Select Subject"}
+            </span>
+            <ChevronDown
+              size={16}
+              className={`flex-shrink-0 transition-transform ${isSubjectDropdownOpen ? "rotate-180" : ""}`}
+            />
+          </button>
 
           <AnimatePresence>
-            {isSubjectDropdownOpen && filteredSubjects.length > 0 && (
+            {isSubjectDropdownOpen && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute z-10 w-full mt-22 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto"
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.15 }}
+                className="absolute z-20 w-full top-full mt-1 bg-white border border-gray-300 rounded shadow-lg"
               >
-                {filteredSubjects.map((subj, index) => (
-                  <div
-                    key={index}
-                    onClick={() => {
-                      setSubject(subj);
-                      setIsSubjectDropdownOpen(false);
-                    }}
-                    className="px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white text-sm"
-                  >
-                    {subj}
-                  </div>
-                ))}
+                {/* Search bar */}
+                <div className="p-2 border-b border-gray-200">
+                  <input
+                    type="text"
+                    value={subjectSearch}
+                    onChange={(e) => setSubjectSearch(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    placeholder="Search subjects..."
+                    className="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none"
+                    autoFocus
+                  />
+                </div>
+
+                <div className="max-h-60 overflow-auto">
+                  {filteredSubjects.length === 0 ? (
+                    subjectSearch.trim() ? (
+                      <div
+                        onClick={() => {
+                          setSubject(subjectSearch.trim());
+                          setIsSubjectDropdownOpen(false);
+                          setSubjectSearch("");
+                        }}
+                        className="px-3 py-2 cursor-pointer text-sm text-[#8000BD] hover:bg-purple-50"
+                      >
+                        Use &quot;{subjectSearch.trim()}&quot; as subject name
+                      </div>
+                    ) : (
+                      <p className="px-3 py-2 text-sm text-gray-400">No subjects found</p>
+                    )
+                  ) : (
+                    filteredSubjects.map((subj, index) => (
+                      <div
+                        key={index}
+                        onClick={() => {
+                          setSubject(subj);
+                          setIsSubjectDropdownOpen(false);
+                          setSubjectSearch("");
+                        }}
+                        className={`px-3 py-2 cursor-pointer text-sm hover:bg-[#6a00a1] hover:text-white ${
+                          subject === subj ? "bg-purple-50 text-[#8000BD] font-medium" : "text-gray-700"
+                        }`}
+                      >
+                        {subj}
+                      </div>
+                    ))
+                  )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -185,7 +196,7 @@ export default function AddSubject() {
           </button>
 
           {isCampusOpen && (
-            <div className="absolute z-10 w-full mt-22 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+            <div className="absolute z-10 w-full top-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
               <div
                 onClick={() => {
                   setCampusId("");

@@ -306,7 +306,7 @@ export const AdminLogin = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Failed to login");
+      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to login");
     } finally {
       setIsLoading(false);
     }

@@ -12,3 +12,17 @@ export interface SetCATemplateResponse {
   data: CATemplateData[];
 }
 
+export interface ClassSpecificTemplate {
+  classId: number;
+  className: string;
+  templates: CATemplateData[];
+}
+
+export interface GetCATemplateResponse {
+  success: boolean;
+  data: {
+    schoolWide: CATemplateData[];
+    classSpecific: ClassSpecificTemplate | null;
+  };
+}
+
