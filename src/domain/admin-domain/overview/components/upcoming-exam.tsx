@@ -1,27 +1,71 @@
+import { useState } from "react";
+import { Plus } from "lucide-react";
 import { CalendarClock } from "lucide-react";
+import type { UpcomingExam } from "../api/admin-overview.api";
+import UpcomingExamsModal from "../modal/upcoming-exam.modal";
 
-const UpcomingExams = () => {
+interface Props {
+  exams: UpcomingExam[];
+  isLoading?: boolean;
+}
+
+const UpcomingExams = ({ exams, isLoading }: Props) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div>
-      <h2 className="text-lg font-semibold text-gray-900 mb-2">
-        Upcoming Exams
-      </h2>
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-lg font-semibold text-gray-900">Upcoming Exams</h2>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold text-white bg-[#8000BD] hover:bg-[#640094] rounded-lg transition-colors cursor-pointer"
+        >
+          <Plus size={15} />
+          Add Exam
+        </button>
+      </div>
+      {isModalOpen && <UpcomingExamsModal onClose={() => setIsModalOpen(false)} />}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
         {/* Table Header */}
-        <div className="grid grid-cols-3 gap-4 p-4 border-b border-[#FAF7FC] bg-[#FAF7FC] px-4 rounded-t-2xl">
+        <div className="grid grid-cols-4 gap-4 p-4 border-b border-[#FAF7FC] bg-[#FAF7FC] px-4 rounded-t-2xl">
           <div className="text-sm font-medium text-gray-900">Exam Name</div>
-          <div className="text-sm font-medium text-gray-900">Date</div>
-          <div className="text-sm font-medium text-gray-900 text-right">Class</div>
+          <div className="text-sm font-medium text-gray-900">Subject</div>
+          <div className="text-sm font-medium text-gray-900">Class</div>
+          <div className="text-sm font-medium text-gray-900 text-right">Date</div>
         </div>
 
-        {/* Coming Soon State */}
-        <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
-          <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center mb-3">
-            <CalendarClock className="w-7 h-7 text-[#8000BD]" />
+        {isLoading ? (
+          <div className="divide-y divide-gray-100 px-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="grid grid-cols-4 gap-4 py-4">
+                {[1, 2, 3, 4].map((j) => (
+                  <div key={j} className="h-4 bg-gray-100 rounded animate-pulse" />
+                ))}
+              </div>
+            ))}
           </div>
-          <p className="text-sm font-semibold text-gray-700">Coming Soon</p>
-          <p className="text-xs text-gray-400 mt-1">Exam schedules will appear here once available.</p>
-        </div>
+        ) : exams.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mb-3">
+              <CalendarClock className="w-6 h-6 text-[#8000BD]" />
+            </div>
+            <p className="text-sm font-semibold text-gray-700">No upcoming exams</p>
+            <p className="text-xs text-gray-400 mt-1">Exam schedules will appear here once available.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100 px-4">
+            {exams.map((exam) => (
+              <div key={exam.id} className="grid grid-cols-4 gap-4 py-3 items-center">
+                <div className="text-sm text-gray-900 font-medium">{exam.name}</div>
+                <div className="text-sm text-gray-600">{exam.subject.name.trim()}</div>
+                <div className="text-sm text-gray-600">
+                  {exam.class.customName ?? exam.class.name}
+                </div>
+                <div className="text-sm text-gray-500 text-right">{exam.createdAt}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -30,78 +74,9 @@ const UpcomingExams = () => {
 export default UpcomingExams;
 
 // ============================================================
-// ORIGINAL IMPLEMENTATION — uncomment when backend is ready
+// ORIGINAL IMPLEMENTATION (pre-API) — kept for reference
 // ============================================================
-
 // import { useState, useEffect } from "react";
 // import UpcomingExamsModal from "../modal/upcoming-exam.modal";
 // import UpcomingExamsSkeleton from "../../../../general/ui/upcoming-exam-skeleton-loader.ui";
-
-// interface Exam {
-//   id: number;
-//   name: string;
-//   date: string;
-//   class: string;
-// }
-
-// const exams: Exam[] = [
-//   { id: 1, name: "Midterm Exam",  date: "2024-05-15", class: "jss1-jss3" },
-//   { id: 2, name: "Final Exam",    date: "2024-06-20", class: "jss1-ss3"  },
-//   { id: 3, name: "Special Exam",  date: "2024-07-10", class: "ss3"       },
-//   { id: 4, name: "Special Exam",  date: "2024-07-10", class: "ss3"       },
-// ];
-
-// const UpcomingExams = () => {
-//   const [isExamOpen, setIsExamOpen] = useState(false);
-//   const [isLoading, setIsLoading] = useState(true);
-
-//   useEffect(() => {
-//     const timer = setTimeout(() => setIsLoading(false), 2000);
-//     return () => clearTimeout(timer);
-//   }, []);
-
-//   return (
-//     <>
-//       {isLoading ? (
-//         <UpcomingExamsSkeleton />
-//       ) : (
-//         <div className="relative">
-//           <h2 className="text-lg font-semibold text-gray-900 mb-2">
-//             Upcoming Exams
-//           </h2>
-//           <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
-//             <div className="grid grid-cols-3 gap-4 p-4 border-b border-[#FAF7FC] bg-[#FAF7FC] px-4 rounded-t-2xl">
-//               <div className="text-sm font-medium text-gray-900">Exam Name</div>
-//               <div className="text-sm font-medium text-gray-900">Date</div>
-//               <div className="text-sm font-medium text-gray-900 text-right">Class</div>
-//             </div>
-//             <div className="divide-y divide-gray-200 px-4">
-//               {exams.map((exam) => (
-//                 <div key={exam.id} className="grid grid-cols-3 gap-4 py-4">
-//                   <div className="text-sm text-gray-900">{exam.name}</div>
-//                   <div className="text-sm text-gray-600">{exam.date}</div>
-//                   <div className="text-sm text-gray-600 text-right">{exam.class}</div>
-//                 </div>
-//               ))}
-//             </div>
-//             <div className="py-2 px-3">
-//               <button
-//                 onClick={() => setIsExamOpen(true)}
-//                 className="text-[#777777] text-sm p-2 rounded-md bg-gray-100 shadow-md cursor-pointer hover:bg-gray-200 transition-colors"
-//               >
-//                 Add New
-//               </button>
-//             </div>
-//           </div>
-//           {isExamOpen && (
-//             <div className="">
-//               <UpcomingExamsModal onClose={() => setIsExamOpen(false)} />
-//             </div>
-//           )}
-//         </div>
-//       )}
-//     </>
-//   );
-// };
-
-// export default UpcomingExams;
+// ... (hardcoded exams array with fake loading)

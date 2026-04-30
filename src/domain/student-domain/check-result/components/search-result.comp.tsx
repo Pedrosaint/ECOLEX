@@ -1,22 +1,24 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { useGetSessionsQuery } from "../../../admin-domain/overview/api/admin-overview.api";
 
 export default function SearchComp() {
-  const [academicSession, setAcademicSession] = useState("");
-  const [term, setTerm] = useState("");
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
+  const [termId, setTermId] = useState<number | null>(null);
   const [selectedClass, setSelectedClass] = useState("");
 
   const [isSessionOpen, setIsSessionOpen] = useState(false);
   const [isTermOpen, setIsTermOpen] = useState(false);
   const [isClassOpen, setIsClassOpen] = useState(false);
 
-  const sessions = ["2021/2022", "2022/2023", "2023/2024"];
-  const terms = ["First Term", "Second Term", "Third Term"];
+  const { data: sessionsData } = useGetSessionsQuery();
+  const sessions = sessionsData?.data ?? [];
+  const selectedSession = sessions.find((s) => s.id === selectedSessionId);
+  const terms = selectedSession?.terms ?? [];
   const classes = ["Class 1", "Class 2", "Class 3"];
 
-  const allFieldsFilled =
-    academicSession.trim() && term.trim() && selectedClass.trim();
+  const allFieldsFilled = selectedSessionId && termId && selectedClass.trim();
 
   return (
     <motion.div
@@ -35,7 +37,7 @@ export default function SearchComp() {
             onClick={() => setIsSessionOpen(!isSessionOpen)}
           >
             <span className="text-sm text-gray-700">
-              {academicSession || "Choose session"}
+              {selectedSession?.name || "Choose session"}
             </span>
             <ChevronDown className="w-4 h-4 text-gray-500" />
           </div>
@@ -43,14 +45,15 @@ export default function SearchComp() {
             <div className="absolute w-full z-10 top-22 bg-white border border-gray-200 rounded shadow-md">
               {sessions.map((s) => (
                 <button
-                  key={s}
+                  key={s.id}
                   onClick={() => {
-                    setAcademicSession(s);
+                    setSelectedSessionId(s.id);
+                    setTermId(null);
                     setIsSessionOpen(false);
                   }}
                   className="w-full px-4 py-3 text-left text-gray-700 hover:bg-[#8000BD] hover:text-white first:rounded-t last:rounded-b"
                 >
-                  {s}
+                  {s.name}
                 </button>
               ))}
             </div>
@@ -63,11 +66,11 @@ export default function SearchComp() {
             Select Term
           </label>
           <div
-            className="w-full px-4 py-4 border border-gray-300 rounded cursor-pointer flex items-center justify-between"
-            onClick={() => setIsTermOpen(!isTermOpen)}
+            className={`w-full px-4 py-4 border border-gray-300 rounded flex items-center justify-between ${selectedSessionId ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+            onClick={() => selectedSessionId && setIsTermOpen(!isTermOpen)}
           >
             <span className="text-sm text-gray-700">
-              {term || "Choose term"}
+              {terms.find((t) => t.id === termId)?.name || (selectedSessionId ? "Choose term" : "Select session first")}
             </span>
             <ChevronDown className="w-4 h-4 text-gray-500" />
           </div>
@@ -75,14 +78,14 @@ export default function SearchComp() {
             <div className="absolute w-full z-10 top-22 bg-white border border-gray-200 rounded shadow-md">
               {terms.map((t) => (
                 <button
-                  key={t}
+                  key={t.id}
                   onClick={() => {
-                    setTerm(t);
+                    setTermId(t.id);
                     setIsTermOpen(false);
                   }}
                   className="w-full px-4 py-3 text-left text-gray-700 hover:bg-[#8000BD] hover:text-white first:rounded-t last:rounded-b"
                 >
-                  {t}
+                  {t.name}
                 </button>
               ))}
             </div>

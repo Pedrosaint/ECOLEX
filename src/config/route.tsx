@@ -100,15 +100,11 @@ export default function appRouter(): RouteObject[] {
     // Super_admin portal++++++++++++++++++++++++++++++
     {
       path: "admin",
-      element: <AdminLayout />,
+      element: <ProtectedRoute><AdminLayout /></ProtectedRoute>,
       children: [
         {
           path: "dashboard",
-          element: (
-            <ProtectedRoute>
-              <Overview />
-            </ProtectedRoute>
-          ),
+          element: <Overview />,
         },
         {
           path: "student's",
@@ -130,7 +126,6 @@ export default function appRouter(): RouteObject[] {
         {
           path: "result",
           element: <ResultView />,
-          // element: <ReportsView />,
         },
         {
           path: "subjects",
@@ -150,7 +145,7 @@ export default function appRouter(): RouteObject[] {
     // Student portal++++++++++++++++++++++++++++++
     {
       path: "student",
-      element: <AdminLayout />,
+      element: <ProtectedRoute><AdminLayout /></ProtectedRoute>,
       children: [
         {
           path: "dashboard",
@@ -170,7 +165,7 @@ export default function appRouter(): RouteObject[] {
     // Staff portal++++++++++++++++++++++++++++++
     {
       path: "staff",
-      element: <AdminLayout />,
+      element: <ProtectedRoute><AdminLayout /></ProtectedRoute>,
       children: [
         {
           path: "dashboard",

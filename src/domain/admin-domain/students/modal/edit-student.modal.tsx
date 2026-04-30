@@ -9,6 +9,7 @@ import {
   useGetClassesQuery,
   useGetClassGroupsQuery,
 } from "../../classes/api/class-api";
+import { useGetSessionsQuery } from "../../overview/api/admin-overview.api";
 import type { Student } from "../response/students.response";
 import type { Class } from "../../classes/response/get-class.response";
 import type { Group } from "../../classes/response/get-group.response";
@@ -43,6 +44,8 @@ export default function EditStudentModal({
   const { data: campusData } = useGetCampusQuery();
   const { data: classData } = useGetClassesQuery();
   const { data: groupData } = useGetClassGroupsQuery({});
+  const { data: sessionsData } = useGetSessionsQuery();
+  const sessions = sessionsData?.data ?? [];
 
 
   const [form, setForm] = useState({
@@ -319,13 +322,9 @@ export default function EditStudentModal({
                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-[#4B0082]"
               >
                 <option value="">Select Session</option>
-                {["2023/2024", "2024/2025", "2025/2026", "2026/2027"].map(
-                  (year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ),
-                )}
+                {sessions.map((s) => (
+                  <option key={s.id} value={s.name}>{s.name}</option>
+                ))}
               </select>
             </div>
 

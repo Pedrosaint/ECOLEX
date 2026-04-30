@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useCreateStudentMutation } from "../api/student.api";
 import { useGetCampusQuery } from "../../campus/api/campus.api";
 import { useGetClassesQuery } from "../../classes/api/class-api";
+import { useGetSessionsQuery } from "../../overview/api/admin-overview.api";
 import type { Class } from "../../classes/response/get-class.response";
 
 import { studentSchema } from "../validation/student.schema";
@@ -51,7 +52,9 @@ export default function AddStudentFormModal({
   // API hooks
   const { data: campusData } = useGetCampusQuery();
   const { data: classData } = useGetClassesQuery();
+  const { data: sessionsData } = useGetSessionsQuery();
   const [createStudent, { isLoading }] = useCreateStudentMutation({ fixedCacheKey: 'create-student' });
+  const sessions = sessionsData?.data ?? [];
 
   // Filter classes by campus
   const filteredClasses = classData?.classes?.filter(
@@ -482,13 +485,9 @@ export default function AddStudentFormModal({
                   } focus:border-[#4B0082]`}
               >
                 <option value="">Select Session</option>
-                {["2023/2024", "2024/2025", "2025/2026", "2026/2027"].map(
-                  (year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  )
-                )}
+                {sessions.map((s) => (
+                  <option key={s.id} value={s.name}>{s.name}</option>
+                ))}
               </select>
               {errors.session && (
                 <p className="text-xs text-red-500 mt-1">{errors.session}</p>

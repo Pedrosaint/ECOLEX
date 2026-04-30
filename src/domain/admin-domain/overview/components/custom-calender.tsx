@@ -18,7 +18,7 @@ const CustomCalendar = () => {
 
 
   return (
-        <div className="bg-white rounded-4xl p-4 shadow-md text-center h-full">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 text-center h-full">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-[220px] mb-8">
               <ClipLoader color="#8B5CF6" loading={isLoading} size={50} />

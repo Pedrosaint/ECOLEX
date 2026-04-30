@@ -56,6 +56,8 @@ import { caTemplateApi } from "../domain/admin-domain/ca-template/api/ca-templat
 import { gradingSchemeApi } from "../domain/teachers-domain/grading-scheme/api/grading-scheme.api";
 import { gradingApi } from "../domain/admin-domain/result/api/grading.api";
 import { teacherOverviewApi } from "../domain/teachers-domain/overview/api/teacher-overview.api";
+import { adminOverviewApi } from "../domain/admin-domain/overview/api/admin-overview.api";
+import { studentResultApi } from "../domain/student-domain/check-result/api/student-result.api";
 
 // Persist config for school slice only
 const schoolSetupPersistConfig = {
@@ -81,6 +83,8 @@ export const store = configureStore({
     [gradingSchemeApi.reducerPath]: gradingSchemeApi.reducer,
     [gradingApi.reducerPath]: gradingApi.reducer,
     [teacherOverviewApi.reducerPath]: teacherOverviewApi.reducer,
+    [adminOverviewApi.reducerPath]: adminOverviewApi.reducer,
+    [studentResultApi.reducerPath]: studentResultApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -103,6 +107,8 @@ export const store = configureStore({
       gradingSchemeApi.middleware,
       gradingApi.middleware,
       teacherOverviewApi.middleware,
+      adminOverviewApi.middleware,
+      studentResultApi.middleware,
     ]),
 });
 

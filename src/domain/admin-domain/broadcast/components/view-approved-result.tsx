@@ -289,6 +289,7 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
+import { useGetSessionsQuery } from "../../overview/api/admin-overview.api";
 
 interface ResultItem {
   id: number;
@@ -314,9 +315,11 @@ export default function ViewApprovedResult() {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<ResultItem[]>([]);
 
+  const { data: sessionsData } = useGetSessionsQuery();
+  const years = sessionsData?.data ?? [];
+
   // Dropdown options
   const [campuses] = useState(["Campus 1", "Campus 2", "Campus 3"]);
-  const [years] = useState(["2023/2024", "2024/2025", "2025/2026"]);
   const [terms] = useState(["1st Term", "2nd Term", "3rd Term"]);
   const [classes] = useState([
     "JSS 1",
@@ -393,10 +396,8 @@ export default function ViewApprovedResult() {
                 className="w-full px-4 py-4 border border-gray-300 text-sm text-gray-700 appearance-none focus:outline-none pr-10"
               >
                 <option value="">Select Year</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
+                {years.map((s) => (
+                  <option key={s.id} value={s.name}>{s.name}</option>
                 ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">

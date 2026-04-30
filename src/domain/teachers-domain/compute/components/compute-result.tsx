@@ -1,6 +1,10 @@
 import { CgDanger } from "react-icons/cg";
+import { useGetSessionsQuery } from "../../../admin-domain/overview/api/admin-overview.api";
 
 const ComputeResult = () => {
+  const { data: sessionsData } = useGetSessionsQuery();
+  const sessions = sessionsData?.data ?? [];
+
   return (
     <div className="">
       <div className="bg-[#D9D9D9] p-4 text-sm md:text-lg font-inter font-semibold shadow-sm">
@@ -20,7 +24,12 @@ const ComputeResult = () => {
                 Select Academic Session
               </label>
               <div className="relative">
-                <select className="w-full px-4 py-4 border border-gray-300 rounded text-sm text-gray-400 appearance-none focus:outline-none pr-10"></select>
+                <select className="w-full px-4 py-4 border border-gray-300 rounded text-sm text-gray-400 appearance-none focus:outline-none pr-10">
+                  <option value="">Select Session</option>
+                  {sessions.map((s) => (
+                    <option key={s.id} value={s.name}>{s.name}</option>
+                  ))}
+                </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <svg
                     className="fill-current h-4 w-4"

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useGetSessionsQuery } from "../../overview/api/admin-overview.api";
 
 export default function ViewRepeatStudents() {
   const [formData, setFormData] = useState({
@@ -18,8 +19,8 @@ export default function ViewRepeatStudents() {
 
   const campuses = ["Campus 1", "Campus 2"];
   const classes = ["Class 1", "Class 2", "Class 3"];
-  const currentSession = ["2022/2023", "2023/2024", "2024/2025"];
-  const nextSession = ["2022/2023", "2023/2024", "2024/2025"];
+  const { data: sessionsData } = useGetSessionsQuery();
+  const sessionOptions = sessionsData?.data ?? [];
 
 
   const handleSelect = (name: string, value: string) => {
@@ -106,16 +107,16 @@ export default function ViewRepeatStudents() {
             </div>
             {isSessionOpen && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded shadow-md">
-                {currentSession.map((session) => (
+                {sessionOptions.map((s) => (
                   <div
-                    key={session}
+                    key={s.id}
                     className="px-4 py-2 hover:bg-[#8000bd] hover:text-white cursor-pointer text-sm"
                     onClick={() => {
-                      handleSelect("currentSession", session);
+                      handleSelect("currentSession", s.name);
                       setIsSessionOpen(false);
                     }}
                   >
-                    {session}
+                    {s.name}
                   </div>
                 ))}
               </div>
@@ -166,16 +167,16 @@ export default function ViewRepeatStudents() {
             </div>
             {isNextSessionOpen && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded shadow-md">
-                {nextSession.map((session) => (
+                {sessionOptions.map((s) => (
                   <div
-                    key={session}
+                    key={s.id}
                     className="px-4 py-2 hover:bg-[#8000bd] hover:text-white cursor-pointer text-sm"
                     onClick={() => {
-                      handleSelect("nextSession", session);
+                      handleSelect("nextSession", s.name);
                       setIsNextSessionOpen(false);
                     }}
                   >
-                    {session}
+                    {s.name}
                   </div>
                 ))}
               </div>

@@ -2,8 +2,8 @@ import { Bell } from "lucide-react";
 
 export default function NoticeBoard() {
   return (
-    <div>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 py-1 px-4">
+    <div className="h-full">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 py-1 px-4 h-full flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-2 mt-2">
           <h2 className="text-lg font-semibold text-gray-900 font-sans">
@@ -15,7 +15,7 @@ export default function NoticeBoard() {
         </div>
 
         {/* Coming Soon State */}
-        <div className="flex flex-col items-center justify-center py-10 px-4 text-center mb-2">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 text-center">
           <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center mb-3">
             <Bell className="w-7 h-7 text-[#8000BD]" />
           </div>

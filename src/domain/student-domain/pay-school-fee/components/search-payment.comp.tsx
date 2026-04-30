@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { useGetSessionsQuery } from "../../../admin-domain/overview/api/admin-overview.api";
 
 export default function SearchPaymentComp() {
   const [academicSession, setAcademicSession] = useState("");
@@ -11,7 +12,8 @@ export default function SearchPaymentComp() {
   const [isTermOpen, setIsTermOpen] = useState(false);
   const [isClassOpen, setIsClassOpen] = useState(false);
 
-  const sessions = ["2021/2022", "2022/2023", "2023/2024"];
+  const { data: sessionsData } = useGetSessionsQuery();
+  const sessions = sessionsData?.data ?? [];
   const terms = ["First Term", "Second Term", "Third Term"];
   const classes = ["Class 1", "Class 2", "Class 3"];
 
@@ -43,14 +45,14 @@ export default function SearchPaymentComp() {
             <div className="absolute w-full z-10 top-22 bg-white border border-gray-200 rounded shadow-md">
               {sessions.map((s) => (
                 <button
-                  key={s}
+                  key={s.id}
                   onClick={() => {
-                    setAcademicSession(s);
+                    setAcademicSession(s.name);
                     setIsSessionOpen(false);
                   }}
                   className="w-full px-4 py-3 text-left text-gray-700 hover:bg-[#8000BD] hover:text-white first:rounded-t last:rounded-b"
                 >
-                  {s}
+                  {s.name}
                 </button>
               ))}
             </div>
