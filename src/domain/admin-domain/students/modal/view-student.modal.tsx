@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
 import { X, Check } from "lucide-react";
-import { useGetStudentQuery } from "../api/student.api";
-import { useGetClassesQuery } from "../../classes/api/class-api";
 import type { Class } from "../../classes/response/get-class.response";
 import LoadingBall from "../../staff/components/loading-ball";
 import { getImageUrl } from "../../../../utils/get-image-url";
+import { useViewStudent } from "../hooks";
 
 
 interface ViewStudentFormModalProps {
@@ -18,8 +17,7 @@ export default function ViewStudentFormModal({
   onEdit,
   studentId,
 }: ViewStudentFormModalProps) {
-  const { data, isLoading, isError } = useGetStudentQuery({ id: studentId });
-  const { data: classesData } = useGetClassesQuery();
+  const { data, isLoading, isError, classesData } = useViewStudent({ studentId });
 
 
   if (isLoading) {
@@ -73,7 +71,7 @@ export default function ViewStudentFormModal({
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
             <h2 className="text-2xl font-medium font-inter text-gray-900">
-              Student’s Detail
+              Student's Detail
             </h2>
             <button
               className="p-2 cursor-pointer transition-colors"
@@ -155,7 +153,7 @@ export default function ViewStudentFormModal({
   );
 }
 
-// ✅ Small reusable component for each detail field
+// Small reusable component for each detail field
 function Detail({
   label,
   value,

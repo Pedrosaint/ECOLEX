@@ -1,112 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from "framer-motion";
 import { X, Check, ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useAssignTeacherMutation, useGetStaffsQuery } from "../api/staff-api";
-import { useGetClassesQuery } from "../../classes/api/class-api";
-import { useGetAllSubjectQuery } from "../../manage-subject/api/subject.api";
-
-interface AssignItem {
-  id: string;
-  staffId: string;
-  classId: string;
-  subjectId: string;
-}
+import { useAssignTeacher } from "../hooks";
 
 export default function AssignStaffModal({ onClose }: { onClose: () => void }) {
-  // 🔹 Fetch dropdown data
-  const { data: staffData } = useGetStaffsQuery();
-  const { data: classData } = useGetClassesQuery();
-  const { data: subjectData } = useGetAllSubjectQuery();
-  const [assignTeacher, { isLoading }] = useAssignTeacherMutation();
+  const {
+    staffData,
+    classData,
+    subjectData,
+    isLoading,
+    form,
+    selectedSubjects,
+    selectedClasses,
+    handleChange,
+    handleAddSubject,
+    handleRemoveSubject,
+    handleAddClass,
+    handleRemoveClass,
+    handleSave,
+  } = useAssignTeacher({ onClose });
 
-  const [assignments, setAssignments] = useState<AssignItem[]>([]);
-  const [form, setForm] = useState({
-    staffId: "",
-    classId: "",
-    subjectId: "",
-  });
-
-  const [selectedSubjects, setSelectedSubjects] = useState<any[]>([]);
-  const [selectedClasses, setSelectedClasses] = useState<any[]>([]);
-
-  // 🔹 Handle form input
-  const handleChange = (name: string, value: string) => {
-    setForm({ ...form, [name]: value });
-  };
-
-  // 🔹 Add subjects and classes individually
-  const handleAddSubject = () => {
-    const selected = subjectData?.subjects?.find(
-      (s: any) => String(s.id) === form.subjectId
-    );
-    if (selected && !selectedSubjects.find((s) => s.id === selected.id)) {
-      setSelectedSubjects([...selectedSubjects, selected]);
-    }
-    setForm({ ...form, subjectId: "" });
-  };
-
-  const handleRemoveSubject = (id: string | number) => {
-    setSelectedSubjects(selectedSubjects.filter((s) => s.id !== id));
-  };
-
-  const handleAddClass = () => {
-    const selected = classData?.classes?.find(
-      (c: any) => String(c.id) === form.classId
-    );
-    if (selected && !selectedClasses.find((c) => c.id === selected.id)) {
-      setSelectedClasses([...selectedClasses, selected]);
-    }
-    setForm({ ...form, classId: "" });
-  };
-
-  const handleRemoveClass = (id: string | number) => {
-    setSelectedClasses(selectedClasses.filter((c) => c.id !== id));
-  };
-
-  // 🔹 Save assignment
-  const handleSave = async () => {
-    if (!form.staffId) {
-      toast.warning("Please select a staff member.");
-      return;
-    }
-
-    if (selectedSubjects.length === 0 || selectedClasses.length === 0) {
-      toast.warning("Please add at least one subject and one class.");
-      return;
-    }
-
-    try {
-      for (const cls of selectedClasses) {
-        for (const sub of selectedSubjects) {
-          await assignTeacher({
-            staffId: Number(form.staffId),
-            classId: Number(cls.id),
-            subjectId: Number(sub.id),
-          }).unwrap();
-        }
-      }
-
-      const newAssignment: AssignItem = {
-        id: crypto.randomUUID(),
-        ...form,
-      };
-
-      setAssignments([...assignments, newAssignment]);
-      setSelectedClasses([]);
-      setSelectedSubjects([]);
-      setForm({ staffId: "", classId: "", subjectId: "" });
-      onClose();
-
-      toast.success("Teacher assigned successfully!");
-    } catch (err) {
-      console.error("Error assigning teacher:", err);
-      toast.error("An error occurred while assigning teacher.");
-    }
-  };
-
-  // 🔹 Reusable Dropdown Component
+  // Reusable Dropdown Component
   const Dropdown = ({
     label,
     name,
@@ -147,10 +61,11 @@ export default function AssignStaffModal({ onClose }: { onClose: () => void }) {
                 handleChange(name, String(opt.id));
                 document.getElementById(name)?.classList.add("hidden");
               }}
-              className={`px-3 py-2 text-sm hover:bg-[#4B0082] hover:text-white cursor-pointer ${value === String(opt.id)
-                ? "bg-[#F3E8FF] text-[#4B0082] font-medium"
-                : ""
-                }`}
+              className={`px-3 py-2 text-sm hover:bg-[#4B0082] hover:text-white cursor-pointer ${
+                value === String(opt.id)
+                  ? "bg-[#F3E8FF] text-[#4B0082] font-medium"
+                  : ""
+              }`}
             >
               {opt.name}
             </div>

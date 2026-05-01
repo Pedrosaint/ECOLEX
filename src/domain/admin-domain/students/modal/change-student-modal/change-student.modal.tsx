@@ -1,62 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
 import { X } from "lucide-react";
-import { skipToken } from "@reduxjs/toolkit/query";
-import { toast } from "sonner";
-import { useGetAllStudentQuery, useChangeClassMutation } from "../../api/student.api";
-import { useGetCampusQuery } from "../../../campus/api/campus.api";
-import { useGetClassesQuery, useGetClassGroupsQuery } from "../../../classes/api/class-api";
+import { useChangeStudent } from "../../hooks";
 import FilterSection from "./filter-section";
 import UpdateSection from "./update-section";
-import StudentTable from "./student-table"
+import StudentTable from "./student-table";
 import students from "../../../../../assets/image/emptystate_filter.png";
 
 const ChangeStudentModal = ({ onClose }: { onClose: () => void }) => {
-  const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
-  const [selectAll, setSelectAll] = useState(false);
-  const [isFiltered, setIsFiltered] = useState(false);
-
-  const [filters, setFilters] = useState({
-    campusId: undefined as string | undefined,
-    classId: undefined as string | undefined,
-    groupId: undefined as string | undefined,
-    page: 1,
-    pageSize: 9,
-  });
-
-  const { data: campusData, isLoading: isCampusLoading } = useGetCampusQuery();
-  const { data: classData, isLoading: isClassLoading } = useGetClassesQuery();
-  const { data: groupData, isLoading: isGroupLoading } = useGetClassGroupsQuery({});
-
-  const { data, isLoading, isFetching } = useGetAllStudentQuery(isFiltered ? filters : skipToken);
-  const [changeClass, { isLoading: isUpdating }] = useChangeClassMutation();
-
-  const handleFilter = (newFilters: typeof filters) => {
-    setFilters(newFilters);
-    setIsFiltered(true);
-    setSelectedStudents([]);
-    setSelectAll(false);
-  };
-
-  const handleUpdate = async (updateValues: { campusId: string; classId: string; groupId: string }) => {
-    if (selectedStudents.length === 0) {
-      toast.warning("Please select at least one student.");
-      return;
-    }
-    try {
-      await changeClass({
-        studentIds: selectedStudents,
-        campusId: Number(updateValues.campusId),
-        classId: Number(updateValues.classId),
-        groupId: Number(updateValues.groupId),
-      }).unwrap();
-      toast.success("Students updated successfully!");
-      setSelectedStudents([]);
-      setSelectAll(false);
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Update failed.");
-    }
-  };
+  const {
+    selectedStudents,
+    setSelectedStudents,
+    selectAll,
+    setSelectAll,
+    isFiltered,
+    campusData,
+    isCampusLoading,
+    classData,
+    isClassLoading,
+    groupData,
+    isGroupLoading,
+    data,
+    isLoading,
+    isFetching,
+    isUpdating,
+    handleFilter,
+    handleUpdate,
+  } = useChangeStudent();
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-50">

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
+import { useFilterSection } from "../../hooks";
 
-// 🧩 Reusable Dropdown Component
+// Reusable Dropdown Component
 const Dropdown = ({
   label,
   options,
@@ -75,7 +76,7 @@ const Dropdown = ({
   );
 };
 
-// 🧩 Filter Section Component
+// Filter Section Component
 const FilterSection = ({
   campusData,
   classData,
@@ -85,39 +86,18 @@ const FilterSection = ({
   isGroupLoading,
   onFilter,
 }: any) => {
-  const [campusId, setCampusId] = useState("");
-  const [classId, setClassId] = useState("");
-  const [groupId, setGroupId] = useState("");
-
-  // 🔹 Filter dependent data
-  const filteredClasses = classData?.classes?.filter(
-    (cls: any) => !campusId || cls.campusId === Number(campusId)
-  );
-
-  const filteredGroups = groupData?.groups?.filter(
-    (grp: any) => !classId || grp.classId === Number(classId)
-  );
-
-  const handleFilterClick = () => {
-    if (!campusId && !classId && !groupId) return;
-    onFilter({
-      campusId: campusId || undefined,
-      classId: classId || undefined,
-      groupId: groupId || undefined,
-      page: 1,
-      pageSize: 9,
-    });
-  };
-
-  // 🔹 Build options
-  const getOptions = (data: any, label: string) => [
-    { value: "", label },
-    ...(data?.map((d: any) => ({ value: String(d.id), label: d.name })) || []),
-  ];
-
-  const campusOptions = getOptions(campusData?.campuses, "Select Campus");
-  const classOptions = getOptions(filteredClasses, "Select Class");
-  const groupOptions = getOptions(filteredGroups, "Select Group");
+  const {
+    campusId,
+    setCampusId,
+    classId,
+    setClassId,
+    groupId,
+    setGroupId,
+    campusOptions,
+    classOptions,
+    groupOptions,
+    handleFilterClick,
+  } = useFilterSection({ campusData, classData, groupData, onFilter });
 
   return (
     <div className="p-6 border-b border-gray-200 bg-white">

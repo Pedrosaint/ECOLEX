@@ -1,7 +1,7 @@
 import { X, ChevronDown, Search, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
 import AddNewNoticeModal from "./add-new-notice.modal";
+import { useViewNotice } from "../hooks";
 
 interface ViewNoticeModalProps {
   onClose: () => void;
@@ -9,39 +9,15 @@ interface ViewNoticeModalProps {
 }
 
 export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeModalProps) {
-  const [isAddNoticeMolda, setIsAddNoticeModal] = useState(false);
-  // Notice data array
-  const notices = [
-    {
-      id: 1,
-      title: "Sports Day Announcement",
-      description:
-        "The school's Annual Sports Day will be held on May 12, 2024. Mark your calendars!",
-      date: "May 12, 2024.",
-      participants: "200",
-      iconBg: "bg-yellow-100",
-      iconColor: "text-yellow-600",
-    },
-    {
-      id: 2,
-      title: "Summer Break Start Date",
-      description:
-        "Summer break begins on May 25, 2024. Have a wonderful holiday!",
-      date: "May 25, 2024.",
-      participants: "100",
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-600",
-    },
-  ];
-
-  const handleAddNotice = () => {
-    onClose();
-    openAddModal();
-  }
+  const {
+    isAddNoticeModal,
+    setIsAddNoticeModal,
+    notices,
+    handleAddNotice,
+  } = useViewNotice(onClose, openAddModal);
 
   return (
     <AnimatePresence>
-      {/* Overlay with fade animation */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -49,7 +25,6 @@ export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeMod
         transition={{ duration: 0.2, ease: "easeOut" }}
         className="fixed inset-0 bg-black/50 backdrop-blur-md bg-opacity-50 z-50 flex items-center justify-center p-3"
       >
-        {/* Modal container with spring animation */}
         <motion.div
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -62,7 +37,6 @@ export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeMod
           }}
           className="relative w-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-8"
         >
-          {/* Header with subtle animation */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -90,7 +64,6 @@ export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeMod
             transition={{ delay: 0.15 }}
             className="flex flex-col md:flex-row md:items-end gap-4 mb-6"
           >
-            {/* Left side: Campus & Search together */}
             <div className="flex flex-col md:flex-row md:items-end gap-4 w-full">
               {/* Campus Select */}
               <motion.div
@@ -129,10 +102,7 @@ export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeMod
             {/* Right side: Add New button */}
             <div className="w-full md:w-auto flex justify-end">
               <motion.button
-                whileHover={{
-                  scale: 1.03,
-                  backgroundColor: "#6a1b9a",
-                }}
+                whileHover={{ scale: 1.03, backgroundColor: "#6a1b9a" }}
                 onClick={handleAddNotice}
                 whileTap={{ scale: 0.97 }}
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none border-2 border-[#8000BD] bg-[#8000BD] text-white h-9 px-4 py-2 w-full md:w-auto cursor-pointer"
@@ -142,7 +112,7 @@ export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeMod
             </div>
           </motion.div>
 
-          {/* Table with staggered row animations */}
+          {/* Table */}
           <motion.div
             initial="hidden"
             animate="visible"
@@ -150,21 +120,17 @@ export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeMod
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
-                transition: {
-                  staggerChildren: 0.05,
-                },
+                transition: { staggerChildren: 0.05 },
               },
             }}
             className="overflow-x-auto"
           >
-            {/* Table Header */}
             <div className="grid grid-cols-[2fr_1fr_0.5fr] gap-4 py-3 px-4 bg-[#E9EEF1] rounded-t-md font-semibold text-gray-700 text-sm border-b font-inter border-gray-200 min-w-[600px]">
               <div>Event Title</div>
               <div>Event Date</div>
               <div className="">Total Participate</div>
             </div>
 
-            {/* Table Rows */}
             <div className="divide-y divide-gray-200 min-w-[600px]">
               {notices.map((notice) => (
                 <motion.div
@@ -197,8 +163,8 @@ export default function ViewNoticeModal({ onClose, openAddModal }: ViewNoticeMod
           </motion.div>
         </motion.div>
 
-        {isAddNoticeMolda && (
-          <AddNewNoticeModal onClose={() => setIsAddNoticeModal(false)}/>
+        {isAddNoticeModal && (
+          <AddNewNoticeModal onClose={() => setIsAddNoticeModal(false)} />
         )}
       </motion.div>
     </AnimatePresence>

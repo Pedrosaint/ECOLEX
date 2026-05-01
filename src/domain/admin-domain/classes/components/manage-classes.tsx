@@ -1,29 +1,21 @@
-import { useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import AddClass from "./add-class";
 import AddGroup from "./add-group";
 import ViewClass from "./view-class";
 import ViewGroup from "./view-group";
-
+import { useManageClasses } from "../hooks";
 
 export default function ManageClasses() {
-  const [activeTab, setActiveTab] = useState("Add Class");
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const tabs = [
-    "Add Class",
-    "View Class",
-    "Add Group",
-    "View Group",
-  ];
+  const { activeTab, showDropdown, tabs, handleTabChange, toggleDropdown, setActiveTab } =
+    useManageClasses();
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "Add Class":
         return <AddClass />;
-        case "View Class":
+      case "View Class":
         return <ViewClass />;
-         case "Add Group":
+      case "Add Group":
         return <AddGroup />;
       case "View Group":
         return <ViewGroup />;
@@ -37,7 +29,7 @@ export default function ManageClasses() {
       {/* Mobile dropdown filter */}
       <div className="lg:hidden mb-4 relative">
         <button
-          onClick={() => setShowDropdown(!showDropdown)}
+          onClick={toggleDropdown}
           className="flex items-center justify-between w-full bg-[#8000BD] text-white px-4 py-2 rounded-md"
         >
           {activeTab}
@@ -49,10 +41,7 @@ export default function ManageClasses() {
             {tabs.map((tab) => (
               <button
                 key={tab}
-                onClick={() => {
-                  setActiveTab(tab);
-                  setShowDropdown(false);
-                }}
+                onClick={() => handleTabChange(tab)}
                 className={`block w-full text-left px-4 py-2 text-sm ${
                   activeTab === tab
                     ? "bg-[#F3E8FF] text-[#8000BD] font-medium"

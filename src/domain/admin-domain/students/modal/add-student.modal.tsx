@@ -1,18 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { motion } from "framer-motion";
 import { X, Check, ChevronDown, CameraIcon } from "lucide-react";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
-import { useCreateStudentMutation } from "../api/student.api";
-import { useGetCampusQuery } from "../../campus/api/campus.api";
-import { useGetClassesQuery } from "../../classes/api/class-api";
-import { useGetSessionsQuery } from "../../overview/api/admin-overview.api";
-import type { Class } from "../../classes/response/get-class.response";
-
-import { studentSchema } from "../validation/student.schema";
-import * as Yup from "yup";
-import type { Campuse } from "../../campus/response/campuse.response";
+import { useAddStudent } from "../hooks";
 
 interface DropdownOption {
   value: string;
@@ -24,160 +13,31 @@ export default function AddStudentFormModal({
 }: {
   onClose: () => void;
 }) {
-  // Dropdown state
-  const [isClassOpen, setIsClassOpen] = useState(false);
-  const [isCampusOpen, setIsCampusOpen] = useState(false);
-  const campusRef = useRef<HTMLDivElement>(null);
-  const classRef = useRef<HTMLDivElement>(null);
-
-  // Form data and errors
-  const [formData, setFormData] = useState({
-    surname: "",
-    name: "",
-    otherNames: "",
-    gender: "",
-    dateOfBirth: "",
-    email: "",
-    guardianName: "",
-    guardianNumber: "",
-    campusId: "",
-    classId: "",
-    lifestyle: "",
-    session: "",
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [passportFile, setPassportFile] = useState<File | null>(null);
-  const [passportPreview, setPassportPreview] = useState<string | null>(null);
-
-  // API hooks
-  const { data: campusData } = useGetCampusQuery();
-  const { data: classData } = useGetClassesQuery();
-  const { data: sessionsData } = useGetSessionsQuery();
-  const [createStudent, { isLoading }] = useCreateStudentMutation({ fixedCacheKey: 'create-student' });
-  const sessions = sessionsData?.data ?? [];
-
-  // Filter classes by campus
-  const filteredClasses = classData?.classes?.filter(
-    (cls: Class) =>
-      !formData.campusId || cls.campusId === Number(formData.campusId)
-  );
-
-  // Dropdown options
-  const campusOptions: DropdownOption[] = [
-    { value: "", label: "Select Campus" },
-    ...(campusData?.campuses?.map((c: Campuse) => ({
-      value: String(c.id),
-      label: c.name,
-    })) || []),
-  ];
-
-  const classOptions: DropdownOption[] = [
-    { value: "", label: "Select Class" },
-    ...(filteredClasses?.map((c: Class) => ({
-      value: String(c.id),
-      label: c.name,
-    })) || []),
-  ];
-
-  // Helpers
-  const getSelectedLabel = (
-    value: string,
-    options: DropdownOption[]
-  ): string => {
-    if (!options || options.length === 0) return "";
-    const found = options.find((option) => option.value === value);
-    return found ? found.label : options[0].label;
-  };
-
-  const handlePassportChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPassportFile(file);
-      setPassportPreview(URL.createObjectURL(file));
-    }
-  };
-
-  // Handle input change + clear error
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-    setErrors((prev) => ({ ...prev, [id]: "" }));
-  };
-
-  // Form validation
-  const validateForm = async () => {
-    try {
-      await studentSchema.validate(formData, { abortEarly: false });
-      setErrors({});
-      return true;
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const newErrors: Record<string, string> = {};
-        err.inner.forEach((error) => {
-          if (error.path) newErrors[error.path] = error.message;
-        });
-        setErrors(newErrors);
-      }
-      return false;
-    }
-  };
-
-  // Submit form
-  const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const isValid = await validateForm();
-    if (!isValid) return;
-
-    try {
-      const fd = new FormData();
-      fd.append("surname", formData.surname);
-      fd.append("name", formData.name);
-      fd.append("otherNames", formData.otherNames);
-      fd.append("gender", formData.gender);
-      fd.append("dateOfBirth", formData.dateOfBirth);
-      fd.append("email", formData.email);
-      fd.append("guardianName", formData.guardianName);
-      fd.append("guardianNumber", formData.guardianNumber);
-      fd.append("campusId", formData.campusId);
-      fd.append("classId", formData.classId);
-      fd.append("lifestyle", formData.lifestyle);
-      fd.append("session", formData.session);
-      if (passportFile) fd.append("passport", passportFile);
-
-      await createStudent(fd).unwrap();
-      toast.success("Student created successfully!");
-      onClose();
-
-      setFormData({
-        surname: "",
-        name: "",
-        otherNames: "",
-        gender: "",
-        dateOfBirth: "",
-        email: "",
-        guardianName: "",
-        guardianNumber: "",
-        campusId: "",
-        classId: "",
-        lifestyle: "",
-        session: "",
-      });
-      setPassportFile(null);
-      setPassportPreview(null);
-    } catch (err) {
-      toast.error((err as { data?: { message?: string } })?.data?.message || "Failed to create student.");
-      console.error("Error creating student:", err);
-    }
-  };
-
-  // Check if all required fields are filled
-  const isFormComplete = Object.entries(formData).every(
-    ([key, value]) => key === "otherNames" || value.trim() !== ""
-  );
+  const {
+    isClassOpen,
+    setIsClassOpen,
+    isCampusOpen,
+    setIsCampusOpen,
+    campusRef,
+    classRef,
+    formData,
+    setFormData,
+    errors,
+    setErrors,
+    passportFile,
+    setPassportFile,
+    passportPreview,
+    setPassportPreview,
+    isLoading,
+    sessions,
+    campusOptions,
+    classOptions,
+    getSelectedLabel,
+    handlePassportChange,
+    handleChange,
+    handleSave,
+    isFormComplete,
+  } = useAddStudent({ onClose });
 
   // Reusable dropdown
   const Dropdown = ({
@@ -210,8 +70,9 @@ export default function AddStudentFormModal({
             type="button"
             onClick={() => setIsOpen(!isOpen)}
             disabled={disabled}
-            className={`w-full px-3 py-2 border rounded bg-white text-sm text-left flex items-center justify-between ${error ? "border-red-500" : "border-gray-300"
-              } disabled:opacity-50`}
+            className={`w-full px-3 py-2 border rounded bg-white text-sm text-left flex items-center justify-between ${
+              error ? "border-red-500" : "border-gray-300"
+            } disabled:opacity-50`}
           >
             {getSelectedLabel(selectedValue, options)}
             <ChevronDown
@@ -223,7 +84,9 @@ export default function AddStudentFormModal({
           {isOpen && (
             <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
               {emptyMessage && realOptions.length === 0 ? (
-                <div className="px-3 py-3 text-sm text-gray-400 italic">{emptyMessage}</div>
+                <div className="px-3 py-3 text-sm text-gray-400 italic">
+                  {emptyMessage}
+                </div>
               ) : (
                 options.map((option) => (
                   <div
@@ -232,10 +95,9 @@ export default function AddStudentFormModal({
                       onSelect(option.value);
                       setIsOpen(false);
                     }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${selectedValue === option.value
-                      ? "bg-gray-100 font-medium"
-                      : ""
-                      }`}
+                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                      selectedValue === option.value ? "bg-gray-100 font-medium" : ""
+                    }`}
                   >
                     {option.label}
                   </div>
@@ -248,10 +110,6 @@ export default function AddStudentFormModal({
       </div>
     );
   };
-
-  // ==========================================================
-  // ======================== UI ==============================
-  // ==========================================================
 
   return (
     <motion.div
@@ -279,17 +137,25 @@ export default function AddStudentFormModal({
           {/* Passport Upload */}
           <div className="flex justify-end mb-6">
             <div className="flex flex-col items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">Passport Photo</label>
+              <label className="text-sm font-medium text-gray-700">
+                Passport Photo
+              </label>
               <label
                 htmlFor="passportUpload"
                 className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-[#4B0082] transition-colors bg-gray-50 overflow-hidden"
               >
                 {passportPreview ? (
-                  <img src={passportPreview} alt="Passport" className="w-full h-full object-cover" />
+                  <img
+                    src={passportPreview}
+                    alt="Passport"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <div className="flex flex-col items-center gap-1 p-2">
-                   <CameraIcon size={30} className="text-gray-400" />
-                    <span className="text-xs text-gray-400 text-center">Upload photo</span>
+                    <CameraIcon size={30} className="text-gray-400" />
+                    <span className="text-xs text-gray-400 text-center">
+                      Upload photo
+                    </span>
                   </div>
                 )}
               </label>
@@ -303,7 +169,10 @@ export default function AddStudentFormModal({
               {passportPreview && (
                 <button
                   type="button"
-                  onClick={() => { setPassportFile(null); setPassportPreview(null); }}
+                  onClick={() => {
+                    setPassportFile(null);
+                    setPassportPreview(null);
+                  }}
                   className="text-xs text-red-500 hover:text-red-700"
                 >
                   Remove
@@ -330,8 +199,9 @@ export default function AddStudentFormModal({
                   value={(formData as any)[id]}
                   onChange={handleChange}
                   type={type}
-                  className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${errors[id] ? "border-red-500" : "border-gray-300"
-                    } focus:border-[#4B0082]`}
+                  className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${
+                    errors[id] ? "border-red-500" : "border-gray-300"
+                  } focus:border-[#4B0082]`}
                   placeholder={`Enter ${label.toLowerCase()}`}
                 />
                 {errors[id] && (
@@ -342,16 +212,14 @@ export default function AddStudentFormModal({
 
             {/* Guardian Number */}
             <div className="flex flex-col">
-              <label htmlFor="gender" className="text-sm font-medium mb-1">
+              <label htmlFor="guardianNumber" className="text-sm font-medium mb-1">
                 Guardian Number
               </label>
               <input
                 id="guardianNumber"
                 value={formData.guardianNumber}
                 onChange={(e) => {
-                  // Remove non-digits
                   const numericValue = e.target.value.replace(/\D/g, "");
-                  // Limit to 11 digits
                   if (numericValue.length <= 11) {
                     setFormData((prev) => ({
                       ...prev,
@@ -363,8 +231,9 @@ export default function AddStudentFormModal({
                 type="text"
                 inputMode="numeric"
                 maxLength={11}
-                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${errors.guardianNumber ? "border-red-500" : "border-gray-300"
-                  } focus:border-[#4B0082]`}
+                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${
+                  errors.guardianNumber ? "border-red-500" : "border-gray-300"
+                } focus:border-[#4B0082]`}
                 placeholder="Enter guardian number"
               />
               {errors.guardianNumber && (
@@ -383,8 +252,9 @@ export default function AddStudentFormModal({
                 id="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${errors.gender ? "border-red-500" : "border-gray-300"
-                  } focus:border-[#4B0082]`}
+                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${
+                  errors.gender ? "border-red-500" : "border-gray-300"
+                } focus:border-[#4B0082]`}
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
@@ -405,14 +275,13 @@ export default function AddStudentFormModal({
                 value={formData.dateOfBirth}
                 onChange={handleChange}
                 type="date"
-                max={new Date().toISOString().split("T")[0]} // Prevent future dates
-                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${errors.dateOfBirth ? "border-red-500" : "border-gray-300"
-                  } focus:border-[#4B0082]`}
+                max={new Date().toISOString().split("T")[0]}
+                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${
+                  errors.dateOfBirth ? "border-red-500" : "border-gray-300"
+                } focus:border-[#4B0082]`}
               />
               {errors.dateOfBirth && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.dateOfBirth}
-                </p>
+                <p className="text-xs text-red-500 mt-1">{errors.dateOfBirth}</p>
               )}
             </div>
 
@@ -425,11 +294,7 @@ export default function AddStudentFormModal({
                 options={campusOptions}
                 selectedValue={formData.campusId}
                 onSelect={(value) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    campusId: value,
-                    classId: "",
-                  }))
+                  setFormData((prev) => ({ ...prev, campusId: value, classId: "" }))
                 }
                 error={errors.campusId}
               />
@@ -460,8 +325,9 @@ export default function AddStudentFormModal({
                 id="lifestyle"
                 value={formData.lifestyle}
                 onChange={handleChange}
-                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${errors.lifestyle ? "border-red-500" : "border-gray-300"
-                  } focus:border-[#4B0082]`}
+                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${
+                  errors.lifestyle ? "border-red-500" : "border-gray-300"
+                } focus:border-[#4B0082]`}
               >
                 <option value="">Select Lifestyle</option>
                 <option value="day">Day Student</option>
@@ -481,12 +347,15 @@ export default function AddStudentFormModal({
                 id="session"
                 value={formData.session}
                 onChange={handleChange}
-                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${errors.session ? "border-red-500" : "border-gray-300"
-                  } focus:border-[#4B0082]`}
+                className={`h-10 w-full rounded-md border px-3 py-2 text-sm outline-none ${
+                  errors.session ? "border-red-500" : "border-gray-300"
+                } focus:border-[#4B0082]`}
               >
                 <option value="">Select Session</option>
                 {sessions.map((s) => (
-                  <option key={s.id} value={s.name}>{s.name}</option>
+                  <option key={s.id} value={s.name}>
+                    {s.name}
+                  </option>
                 ))}
               </select>
               {errors.session && (

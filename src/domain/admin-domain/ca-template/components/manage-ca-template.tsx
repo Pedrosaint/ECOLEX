@@ -1,21 +1,17 @@
-import { useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import DefaultTemplate from "./default-template";
 import ClassTemplate from "./class-template";
-
-const TABS = ["Default Template", "Per Class Template"] as const;
-type Tab = (typeof TABS)[number];
+import { useManageCATemplate } from "../hooks";
 
 export default function ManageCATemplate() {
-  const [activeTab, setActiveTab] = useState<Tab>("Default Template");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const { TABS, activeTab, showDropdown, toggleDropdown, selectTab, setActiveTab } = useManageCATemplate();
 
   return (
     <div>
       {/* Mobile dropdown */}
       <div className="lg:hidden mb-4 relative">
         <button
-          onClick={() => setShowDropdown((v) => !v)}
+          onClick={toggleDropdown}
           className="flex items-center justify-between w-full bg-[#8000BD] text-white px-4 py-2 rounded-md"
         >
           {activeTab}
@@ -26,10 +22,7 @@ export default function ManageCATemplate() {
             {TABS.map((tab) => (
               <button
                 key={tab}
-                onClick={() => {
-                  setActiveTab(tab);
-                  setShowDropdown(false);
-                }}
+                onClick={() => selectTab(tab)}
                 className={`w-full text-left px-4 py-2 text-sm hover:bg-purple-50 cursor-pointer ${
                   activeTab === tab ? "text-[#8000BD] font-semibold" : "text-gray-700"
                 }`}

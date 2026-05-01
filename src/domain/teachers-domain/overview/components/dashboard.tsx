@@ -1,35 +1,10 @@
 import { StatsCardSkeleton } from "../../../../general/ui/skeleton-loader.ui";
 import { motion } from "framer-motion";
 import StatsCard from "../../../../general/common/stat-card";
-import { useGetTeacherOverviewQuery } from "../api/teacher-overview.api";
+import { useDashboard } from "../hooks";
 
 export default function Dashboard() {
-  const { data, isLoading, isError } = useGetTeacherOverviewQuery();
-
-  const cards = [
-    {
-      title: "Total Students",
-      value: isError ? "—" : String(data?.data.totalStudents ?? 0),
-      isPrimary: true,
-      flipLayout: true,
-    },
-    {
-      title: "Classes Assigned to You",
-      value: isError ? "—" : String(data?.data.totalClasses ?? 0),
-      flipLayout: true,
-    },
-    {
-      title: "Subjects Assigned to You",
-      value: isError ? "—" : String(data?.data.totalSubjects ?? 0),
-      isPrimary: true,
-      flipLayout: true,
-    },
-    {
-      title: "Assignments in Progress",
-      value: isError ? "—" : String(data?.data.assignmentsInProgress ?? 0),
-      flipLayout: true,
-    },
-  ];
+  const { isLoading, cards } = useDashboard();
 
   return (
     <div>

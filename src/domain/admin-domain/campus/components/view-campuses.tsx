@@ -1,36 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Printer, Trash2, ChevronLeft, ChevronRight, Edit } from "lucide-react";
-import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import EditCampus from "../modal/edit-campus.modal";
 import CampuseDeleteModal from "../modal/campuse-delete.modal";
-import { useGetCampusParamsQuery } from "../api/campus.api";
-import { printContent } from "../../../../utils/print-content";
+import { useViewCampuses } from "../hooks";
 
 export default function ViewCampuses() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-   const [selectedCampus, setSelectedCampus] = useState<any>(null);
-
-  // ✅ Fetch data with pagination
-  const { data, isLoading } = useGetCampusParamsQuery({
-    page: currentPage,
-    limit: 9,
-  });
-
-  const campuses = data?.campuses ?? [];
-  const total = data?.total ?? 0;
-  const totalPages = data?.pages ?? 1;
-
-    const handlePrint = () => {
-      if (contentRef.current) {
-        printContent(contentRef.current.innerHTML, "All Campuses List");
-      }
-    };
+  const {
+    currentPage,
+    isEditOpen,
+    isDeleteOpen,
+    selectedCampus,
+    contentRef,
+    campuses,
+    total,
+    totalPages,
+    isLoading,
+    handlePrint,
+    openEdit,
+    closeEdit,
+    openDelete,
+    closeDelete,
+    goToPrevPage,
+    goToNextPage,
+    goToPage,
+  } = useViewCampuses();
 
   return (
     <>
@@ -107,16 +101,13 @@ export default function ViewCampuses() {
                           <td className="py-3 px-5 no-print">
                             <div className="flex items-center justify-center space-x-1">
                               <button
-                                onClick={() => { 
-                                  setIsEditOpen(true);
-                                   setSelectedCampus(campus);
-                                }}
+                                onClick={() => openEdit(campus)}
                                 className="p-1 cursor-pointer"
                               >
                                 <Edit size={20} className="text-gray-400" />
                               </button>
                               <button
-                                onClick={() => setIsDeleteOpen(true)}
+                                onClick={openDelete}
                                 className="p-1 cursor-pointer"
                               >
                                 <Trash2
@@ -151,9 +142,7 @@ export default function ViewCampuses() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={() =>
-                        setCurrentPage(Math.max(1, currentPage - 1))
-                      }
+                      onClick={goToPrevPage}
                       disabled={currentPage === 1}
                       className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -164,7 +153,7 @@ export default function ViewCampuses() {
                       {[...Array(totalPages)].map((_, page) => (
                         <button
                           key={page + 1}
-                          onClick={() => setCurrentPage(page + 1)}
+                          onClick={() => goToPage(page + 1)}
                           className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
                             currentPage === page + 1
                               ? "bg-[#8000BD] text-white"
@@ -177,9 +166,7 @@ export default function ViewCampuses() {
                     </div>
 
                     <button
-                      onClick={() =>
-                        setCurrentPage(Math.min(totalPages, currentPage + 1))
-                      }
+                      onClick={goToNextPage}
                       disabled={currentPage === totalPages}
                       className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -191,12 +178,12 @@ export default function ViewCampuses() {
             </motion.div>
           </div>
 
-          {isEditOpen && selectedCampus&& <EditCampus onClose={() => setIsEditOpen(false)}  campus={selectedCampus}/>}
+          {isEditOpen && selectedCampus && <EditCampus onClose={closeEdit} campus={selectedCampus} />}
           {isDeleteOpen && (
             <CampuseDeleteModal
               isOpen={isDeleteOpen}
-              onClose={() => setIsDeleteOpen(false)}
-              onConfirm={() => setIsDeleteOpen(false)}
+              onClose={closeDelete}
+              onConfirm={closeDelete}
             />
           )}
         </div>

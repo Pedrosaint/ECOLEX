@@ -1,72 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useGetCampusQuery } from "../../campus/api/campus.api";
-import { useAddClassMutation } from "../api/class-api";
-
-interface DropdownOption {
-  value: string;
-  label: string;
-}
+import { useAddClass } from "../hooks";
 
 export default function AddClass() {
-  const [classes, setClasses] = useState("");
-  const [campusId, setCampusId] = useState("");
-  const [className, setClassName] = useState("");
-  const [isCampusOpen, setIsCampusOpen] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const { data } = useGetCampusQuery();
-  const campusOptions: DropdownOption[] = [
-    { value: "", label: "Select Campus" },
-    ...(data?.campuses?.map((c: any) => ({
-      value: String(c.id),
-      label: c.name,
-    })) || []),
-  ];
-
-  const [addClass, { isLoading, isSuccess, isError, error }] =
-    useAddClassMutation();
-
-  useEffect(() => {
-    if (isSuccess) {
-      setShowSuccess(true);
-      const timer = setTimeout(() => setShowSuccess(false), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isSuccess]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    try {
-      await addClass({
-        name: classes,
-        customName: className,
-        campusId: Number(campusId),
-      }).unwrap();
-
-      // clear form if successful
-      setClasses("");
-      setCampusId("");
-      setClassName("");
-    } catch (err) {
-      console.error("Error adding campus:", err);
-    }
-  };
-
-  const isFormComplete =
-    classes.trim() !== "" && campusId.trim() !== "" && className.trim() !== "";
-
-  const getSelectedLabel = (
-    value: string,
-    options: DropdownOption[]
-  ): string => {
-    if (!options || options.length === 0) return "";
-    const found = options.find((option) => option.value === value);
-    return found ? found.label : options[0].label;
-  };
+  const {
+    classes,
+    setClasses,
+    campusId,
+    setCampusId,
+    className,
+    setClassName,
+    isCampusOpen,
+    setIsCampusOpen,
+    showSuccess,
+    campusOptions,
+    isLoading,
+    isError,
+    error,
+    handleSubmit,
+    isFormComplete,
+    getSelectedLabel,
+  } = useAddClass();
 
   return (
     <motion.div
@@ -101,7 +56,6 @@ export default function AddClass() {
           ></div>
         </div>
       </div>
-
 
       <form
         onSubmit={handleSubmit}
@@ -157,7 +111,7 @@ export default function AddClass() {
           />
         </div>
 
-        {/* Class Name Dropdown (custom controlled like Category) */}
+        {/* Class Name Input */}
         <div className="flex flex-col relative">
           <label className="text-sm font-bold text-[#120D1C] font-poppins mb-4">
             Class Name
@@ -186,7 +140,6 @@ export default function AddClass() {
       </form>
 
       {/* Success Message */}
-
       {showSuccess && (
         <AnimatePresence>
           <motion.div

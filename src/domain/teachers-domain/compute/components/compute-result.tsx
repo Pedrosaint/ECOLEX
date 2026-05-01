@@ -1,9 +1,8 @@
 import { CgDanger } from "react-icons/cg";
-import { useGetSessionsQuery } from "../../../admin-domain/overview/api/admin-overview.api";
+import { useComputeResult } from "../hooks";
 
 const ComputeResult = () => {
-  const { data: sessionsData } = useGetSessionsQuery();
-  const sessions = sessionsData?.data ?? [];
+  const { sessions } = useComputeResult();
 
   return (
     <div className="">

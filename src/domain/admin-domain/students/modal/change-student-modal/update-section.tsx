@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IoRefreshSharp } from "react-icons/io5";
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useUpdateSection } from "../../hooks";
 
 const UpdateSection = ({
   campusData,
@@ -10,34 +10,21 @@ const UpdateSection = ({
   onUpdate,
   isUpdating,
 }: any) => {
-  const [campusId, setCampusId] = useState("");
-  const [classId, setClassId] = useState("");
-  const [groupId, setGroupId] = useState("");
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const {
+    campusId,
+    classId,
+    groupId,
+    openDropdown,
+    setOpenDropdown,
+    campusOptions,
+    classOptions,
+    groupOptions,
+    getLabel,
+    handleDropdownSelect,
+    handleUpdate,
+  } = useUpdateSection({ campusData, classData, groupData, onUpdate });
 
-  // 🔹 derived filtered lists (based on selected parents)
-  const filteredClasses = classData?.classes?.filter(
-    (cls: any) => !campusId || cls.campusId === Number(campusId)
-  );
-
-  const filteredGroups = groupData?.groups?.filter(
-    (grp: any) => !classId || grp.classId === Number(classId)
-  );
-
-  // 🔹 data mapping helpers
-  const getOptions = (data: any, label: string) => [
-    { value: "", label },
-    ...(data?.map((d: any) => ({ value: String(d.id), label: d.name })) || []),
-  ];
-
-  const campusOptions = getOptions(campusData?.campuses, "Select Campus");
-  const classOptions = getOptions(filteredClasses, "Select Class");
-  const groupOptions = getOptions(filteredGroups, "Select Group");
-
-  const getLabel = (id: string, options: any[]) =>
-    options.find((opt) => opt.value === id)?.label || options[0].label;
-
-  // 🔹 reusable dropdown component
+  // Reusable dropdown component (local to UpdateSection)
   const Dropdown = ({ label, options, selectedValue, onSelect, name }: any) => (
     <div className="relative">
       <label className="text-sm font-bold text-[#120D1C] mb-2 block">
@@ -60,18 +47,7 @@ const UpdateSection = ({
               className={`px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer ${
                 opt.value === selectedValue ? "bg-gray-100" : ""
               }`}
-              onClick={() => {
-                onSelect(opt.value);
-                setOpenDropdown(null);
-
-                // 🔹 Reset dependent fields
-                if (name === "campus") {
-                  setClassId("");
-                  setGroupId("");
-                } else if (name === "class") {
-                  setGroupId("");
-                }
-              }}
+              onClick={() => handleDropdownSelect(name, opt.value)}
             >
               {opt.label}
             </li>
@@ -81,11 +57,6 @@ const UpdateSection = ({
     </div>
   );
 
-  const handleUpdate = () => {
-    if (!campusId || !classId || !groupId) return;
-    onUpdate({ campusId, classId, groupId });
-  };
-
   return (
     <div className="p-6 bg-[#EDEDED] border border-gray-200 rounded-t-xl">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -93,21 +64,21 @@ const UpdateSection = ({
           label="Select Campus"
           options={campusOptions}
           selectedValue={campusId}
-          onSelect={setCampusId}
+          onSelect={(v: string) => handleDropdownSelect("campus", v)}
           name="campus"
         />
         <Dropdown
           label="Select Class"
           options={classOptions}
           selectedValue={classId}
-          onSelect={setClassId}
+          onSelect={(v: string) => handleDropdownSelect("class", v)}
           name="class"
         />
         <Dropdown
           label="Select Group"
           options={groupOptions}
           selectedValue={groupId}
-          onSelect={setGroupId}
+          onSelect={(v: string) => handleDropdownSelect("group", v)}
           name="group"
         />
 

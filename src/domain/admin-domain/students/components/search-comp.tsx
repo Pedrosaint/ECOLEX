@@ -1,13 +1,6 @@
-
-import { useState, useRef, useEffect } from "react";
 import { Search, X, ChevronDown } from "lucide-react";
-import { useGetCampusQuery } from "../../campus/api/campus.api";
 import DotLoader from "../../../../general/ui/dot-loader";
-import { useGetClassesQuery, useGetClassGroupsQuery } from "../../classes/api/class-api";
-import type { Class } from "../../classes/response/get-class.response";
-import type { Group } from "../../classes/response/get-group.response";
-import type { Campuse } from "../../campus/response/campuse.response";
-
+import { useSearchComp } from "../hooks";
 
 interface SearchStudentCompProps {
   onDisplayStudents: (filters: {
@@ -22,139 +15,43 @@ interface SearchStudentCompProps {
   hasFilters?: boolean;
 }
 
-interface DropdownOption {
-  value: string;
-  label: string;
-}
-
 export default function SearchStudentComp({
   onDisplayStudents,
   isLoading,
   onClearFilters,
   hasFilters,
 }: SearchStudentCompProps) {
-  const [campusId, setCampusId] = useState("");
-  const [classId, setClassId] = useState("");
-  const [groupId, setGroupId] = useState("");
-  const [gender, setGender] = useState("");
-  const [searchName, setSearchName] = useState("");
-  const [isCampusOpen, setIsCampusOpen] = useState(false);
-  const [isClassOpen, setIsClassOpen] = useState(false);
-  const [isGroupOpen, setIsGroupOpen] = useState(false);
-  const [isGenderOpen, setIsGenderOpen] = useState(false);
-
-  const campusRef = useRef<HTMLDivElement>(null);
-  const classRef = useRef<HTMLDivElement>(null);
-  const groupRef = useRef<HTMLDivElement>(null);
-  const genderRef = useRef<HTMLDivElement>(null);
-
-  const { data: campusData } = useGetCampusQuery();
-  const { data: classData } = useGetClassesQuery();
-  const { data: groupData } = useGetClassGroupsQuery({});
-
-  // Filter dependent data
-  const filteredClasses = classData?.classes?.filter(
-    (cls: Class) => !campusId || cls.campusId === Number(campusId)
-  );
-
-  const filteredGroups = groupData?.groups?.filter(
-    (grp: Group) => !classId || grp.classId === Number(classId)
-  );
-
-  // Campus dropdown options
-  const campusOptions: DropdownOption[] = [
-    { value: "", label: "Select Campus" },
-    ...(campusData?.campuses?.map((c: Campuse) => ({
-      value: String(c.id),
-      label: c.name,
-    })) || []),
-  ];
-
-  // Class dropdown options
-  const classOptions: DropdownOption[] = [
-    { value: "", label: "Select Class" },
-    ...(filteredClasses?.map((c: Class) => ({
-      value: String(c.id),
-      label: c.name,
-    })) || []),
-  ];
-
-  // Group dropdown options
-  const groupOptions: DropdownOption[] = [
-    { value: "", label: "Select Group" },
-    ...(filteredGroups?.map((g: Group) => ({
-      value: String(g.id),
-      label: g.name,
-    })) || []),
-  ];
-
-  // Gender dropdown options
-  const genderOptions: DropdownOption[] = [
-    { value: "", label: "Select Gender" },
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
-  ];
-
-  const handleDisplayStudents = () => {
-    onDisplayStudents({
-      campusId: campusId || undefined,
-      classId: classId || undefined,
-      classGroupId: groupId || undefined,
-      gender: gender || undefined,
-      name: searchName || undefined,
-    });
-  };
-
-  const handleClearFilters = () => {
-    setCampusId("");
-    setClassId("");
-    setGroupId("");
-    setGender("");
-    setSearchName("");
-    onClearFilters();
-  };
-
-  const getSelectedLabel = (
-    value: string,
-    options: DropdownOption[]
-  ): string => {
-    if (!options || options.length === 0) return "";
-    const found = options.find((option) => option.value === value);
-    return found ? found.label : options[0].label;
-  };
-
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        campusRef.current &&
-        !campusRef.current.contains(event.target as Node)
-      ) {
-        setIsCampusOpen(false);
-      }
-      if (
-        classRef.current &&
-        !classRef.current.contains(event.target as Node)
-      ) {
-        setIsClassOpen(false);
-      }
-      if (
-        groupRef.current &&
-        !groupRef.current.contains(event.target as Node)
-      ) {
-        setIsGroupOpen(false);
-      }
-      if (
-        genderRef.current &&
-        !genderRef.current.contains(event.target as Node)
-      ) {
-        setIsGenderOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const {
+    campusId,
+    setCampusId,
+    classId,
+    setClassId,
+    groupId,
+    setGroupId,
+    gender,
+    setGender,
+    searchName,
+    setSearchName,
+    isCampusOpen,
+    setIsCampusOpen,
+    isClassOpen,
+    setIsClassOpen,
+    isGroupOpen,
+    setIsGroupOpen,
+    isGenderOpen,
+    setIsGenderOpen,
+    campusRef,
+    classRef,
+    groupRef,
+    genderRef,
+    campusOptions,
+    classOptions,
+    groupOptions,
+    genderOptions,
+    handleDisplayStudents,
+    handleClearFilters,
+    getSelectedLabel,
+  } = useSearchComp({ onDisplayStudents, onClearFilters });
 
   return (
     <div className="w-full">
@@ -175,8 +72,7 @@ export default function SearchStudentComp({
               {getSelectedLabel(campusId, campusOptions)}
               <ChevronDown
                 size={16}
-                className={`transition-transform ${isCampusOpen ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform ${isCampusOpen ? "rotate-180" : ""}`}
               />
             </button>
             {isCampusOpen && (
@@ -188,8 +84,9 @@ export default function SearchStudentComp({
                       setCampusId(option.value);
                       setIsCampusOpen(false);
                     }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${campusId === option.value ? "bg-gray-100 font-medium" : ""
-                      }`}
+                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                      campusId === option.value ? "bg-gray-100 font-medium" : ""
+                    }`}
                   >
                     {option.label}
                   </div>
@@ -229,8 +126,7 @@ export default function SearchStudentComp({
               {getSelectedLabel(gender, genderOptions)}
               <ChevronDown
                 size={16}
-                className={`transition-transform ${isGenderOpen ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform ${isGenderOpen ? "rotate-180" : ""}`}
               />
             </button>
             {isGenderOpen && (
@@ -242,8 +138,9 @@ export default function SearchStudentComp({
                       setGender(option.value);
                       setIsGenderOpen(false);
                     }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${gender === option.value ? "bg-gray-100 font-medium" : ""
-                      }`}
+                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                      gender === option.value ? "bg-gray-100 font-medium" : ""
+                    }`}
                   >
                     {option.label}
                   </div>
@@ -268,8 +165,7 @@ export default function SearchStudentComp({
               {getSelectedLabel(classId, classOptions)}
               <ChevronDown
                 size={16}
-                className={`transition-transform ${isClassOpen ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform ${isClassOpen ? "rotate-180" : ""}`}
               />
             </button>
             {isClassOpen && (
@@ -281,8 +177,9 @@ export default function SearchStudentComp({
                       setClassId(option.value);
                       setIsClassOpen(false);
                     }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${classId === option.value ? "bg-gray-100 font-medium" : ""
-                      }`}
+                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                      classId === option.value ? "bg-gray-100 font-medium" : ""
+                    }`}
                   >
                     {option.label}
                   </div>
@@ -307,8 +204,7 @@ export default function SearchStudentComp({
               {getSelectedLabel(groupId, groupOptions)}
               <ChevronDown
                 size={16}
-                className={`transition-transform ${isGroupOpen ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform ${isGroupOpen ? "rotate-180" : ""}`}
               />
             </button>
             {isGroupOpen && (
@@ -320,8 +216,9 @@ export default function SearchStudentComp({
                       setGroupId(option.value);
                       setIsGroupOpen(false);
                     }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${groupId === option.value ? "bg-gray-100 font-medium" : ""
-                      }`}
+                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
+                      groupId === option.value ? "bg-gray-100 font-medium" : ""
+                    }`}
                   >
                     {option.label}
                   </div>
@@ -349,7 +246,7 @@ export default function SearchStudentComp({
 
       {/* Display Button */}
       {isLoading ||
-        (!campusId && !searchName.trim() && !gender && !classId && !groupId) ? (
+      (!campusId && !searchName.trim() && !gender && !classId && !groupId) ? (
         <div className="bg-[#8000BD]/80 px-6 py-3 mb-4 rounded cursor-not-allowed opacity-50">
           <div className="flex items-center justify-center">
             {!isLoading && <Search className="w-5 h-5 mr-2 text-white" />}

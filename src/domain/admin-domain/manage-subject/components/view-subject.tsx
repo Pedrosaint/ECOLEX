@@ -1,46 +1,31 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion, AnimatePresence } from "framer-motion";
 import { Printer, ChevronLeft, ChevronRight, Edit, Trash2, AlertTriangle } from "lucide-react";
-import { useRef, useState } from "react";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import EditSubject from "../modal/edit-subject.modal";
-import { useGetAllSubjectQuery, useDeleteSubjectMutation } from "../api/subject.api";
-import { printContent } from "../../../../utils/print-content";
-import { toast } from "sonner";
-
+import { useViewSubject } from "../hooks";
 
 export default function ViewSubject() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState<any>(null);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const { data, isLoading, isError } = useGetAllSubjectQuery();
-  const [deleteSubject, { isLoading: isDeleting }] = useDeleteSubjectMutation();
-
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
-    try {
-      await deleteSubject({ id: deleteTarget.id }).unwrap();
-      toast.success("Subject deleted successfully");
-      setDeleteTarget(null);
-    } catch (error) {
-      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to delete subject");
-    }
-  };
-
-  const subjects = data?.subjects || [];
-  const totalSubjects = data?.count || 0;
-  const subjectsPerPage = 9;
-  const totalPages = Math.ceil(totalSubjects / subjectsPerPage);
-
-  // Handle pagination manually (client-side)
-  const startIndex = (currentPage - 1) * subjectsPerPage;
-  const paginatedSubjects = subjects.slice(
+  const {
+    currentPage,
+    setCurrentPage,
+    isEditOpen,
+    selectedSubject,
+    deleteTarget,
+    setDeleteTarget,
+    contentRef,
+    isLoading,
+    isError,
+    isDeleting,
+    handleDelete,
+    handlePrint,
+    totalSubjects,
+    subjectsPerPage,
+    totalPages,
     startIndex,
-    startIndex + subjectsPerPage
-  );
+    paginatedSubjects,
+    openEdit,
+    closeEdit,
+  } = useViewSubject();
 
   if (isLoading) return <TableSkeleton />;
   if (isError)
@@ -49,12 +34,6 @@ export default function ViewSubject() {
         Failed to load subjects. Please try again later.
       </div>
     );
-
-  const handlePrint = () => {
-    if (contentRef.current) {
-      printContent(contentRef.current.innerHTML, "All Subject List");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -115,7 +94,7 @@ export default function ViewSubject() {
                       <td className="py-3 px-5 no-print">
                         <div className="flex items-center justify-center space-x-1">
                           <button
-                            onClick={() => { setSelectedSubject(subject); setIsEditOpen(true); }}
+                            onClick={() => openEdit(subject)}
                             className="p-1 hover:bg-gray-100 rounded transition-colors cursor-pointer"
                           >
                             <Edit size={18} className="text-gray-400 hover:text-amber-500" />
@@ -146,7 +125,7 @@ export default function ViewSubject() {
 
           {isEditOpen && (
             <EditSubject
-              onClose={() => setIsEditOpen(false)}
+              onClose={closeEdit}
               subjectId={selectedSubject?.id}
               initialName={selectedSubject?.name}
               initialCampusId={selectedSubject?.campusId}
@@ -174,7 +153,11 @@ export default function ViewSubject() {
                   </div>
                   <h2 className="text-lg font-bold text-gray-900 mb-1">Delete Subject</h2>
                   <p className="text-sm text-gray-500 mb-6">
-                    Are you sure you want to delete <span className="font-semibold text-gray-700">"{deleteTarget.name}"</span>? This action cannot be undone.
+                    Are you sure you want to delete{" "}
+                    <span className="font-semibold text-gray-700">
+                      &quot;{deleteTarget.name}&quot;
+                    </span>
+                    ? This action cannot be undone.
                   </p>
                   <div className="flex gap-3 w-full">
                     <button
@@ -207,36 +190,30 @@ export default function ViewSubject() {
               </p>
 
               <div className="flex items-center space-x-1">
-                {/* Previous Button */}
                 <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft size={20} />
                 </button>
 
-                {/* Page Numbers */}
                 {[...Array(totalPages).keys()].map((page) => (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page + 1)}
-                    className={`w-8 h-8 rounded text-sm font-semibold transition-colors ${currentPage === page + 1
-                      ? "bg-[#8000BD] text-white"
-                      : "text-gray-600 hover:bg-gray-100"
-                      }`}
+                    className={`w-8 h-8 rounded text-sm font-semibold transition-colors ${
+                      currentPage === page + 1
+                        ? "bg-[#8000BD] text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
                   >
                     {page + 1}
                   </button>
                 ))}
 
-                {/* Next Button */}
                 <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
                   className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 >

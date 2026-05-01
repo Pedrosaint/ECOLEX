@@ -51,3 +51,5 @@ export const {
   useSetDefaultCATemplateMutation,
   useSetClassCATemplateMutation,
 } = caTemplateApi;
+
+export * from '../types';

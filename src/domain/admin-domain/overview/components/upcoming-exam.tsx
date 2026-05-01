@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Plus } from "lucide-react";
 import { CalendarClock } from "lucide-react";
-import type { UpcomingExam } from "../api/admin-overview.api";
+import type { UpcomingExam } from "../types";
 import UpcomingExamsModal from "../modal/upcoming-exam.modal";
+import { useUpcomingExam } from "../hooks";
 
 interface Props {
   exams: UpcomingExam[];
@@ -10,21 +10,21 @@ interface Props {
 }
 
 const UpcomingExams = ({ exams, isLoading }: Props) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isModalOpen, openModal, closeModal } = useUpcomingExam();
 
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-lg font-semibold text-gray-900">Upcoming Exams</h2>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={openModal}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold text-white bg-[#8000BD] hover:bg-[#640094] rounded-lg transition-colors cursor-pointer"
         >
           <Plus size={15} />
           Add Exam
         </button>
       </div>
-      {isModalOpen && <UpcomingExamsModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <UpcomingExamsModal onClose={closeModal} />}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
         {/* Table Header */}
         <div className="grid grid-cols-4 gap-4 p-4 border-b border-[#FAF7FC] bg-[#FAF7FC] px-4 rounded-t-2xl">
@@ -72,11 +72,3 @@ const UpcomingExams = ({ exams, isLoading }: Props) => {
 };
 
 export default UpcomingExams;
-
-// ============================================================
-// ORIGINAL IMPLEMENTATION (pre-API) — kept for reference
-// ============================================================
-// import { useState, useEffect } from "react";
-// import UpcomingExamsModal from "../modal/upcoming-exam.modal";
-// import UpcomingExamsSkeleton from "../../../../general/ui/upcoming-exam-skeleton-loader.ui";
-// ... (hardcoded exams array with fake loading)

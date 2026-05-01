@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Plus,
   Printer,
@@ -8,7 +7,6 @@ import {
   Edit,
   UserPlus,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoEyeOutline } from "react-icons/io5";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
@@ -18,170 +16,48 @@ import ViewStaffModal from "../modal/view-staff.modal";
 import EditStaffModal from "../modal/edit-staff.modal";
 import DeleteStaffModal from "../modal/delete-staff.modal";
 import SearchStaffComp from "../components/search-staff-comp";
-import { useDeleteStaffMutation, useGetAllStaffQuery } from "../api/staff-api";
-
-
-// Remove the mock Staff type and use your actual interface
 import type { Staff as ApiStaff } from "../model/staff.model";
-import { toast } from "sonner";
 import EmptyStaffData from "./empty-staff-data";
 import NetworkError from "./network-error";
-import { printContent } from "../../../../utils/print-content";
+import { useListOfStaff } from "../hooks";
 
 export default function ListOfStaff() {
-  const [filters, setFilters] = useState({
-    campusId: undefined as string | undefined,
-    duty: undefined as string | undefined,
-    name: undefined as string | undefined,
-    page: 1,
-    pageSize: 9,
-  });
-
-  const [selectedStaffData, setSelectedStaffData] = useState<any>(null);
-  const [showTable, setShowTable] = useState(true);
-  const [hasFilters, setHasFilters] = useState(false);
-  const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState("All");
-  const [isTabLoading, setIsTabLoading] = useState(false);
-  const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
-  const [isAssignTeacherModalOpen, setIsAssignTeacherModalOpen] =
-    useState(false);
-  const [isViewStaffModalOpen, setIsViewStaffModalOpen] = useState(false);
-  const [isEditStaffModalOpen, setIsEditStaffModalOpen] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [isDeleteStaffModalOpen, setIsDeleteStaffModalOpen] = useState({
-    isOpen: false,
-    staff: null as ApiStaff | null,
-    isLoading: false,
-  });
-
-  const [deleteStaff] = useDeleteStaffMutation();
-  const { data, error, isLoading, isFetching, refetch } =
-    useGetAllStaffQuery(filters);
-
-  // Handle tab changes - they filter by duty
-  useEffect(() => {
-    const handleTabChange = async () => {
-      setIsTabLoading(true);
-
-      if (activeTab === "All") {
-        setFilters((prev) => ({ ...prev, duty: undefined, page: 1 }));
-      } else {
-        setFilters((prev) => ({ ...prev, duty: activeTab, page: 1 }));
-      }
-      setTimeout(() => {
-        setIsTabLoading(false);
-      }, 500);
-    };
-
-    handleTabChange();
-  }, [activeTab]);
-
-const handleDisplayStaff = (newFilters: {
-  campusId?: string;
-  duty?: string;
-  name?: string;
-}) => {
-  const hasActiveFilters =
-    !!newFilters.campusId || !!newFilters.duty || !!newFilters.name;
-  setHasFilters(hasActiveFilters);
-
-  setFilters((prev) => ({
-    ...prev,
-    campusId: newFilters.campusId,
-    duty: newFilters.duty,
-    name: newFilters.name,
-    classId: undefined,
-    subjectId: undefined,
-    page: 1,
-  }));
-
-  // ✅ When user filters, show table again
-  if (hasActiveFilters) {
-    setShowTable(true);
-  } else {
-    setShowTable(false);
-  }
-};
-
-const handleClearFilters = () => {
-  setHasFilters(false);
-  setFilters({
-    campusId: undefined,
-    duty: undefined,
-    name: undefined,
-    page: 1,
-    pageSize: 9,
-  });
-
-
-  setShowTable(false);
-};
-
-
-  const handlePageChange = (newPage: number) => {
-    setFilters((prev) => ({ ...prev, page: newPage }));
-  };
-
-  const handleEdit = () => {
-    setIsViewStaffModalOpen(false);
-    setTimeout(() => {
-      setIsEditStaffModalOpen(true);
-    }, 300);
-  };
-
-  const handleDeleteConfirm = async () => {
-    setIsDeleteStaffModalOpen((prev) => ({ ...prev, isLoading: true }));
-    const staffId = isDeleteStaffModalOpen.staff?.id;
-    if (staffId === undefined) {
-      toast.error("Staff ID is missing!");
-      setIsDeleteStaffModalOpen({
-        isOpen: false,
-        staff: null,
-        isLoading: false,
-      });
-      return;
-    }
-    try {
-      await deleteStaff({ id: staffId }).unwrap();
-      toast.success("Staff deleted successfully!");
-    } catch (error) {
-      console.error("Failed to delete staff:", error);
-      toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to delete staff!");
-    }
-    setTimeout(() => {
-      setIsDeleteStaffModalOpen({
-        isOpen: false,
-        staff: null,
-        isLoading: false,
-      });
-      refetch();
-    }, 1500);
-  };
-
-  const handleDeleteCancel = () => {
-    setIsDeleteStaffModalOpen({
-      isOpen: false,
-      staff: null,
-      isLoading: false,
-    });
-  };
-
-  const isNetworkError = (err: any) => {
-    return (
-      err?.code === "ERR_NETWORK" ||
-      err?.message?.includes("Failed to fetch") ||
-      err?.message?.includes("NetworkError")
-    );
-  };
-
-  const tabs = ["All", "Teacher", "Security", "Cleaner", "HR"];
-
-    const handlePrint = () => {
-      if (contentRef.current) {
-        printContent(contentRef.current.innerHTML, "All Staff List");
-      }
-    };
+  const {
+    filters,
+    data,
+    error,
+    isLoading,
+    isFetching,
+    selectedStaffData,
+    setSelectedStaffData,
+    showTable,
+    hasFilters,
+    selectedStaffId,
+    setSelectedStaffId,
+    activeTab,
+    setActiveTab,
+    isTabLoading,
+    isAddStaffModalOpen,
+    setIsAddStaffModalOpen,
+    isAssignTeacherModalOpen,
+    setIsAssignTeacherModalOpen,
+    isViewStaffModalOpen,
+    setIsViewStaffModalOpen,
+    isEditStaffModalOpen,
+    setIsEditStaffModalOpen,
+    contentRef,
+    isDeleteStaffModalOpen,
+    setIsDeleteStaffModalOpen,
+    handleDisplayStaff,
+    handleClearFilters,
+    handlePageChange,
+    handleEdit,
+    handleDeleteConfirm,
+    handleDeleteCancel,
+    isNetworkError,
+    handlePrint,
+    tabs,
+  } = useListOfStaff();
 
   return (
     <>
@@ -205,7 +81,8 @@ const handleClearFilters = () => {
                 <h1 className="text-xl font-bold text-gray-800">Staff Management</h1>
                 {data && (
                   <p className="text-sm text-gray-500 mt-0.5">
-                    {data.pagination?.total ?? data.staff.length} staff member{(data.pagination?.total ?? data.staff.length) !== 1 ? "s" : ""} found
+                    {data.pagination?.total ?? data.staff.length} staff member
+                    {(data.pagination?.total ?? data.staff.length) !== 1 ? "s" : ""} found
                   </p>
                 )}
               </div>
@@ -337,9 +214,7 @@ const handleClearFilters = () => {
                             {data.staff.map((staff, index) => (
                               <tr key={staff.id} className="hover:bg-gray-50">
                                 <td className="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">
-                                  {(filters.page - 1) * filters.pageSize +
-                                    index +
-                                    1}
+                                  {(filters.page - 1) * filters.pageSize + index + 1}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   {staff.name}
@@ -351,8 +226,7 @@ const handleClearFilters = () => {
                                         const subjectName = a.subject?.name;
                                         return (
                                           <li key={a.id}>
-                                            {subjectName &&
-                                            typeof subjectName === "string"
+                                            {subjectName && typeof subjectName === "string"
                                               ? subjectName
                                               : "No subject"}
                                           </li>
@@ -371,8 +245,7 @@ const handleClearFilters = () => {
                                         const className = a.class?.name;
                                         return (
                                           <li key={a.id}>
-                                            {className &&
-                                            typeof className === "string"
+                                            {className && typeof className === "string"
                                               ? className
                                               : "No class"}
                                           </li>
@@ -394,7 +267,9 @@ const handleClearFilters = () => {
                                   {staff.registrationNumber}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
-                                  {staff.dateEmployed ? new Date(staff.dateEmployed).toLocaleDateString("en-GB") : "—"}
+                                  {staff.dateEmployed
+                                    ? new Date(staff.dateEmployed).toLocaleDateString("en-GB")
+                                    : "—"}
                                 </td>
                                 <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                                   ₦{Number(staff.payroll).toLocaleString()}
@@ -470,9 +345,7 @@ const handleClearFilters = () => {
                             </div>
                             <div className="flex items-center">
                               <button
-                                onClick={() =>
-                                  handlePageChange(filters.page - 1)
-                                }
+                                onClick={() => handlePageChange(filters.page - 1)}
                                 disabled={filters.page === 1}
                                 className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
@@ -482,19 +355,14 @@ const handleClearFilters = () => {
                               <div className="flex items-center font-space">
                                 {Array.from(
                                   {
-                                    length: Math.min(
-                                      5,
-                                      data.pagination.totalPages
-                                    ),
+                                    length: Math.min(5, data.pagination.totalPages),
                                   },
                                   (_, i) => {
                                     const pageNum = i + 1;
                                     return (
                                       <button
                                         key={pageNum}
-                                        onClick={() =>
-                                          handlePageChange(pageNum)
-                                        }
+                                        onClick={() => handlePageChange(pageNum)}
                                         className={`w-8 h-8 rounded text-sm font-semibold transition-colors font-space ${
                                           filters.page === pageNum
                                             ? "bg-[#8000BD] text-white"
@@ -508,14 +376,10 @@ const handleClearFilters = () => {
                                 )}
                                 {data.pagination.totalPages > 5 && (
                                   <>
-                                    <span className="text-gray-400 px-2">
-                                      ...
-                                    </span>
+                                    <span className="text-gray-400 px-2">...</span>
                                     <button
                                       onClick={() =>
-                                        handlePageChange(
-                                          data.pagination.totalPages
-                                        )
+                                        handlePageChange(data.pagination.totalPages)
                                       }
                                       className="w-8 h-8 rounded text-sm font-semibold text-gray-600 hover:bg-gray-100 font-space"
                                     >
@@ -526,12 +390,8 @@ const handleClearFilters = () => {
                               </div>
 
                               <button
-                                onClick={() =>
-                                  handlePageChange(filters.page + 1)
-                                }
-                                disabled={
-                                  filters.page === data.pagination.totalPages
-                                }
+                                onClick={() => handlePageChange(filters.page + 1)}
+                                disabled={filters.page === data.pagination.totalPages}
                                 className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 <ChevronRight size={20} />
@@ -558,11 +418,9 @@ const handleClearFilters = () => {
               )}
             </AnimatePresence>
 
-            {/* Your modals */}
+            {/* Modals */}
             {isAddStaffModalOpen && (
-              <AddStaffFormModal
-                onClose={() => setIsAddStaffModalOpen(false)}
-              />
+              <AddStaffFormModal onClose={() => setIsAddStaffModalOpen(false)} />
             )}
 
             {isAssignTeacherModalOpen && (

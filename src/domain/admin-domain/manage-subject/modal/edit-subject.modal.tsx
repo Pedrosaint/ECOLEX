@@ -1,9 +1,6 @@
-import { useEditSubjectMutation } from "../api/subject.api";
-import { useGetCampusQuery } from "../../campus/api/campus.api";
 import { ChevronDown, X } from "lucide-react";
-import { useEffect, useState } from "react";
 import type { Campuse } from "../../campus/response/campuse.response";
-
+import { useEditSubject } from "../hooks";
 
 const EditSubject = ({
   onClose,
@@ -18,43 +15,21 @@ const EditSubject = ({
   initialCampusId?: number;
   initialCode?: string;
 }) => {
-  const [subjectName, setSubjectName] = useState(initialName || "");
-  const [campusId, setCampusId] = useState(initialCampusId ? String(initialCampusId) : "");
-  const [code, setCode] = useState(initialCode || "");
-  const [isCampusOpen, setIsCampusOpen] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const { data: campusData, isLoading: campusLoading } = useGetCampusQuery();
-
-  const [editSubject, { isLoading, isSuccess }] = useEditSubjectMutation();
-
-  useEffect(() => {
-    if (isSuccess) {
-      setShowSuccess(true);
-      const timeout = setTimeout(() => {
-        setShowSuccess(false);
-        onClose();
-      }, 1500);
-      return () => clearTimeout(timeout);
-    }
-  }, [isSuccess, onClose]);
-
-  const handleSave = async () => {
-    if (!subjectName.trim()) return;
-
-    try {
-      await editSubject({
-        id: subjectId,
-        payload: {
-          name: subjectName,
-          campusId: campusId ? Number(campusId) : undefined,
-          code: code || undefined,
-        },
-      });
-    } catch (err) {
-      console.error("Error updating subject:", err);
-    }
-  };
+  const {
+    subjectName,
+    setSubjectName,
+    campusId,
+    setCampusId,
+    code,
+    setCode,
+    isCampusOpen,
+    setIsCampusOpen,
+    showSuccess,
+    campusData,
+    campusLoading,
+    isLoading,
+    handleSave,
+  } = useEditSubject({ onClose, subjectId, initialName, initialCampusId, initialCode });
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">

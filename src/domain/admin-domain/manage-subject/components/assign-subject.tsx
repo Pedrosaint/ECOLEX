@@ -1,79 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, AlertTriangle, CheckSquare, Square } from "lucide-react";
-import { toast } from "sonner";
-import { skipToken } from "@reduxjs/toolkit/query";
-import { useGetClassesQuery } from "../../classes/api/class-api";
-import { useGetAllSubjectQuery, useAssignSubjectToClassMutation, useGetClassSubjectsQuery } from "../api/subject.api";
-import { useGetCATemplateQuery } from "../../ca-template/api/ca-template.api";
+import { useAssignSubject } from "../hooks";
 
 export default function AssignSubject() {
-  const [classId, setClassId] = useState<number | null>(null);
-  const [selectedSubjectIds, setSelectedSubjectIds] = useState<number[]>([]);
-  const [classDropdownOpen, setClassDropdownOpen] = useState(false);
-  const [subjectDropdownOpen, setSubjectDropdownOpen] = useState(false);
-  const [subjectSearch, setSubjectSearch] = useState("");
-  const [caError, setCaError] = useState(false);
-  const [, setResult] = useState<{
-    assigned: number;
-    skipped: number;
-    casCreated: number;
-    examsCreated: number;
-  } | null>(null);
-
-  const { data: classesData, isLoading: classesLoading } = useGetClassesQuery();
-  const { data: subjectsData, isLoading: subjectsLoading } = useGetAllSubjectQuery();
-  const { data: classSubjectsData } = useGetClassSubjectsQuery(classId ?? skipToken);
-  const { data: caTemplateData } = useGetCATemplateQuery(classId ? { classId } : skipToken);
-  const [assignSubject, { isLoading }] = useAssignSubjectToClassMutation();
-
-  const selectedClass = classesData?.classes.find((c) => c.id === classId);
-
-  const assignedSubjectIds = new Set(classSubjectsData?.data?.subjects.map((s) => s.id) ?? []);
-  const availableSubjects = (subjectsData?.subjects ?? [])
-    .filter((s) => !assignedSubjectIds.has(s.id))
-    .filter((s) => s.name.toLowerCase().includes(subjectSearch.toLowerCase()));
-
-  const toggleSubject = (id: number) => {
-    setSelectedSubjectIds((prev) =>
-      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
-    );
-  };
-
-  const selectedSubjectNames = availableSubjects
-    .filter((s) => selectedSubjectIds.includes(s.id))
-    .map((s) => s.name)
-    .join(", ");
-
-  const handleSubmit = async () => {
-    if (!classId) { toast.error("Please select a class"); return; }
-    if (selectedSubjectIds.length === 0) { toast.error("Please select at least one subject"); return; }
-
-    setCaError(false);
-    setResult(null);
-
-    try {
-      const res = await assignSubject({ classId, subjectIds: selectedSubjectIds }).unwrap();
-      setResult(res.data);
-      setSelectedSubjectIds([]);
-      setClassId(null);
-      const hasClassTemplate = !!(caTemplateData?.data?.classSpecific && caTemplateData.data.classSpecific.templates.length > 0);
-
-      if (hasClassTemplate) {
-        toast.success(res.message);
-      } else {
-        toast.success(`Subjects assigned to ${selectedClass?.name} uses the default CA template.`);
-      }
-    } catch (err: any) {
-      const message: string = err?.data?.message || "";
-      if (message.toLowerCase().includes("ca") || message.toLowerCase().includes("template")) {
-        setCaError(true);
-      } else {
-        toast.error(message || "Failed to assign subjects");
-      }
-    }
-  };
+  const {
+    classId,
+    selectedSubjectIds,
+    classDropdownOpen,
+    subjectDropdownOpen,
+    subjectSearch,
+    setSubjectSearch,
+    caError,
+    classesData,
+    classesLoading,
+    subjectsLoading,
+    isLoading,
+    selectedClass,
+    availableSubjects,
+    selectedSubjectNames,
+    toggleSubject,
+    handleSubmit,
+    handleClassSelect,
+    toggleClassDropdown,
+    toggleSubjectDropdown,
+  } = useAssignSubject();
 
   return (
     <motion.div
@@ -104,23 +55,6 @@ export default function AssignSubject() {
         </div>
       )}
 
-      {/* Success result card */}
-      {/* {result && (
-        <div className="mb-5 bg-green-50 border border-green-200 rounded-xl px-4 py-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-          {[
-            { label: "Assigned", value: result.assigned },
-            { label: "Skipped", value: result.skipped },
-            { label: "CAs Created", value: result.casCreated },
-            { label: "Exams Created", value: result.examsCreated },
-          ].map((item) => (
-            <div key={item.label}>
-              <p className="text-xl font-bold text-green-700">{item.value}</p>
-              <p className="text-xs text-green-600">{item.label}</p>
-            </div>
-          ))}
-        </div>
-      )} */}
-
       <div className="flex flex-col gap-4">
         {/* Dropdowns row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -132,7 +66,7 @@ export default function AssignSubject() {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => { setClassDropdownOpen((v) => !v); setSubjectDropdownOpen(false); }}
+                onClick={toggleClassDropdown}
                 disabled={classesLoading}
                 className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm text-left flex items-center justify-between focus:outline-none"
               >
@@ -147,7 +81,7 @@ export default function AssignSubject() {
                   {classesData?.classes.map((cls) => (
                     <div
                       key={cls.id}
-                      onClick={() => { setClassId(cls.id); setClassDropdownOpen(false); setCaError(false); setResult(null); setSelectedSubjectIds([]); setSubjectSearch(""); }}
+                      onClick={() => handleClassSelect(cls.id)}
                       className={`px-3 py-2 cursor-pointer text-sm hover:bg-[#6a00a1] hover:text-white ${
                         classId === cls.id ? "bg-purple-50 font-medium text-[#8000BD]" : "text-gray-700"
                       }`}
@@ -168,7 +102,7 @@ export default function AssignSubject() {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => { setSubjectDropdownOpen((v) => { if (v) setSubjectSearch(""); return !v; }); setClassDropdownOpen(false); }}
+                onClick={toggleSubjectDropdown}
                 disabled={subjectsLoading}
                 className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm text-left flex items-center justify-between focus:outline-none"
               >
@@ -196,27 +130,27 @@ export default function AssignSubject() {
                     />
                   </div>
                   <div className="max-h-48 overflow-y-auto">
-                  {availableSubjects.length === 0 && (
-                    <p className="text-sm text-gray-400 px-3 py-2">
-                      {classId ? "All subjects already assigned to this class" : "No subjects found"}
-                    </p>
-                  )}
-                  {availableSubjects.map((subject) => {
-                    const checked = selectedSubjectIds.includes(subject.id);
-                    return (
-                      <div
-                        key={subject.id}
-                        onClick={() => toggleSubject(subject.id)}
-                        className="flex items-center gap-2 px-3 py-2 cursor-pointer text-sm hover:bg-purple-50 text-gray-700"
-                      >
-                        {checked
-                          ? <CheckSquare size={16} className="text-[#8000BD] flex-shrink-0" />
-                          : <Square size={16} className="text-gray-400 flex-shrink-0" />
-                        }
-                        {subject.name}
-                      </div>
-                    );
-                  })}
+                    {availableSubjects.length === 0 && (
+                      <p className="text-sm text-gray-400 px-3 py-2">
+                        {classId ? "All subjects already assigned to this class" : "No subjects found"}
+                      </p>
+                    )}
+                    {availableSubjects.map((subject) => {
+                      const checked = selectedSubjectIds.includes(subject.id);
+                      return (
+                        <div
+                          key={subject.id}
+                          onClick={() => toggleSubject(subject.id)}
+                          className="flex items-center gap-2 px-3 py-2 cursor-pointer text-sm hover:bg-purple-50 text-gray-700"
+                        >
+                          {checked
+                            ? <CheckSquare size={16} className="text-[#8000BD] flex-shrink-0" />
+                            : <Square size={16} className="text-gray-400 flex-shrink-0" />
+                          }
+                          {subject.name}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -227,7 +161,7 @@ export default function AssignSubject() {
           </div>
         </div>
 
-        {/* Submit — full width below */}
+        {/* Submit */}
         <button
           onClick={handleSubmit}
           disabled={isLoading || !classId || selectedSubjectIds.length === 0}

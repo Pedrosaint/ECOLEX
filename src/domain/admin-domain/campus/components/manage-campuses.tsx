@@ -1,25 +1,16 @@
-import { useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import ViewCampuses from "./view-campuses";
 import AddCampuses from "./add-campuses";
-
-
+import { useManageCampuses } from "../hooks";
 
 export default function ManageCampuses() {
-  const [activeTab, setActiveTab] = useState("Add Campuses");
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const tabs = [
-    "Add Campuses",
-    "View Campuses",
-
-  ];
+  const { tabs, activeTab, showDropdown, toggleDropdown, selectTab, setActiveTab } = useManageCampuses();
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "Add Campuses":
         return <AddCampuses />;
-        case "View Campuses":
+      case "View Campuses":
         return <ViewCampuses />;
       default:
         return null;
@@ -31,7 +22,7 @@ export default function ManageCampuses() {
       {/* Mobile dropdown filter */}
       <div className="lg:hidden mb-4 relative">
         <button
-          onClick={() => setShowDropdown(!showDropdown)}
+          onClick={toggleDropdown}
           className="flex items-center justify-between w-full bg-[#8000BD] text-white px-4 py-2 rounded-md"
         >
           {activeTab}
@@ -43,10 +34,7 @@ export default function ManageCampuses() {
             {tabs.map((tab) => (
               <button
                 key={tab}
-                onClick={() => {
-                  setActiveTab(tab);
-                  setShowDropdown(false);
-                }}
+                onClick={() => selectTab(tab)}
                 className={`block w-full text-left px-4 py-2 text-sm ${
                   activeTab === tab
                     ? "bg-[#F3E8FF] text-[#8000BD] font-medium"

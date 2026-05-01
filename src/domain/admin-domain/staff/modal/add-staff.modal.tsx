@@ -1,92 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from "framer-motion";
 import { X, Check, ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { useCreateStaffMutation } from "../../staff/api/staff-api";
-import { toast } from "sonner";
-import { useGetCampusQuery } from "../../campus/api/campus.api";
+import { useAddStaff } from "../hooks";
 
 export default function AddStaffFormModal({
   onClose,
 }: {
   onClose: () => void;
 }) {
-  const [campusDropdown, setCampusDropdown] = useState(false);
-  const [campusSearch, setCampusSearch] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phoneNumber: "",
-    address: "",
-    duty: "",
-    nextOfKin: "",
-    dateEmployed: "",
-    payroll: "",
-    campusId: "",
-  });
-
-  const [createStaff, { isLoading }] = useCreateStaffMutation();
-  const { data } = useGetCampusQuery();
-  const campuses = data?.campuses || [];
-
-  const filteredCampuses = campuses.filter((c) =>
-    c.name.toLowerCase().includes(campusSearch.toLowerCase())
-  );
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    
-    if (id === "payroll") {
-      // Remove all non-digits
-      const numericValue = value.replace(/\D/g, "");
-      // Format with commas
-      const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      setFormData((prev) => ({
-        ...prev,
-        [id]: formattedValue,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [id]: value,
-      }));
-    }
-  };
-
-  const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    try {
-      const payload = {
-        ...formData,
-        payroll: Number(formData.payroll.replace(/,/g, "")),
-        campusId: Number(formData.campusId),
-        dateEmployed: formData.dateEmployed
-          ? formData.dateEmployed.split("T")[0]
-          : "",
-      };
-
-      const response = await createStaff(payload).unwrap();
-      toast.success("Staff created successfully!");
-      console.log("Staff created:", response);
-
-      setFormData({
-        name: "",
-        email: "",
-        phoneNumber: "",
-        address: "",
-        duty: "",
-        nextOfKin: "",
-        dateEmployed: "",
-        payroll: "",
-        campusId: "",
-      });
-
-      onClose();
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to create staff!");
-      console.error("Failed to create staff:", error);
-    }
-  };
+  const {
+    campusDropdown,
+    setCampusDropdown,
+    campusSearch,
+    setCampusSearch,
+    formData,
+    setFormData,
+    isLoading,
+    campuses,
+    filteredCampuses,
+    handleChange,
+    handleSave,
+  } = useAddStaff({ onClose });
 
   return (
     <motion.div
@@ -152,13 +85,11 @@ export default function AddStaffFormModal({
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm text-left outline-none border-gray-200 flex justify-between items-center"
               >
                 {formData.campusId
-                  ? campuses.find((c) => c.id === Number(formData.campusId))
-                    ?.name
+                  ? campuses.find((c) => c.id === Number(formData.campusId))?.name
                   : "Select a campus"}
                 <ChevronDown
                   size={16}
-                  className={`transition-transform ${campusDropdown ? "rotate-180" : ""
-                    }`}
+                  className={`transition-transform ${campusDropdown ? "rotate-180" : ""}`}
                 />
               </button>
 
@@ -204,10 +135,7 @@ export default function AddStaffFormModal({
 
             {/* Date Employed */}
             <div className="flex flex-col">
-              <label
-                htmlFor="dateEmployed"
-                className="text-sm font-medium mb-1"
-              >
+              <label htmlFor="dateEmployed" className="text-sm font-medium mb-1">
                 Date Employed
               </label>
               <input

@@ -1,6 +1,5 @@
 import { X } from "lucide-react";
-import { useState } from "react";
-import { useEditCampusMutation } from "../api/campus.api";
+import { useEditCampus } from "../hooks";
 
 interface EditCampusProps {
   onClose: () => void;
@@ -14,37 +13,19 @@ interface EditCampusProps {
 }
 
 const EditCampus = ({ onClose, campus }: EditCampusProps) => {
-  const [name, setName] = useState(campus.name);
-  const [address, setAddress] = useState(campus.address || "");
-  const [number, setNumber] = useState(campus.phoneNumber);
-  const [email, setEmail] = useState(campus.email);
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const [editCampus, { isLoading }] = useEditCampusMutation();
-
-  const handleSave = async () => {
-    try {
-      await editCampus({
-        id: campus.id,
-        payload: {
-          name,
-          address,
-          phoneNumber: number,
-          email,
-        },
-      }).unwrap();
-
-      setShowSuccess(true);
-
-      // Auto-hide success and close modal
-      setTimeout(() => {
-        setShowSuccess(false);
-        onClose();
-      }, 2000);
-    } catch (err) {
-      console.error("Update failed", err);
-    }
-  };
+  const {
+    name,
+    setName,
+    address,
+    setAddress,
+    number,
+    setNumber,
+    email,
+    setEmail,
+    showSuccess,
+    isLoading,
+    handleSave,
+  } = useEditCampus(campus, onClose);
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -87,10 +68,10 @@ const EditCampus = ({ onClose, campus }: EditCampusProps) => {
               />
             </div>
 
-            {/* Principal */}
+            {/* Address */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-900">
-               Adress
+                Adress
               </label>
               <input
                 type="text"

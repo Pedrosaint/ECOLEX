@@ -1,87 +1,41 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Printer } from "lucide-react";
-import { skipToken } from "@reduxjs/toolkit/query";
-import { toast } from "sonner";
 import SearchTeachersComp from "./search-teachers.comp";
-import type { TeacherSearchParams } from "./search-teachers.comp";
-import { useGetTeacherResultQuery, usePublishResultsMutation } from "../api/grading.api";
+import { useViewTeacherResult } from "../hooks";
 import Print from "../../../../general/common/print";
 import EmptyBroadsheet from "../../../../assets/image/classResult.png";
 
 export default function ViewTeacherResultTab() {
-  const [searchParams, setSearchParams] = useState<TeacherSearchParams | null>(null);
-  const [page, setPage] = useState(1);
-  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const {
+    searchParams, page, setPage,
+    isPrintModalOpen, setIsPrintModalOpen,
+    result, caHeaders, totalPages,
+    isFetching, isError, isPublishing,
+    handleSearch, handleApprove, renderPageButtons,
+  } = useViewTeacherResult();
 
-  const { data, isFetching, isError } = useGetTeacherResultQuery(
-    searchParams ? { ...searchParams, page } : skipToken
-  );
-  const [publishResults, { isLoading: isPublishing }] = usePublishResultsMutation();
-
-  const handleApprove = async () => {
-    if (!searchParams) return;
-    try {
-      await publishResults({
-        classId: searchParams.classId,
-        subjectId: searchParams.subjectId,
-        academicSessionId: searchParams.academicSessionId,
-      }).unwrap();
-      toast.success("Results published successfully");
-    } catch {
-      toast.error("Failed to publish results. Please try again.");
-    }
-  };
-
-  const result = data?.data;
-  const caHeaders = result?.rows[0]?.caScores.map((c) => c.name) ?? [];
-  const totalPages = result?.meta.totalPages ?? 1;
-
-  const handleSearch = (params: TeacherSearchParams) => {
-    setSearchParams(params);
-    setPage(1);
-  };
-
-  const renderPageButtons = () => {
-    const pages: (number | "...")[] = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (page > 3) pages.push("...");
-      for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) pages.push(i);
-      if (page < totalPages - 2) pages.push("...");
-      pages.push(totalPages);
-    }
-    return pages;
-  };
-
-  const TeacherInfo = () => (
+  const TeacherInfo = () => result ? (
     <div className="space-y-1 text-sm text-gray-600">
-      <div><span className="font-medium">Name:</span> {result!.teacher.name}</div>
-      <div><span className="font-medium">Registration Number:</span> {result!.teacher.registrationNumber}</div>
-      {result!.teacher.campus && <div><span className="font-medium">Campus:</span> {result!.teacher.campus}</div>}
-      <div><span className="font-medium">Class:</span> {result!.class}</div>
-      <div><span className="font-medium">Subject:</span> {result!.subject}</div>
-      <div><span className="font-medium">Session:</span> {result!.session}</div>
+      <div><span className="font-medium">Name:</span> {result.teacher.name}</div>
+      <div><span className="font-medium">Registration Number:</span> {result.teacher.registrationNumber}</div>
+      {result.teacher.campus && <div><span className="font-medium">Campus:</span> {result.teacher.campus}</div>}
+      <div><span className="font-medium">Class:</span> {result.class}</div>
+      <div><span className="font-medium">Subject:</span> {result.subject}</div>
+      <div><span className="font-medium">Session:</span> {result.session}</div>
       <div>
         <span className="font-medium">Submission Status:</span>{" "}
-        <span className={result!.submission.status === "PENDING" ? "text-yellow-600 font-semibold" : "text-green-600 font-semibold"}>
-          {result!.submission.status}
+        <span className={result.submission.status === "PENDING" ? "text-yellow-600 font-semibold" : "text-green-600 font-semibold"}>
+          {result.submission.status}
         </span>
       </div>
-      <div>
-        <span className="font-medium">Date Submitted:</span>{" "}
-        {new Date(result!.submission.submittedAt).toLocaleDateString()}
-      </div>
+      <div><span className="font-medium">Date Submitted:</span> {new Date(result.submission.submittedAt).toLocaleDateString()}</div>
     </div>
-  );
+  ) : null;
 
   return (
     <div>
       <SearchTeachersComp onSearch={handleSearch} isSearching={isFetching} />
 
-      {/* Empty state */}
       {!searchParams && (
         <div className="mt-6 flex flex-col items-center justify-center py-16 px-4 text-center">
           <img src={EmptyBroadsheet} alt="No result yet" className="w-52 h-52 object-contain" />
@@ -111,24 +65,14 @@ export default function ViewTeacherResultTab() {
               No result found for the selected criteria.
             </div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="mt-6"
-            >
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="mt-6">
               <div className="flex justify-end mb-4">
-                <button
-                  onClick={() => setIsPrintModalOpen(true)}
-                  className="bg-[#4B0082] text-white cursor-pointer px-3 py-2 rounded-sm flex items-center gap-2 text-sm font-semibold hover:bg-[#3a006b] transition-colors"
-                >
-                  <Printer size={18} />
-                  PRINT RECORD
+                <button onClick={() => setIsPrintModalOpen(true)} className="bg-[#4B0082] text-white cursor-pointer px-3 py-2 rounded-sm flex items-center gap-2 text-sm font-semibold hover:bg-[#3a006b] transition-colors">
+                  <Printer size={18} /> PRINT RECORD
                 </button>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm p-6">
-                {/* Teacher info header */}
                 <div className="md:flex md:justify-between items-start bg-[#e6e7e8] border-b border-[#D1D1D1] p-5 rounded-t-2xl mb-0">
                   <div>
                     <h1 className="text-xl font-semibold text-gray-800 mb-4">Teacher's Information</h1>
@@ -136,7 +80,6 @@ export default function ViewTeacherResultTab() {
                   </div>
                 </div>
 
-                {/* Scores table */}
                 <div className="mb-4 rounded-b-2xl overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full border-separate border-spacing-0 bg-[#FAFAFA] min-w-[400px]">
@@ -144,9 +87,7 @@ export default function ViewTeacherResultTab() {
                         <tr className="bg-gray-50">
                           <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">Reg. No</th>
                           <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">Student Name</th>
-                          {caHeaders.map((name) => (
-                            <th key={name} className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">{name}</th>
-                          ))}
+                          {caHeaders.map((name) => <th key={name} className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">{name}</th>)}
                           <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">CA Total</th>
                           <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Exam</th>
                           <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Total</th>
@@ -161,11 +102,7 @@ export default function ViewTeacherResultTab() {
                             <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">{row.studentName}</td>
                             {caHeaders.map((name) => {
                               const ca = row.caScores.find((c) => c.name === name);
-                              return (
-                                <td key={name} className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">
-                                  {ca?.score ?? "—"}
-                                </td>
-                              );
+                              return <td key={name} className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">{ca?.score ?? "—"}</td>;
                             })}
                             <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">{row.caTotal}</td>
                             <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">{row.examTotal}</td>
@@ -179,53 +116,31 @@ export default function ViewTeacherResultTab() {
                   </div>
                 </div>
 
-                {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between px-2 mb-4">
                     <p className="text-sm text-gray-500">
-                      Showing {(page - 1) * (result.meta.pageSize) + 1}–{Math.min(page * result.meta.pageSize, result.meta.total)} of {result.meta.total}
+                      Showing {(page - 1) * result.meta.pageSize + 1}–{Math.min(page * result.meta.pageSize, result.meta.total)} of {result.meta.total}
                     </p>
                     <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => setPage((p) => Math.max(1, p - 1))}
-                        disabled={page === 1}
-                        className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40"
-                      >
+                      <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40">
                         <ChevronLeft className="h-4 w-4" />
                       </button>
                       {renderPageButtons().map((p, idx) =>
                         p === "..." ? (
                           <span key={`e-${idx}`} className="px-2 text-sm text-gray-400">...</span>
                         ) : (
-                          <button
-                            key={p}
-                            onClick={() => setPage(p as number)}
-                            className={`w-8 h-8 rounded-lg text-sm font-medium ${
-                              page === p ? "bg-[#8000BD] text-white" : "border border-gray-300 hover:bg-gray-50"
-                            }`}
-                          >
-                            {p}
-                          </button>
+                          <button key={p} onClick={() => setPage(p as number)} className={`w-8 h-8 rounded-lg text-sm font-medium ${page === p ? "bg-[#8000BD] text-white" : "border border-gray-300 hover:bg-gray-50"}`}>{p}</button>
                         )
                       )}
-                      <button
-                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={page === totalPages}
-                        className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40"
-                      >
+                      <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40">
                         <ChevronRight className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* Approve / Reject */}
                 <div className="flex md:justify-end gap-3 pt-2">
-                  <button
-                    onClick={handleApprove}
-                    disabled={isPublishing}
-                    className="bg-[#4B0082] text-white px-6 py-2 rounded-sm text-sm font-semibold cursor-pointer hover:bg-[#3a006b] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
+                  <button onClick={handleApprove} disabled={isPublishing} className="bg-[#4B0082] text-white px-6 py-2 rounded-sm text-sm font-semibold cursor-pointer hover:bg-[#3a006b] transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                     {isPublishing ? "Publishing..." : "Approve Result"}
                   </button>
                   <button className="bg-[#EBE5F5] text-gray-700 px-6 py-2 rounded-sm text-sm font-semibold cursor-pointer hover:bg-[#d8cff0] transition-colors">

@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef, useEffect } from "react";
 import { Search, X, ChevronDown } from "lucide-react";
-import { useGetCampusQuery } from "../../campus/api/campus.api";
 import DotLoader from "../../../../general/ui/dot-loader";
+import { useSearchStaffComp } from "../hooks";
 
 interface SearchStaffCompProps {
   onDisplayStaff: (filters: {
@@ -15,83 +13,31 @@ interface SearchStaffCompProps {
   hasFilters?: boolean;
 }
 
-interface DropdownOption {
-  value: string;
-  label: string;
-}
-
 export default function SearchStaffComp({
   onDisplayStaff,
   isLoading,
   onClearFilters,
   hasFilters,
 }: SearchStaffCompProps) {
-  const [campusId, setCampusId] = useState("");
-  const [searchName, setSearchName] = useState("");
-  const [duty, setDuty] = useState("");
-  const [isCampusOpen, setIsCampusOpen] = useState(false);
-  const [isDutyOpen, setIsDutyOpen] = useState(false);
-  const campusRef = useRef<HTMLDivElement>(null);
-  const dutyRef = useRef<HTMLDivElement>(null);
-
-  const { data } = useGetCampusQuery();
-  const campusOptions: DropdownOption[] = [
-    { value: "", label: "Select Campus" },
-    ...(data?.campuses?.map((c: any) => ({
-      value: String(c.id),
-      label: c.name,
-    })) || []),
-  ];
-
-  const dutyOptions: DropdownOption[] = [
-    { value: "", label: "Select Duty" },
-    { value: "Teacher", label: "Teacher" },
-    { value: "Security", label: "Security" },
-    { value: "Cleaner", label: "Cleaner" },
-    { value: "HR", label: "HR" },
-  ];
-
-  const handleDisplayStaff = () => {
-    onDisplayStaff({
-      campusId: campusId || undefined,
-      duty: duty || undefined,
-      name: searchName || undefined,
-    });
-  };
-
-  const handleClearFilters = () => {
-    setCampusId("");
-    setSearchName("");
-    setDuty("");
-    onClearFilters();
-  };
-
-  const getSelectedLabel = (
-    value: string,
-    options: DropdownOption[]
-  ): string => {
-    if (!options || options.length === 0) return "";
-    const found = options.find((option) => option.value === value);
-    return found ? found.label : options[0].label;
-  };
-
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        campusRef.current &&
-        !campusRef.current.contains(event.target as Node)
-      ) {
-        setIsCampusOpen(false);
-      }
-      if (dutyRef.current && !dutyRef.current.contains(event.target as Node)) {
-        setIsDutyOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const {
+    campusId,
+    setCampusId,
+    searchName,
+    setSearchName,
+    duty,
+    setDuty,
+    isCampusOpen,
+    setIsCampusOpen,
+    isDutyOpen,
+    setIsDutyOpen,
+    campusRef,
+    dutyRef,
+    campusOptions,
+    dutyOptions,
+    handleDisplayStaff,
+    handleClearFilters,
+    getSelectedLabel,
+  } = useSearchStaffComp({ onDisplayStaff, onClearFilters });
 
   return (
     <div className="w-full">
@@ -112,9 +58,7 @@ export default function SearchStaffComp({
               {getSelectedLabel(campusId, campusOptions)}
               <ChevronDown
                 size={16}
-                className={`transition-transform ${
-                  isCampusOpen ? "rotate-180" : ""
-                }`}
+                className={`transition-transform ${isCampusOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -169,9 +113,7 @@ export default function SearchStaffComp({
               {getSelectedLabel(duty, dutyOptions)}
               <ChevronDown
                 size={16}
-                className={`transition-transform ${
-                  isDutyOpen ? "rotate-180" : ""
-                }`}
+                className={`transition-transform ${isDutyOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -214,13 +156,13 @@ export default function SearchStaffComp({
       {isLoading || (!campusId && !searchName.trim() && !duty) ? (
         <div className="bg-[#8000BD]/80 px-6 py-3 mb-4 rounded cursor-not-allowed transition-colors opacity-50">
           <div className="flex items-center justify-center">
-           {!isLoading && <Search className="w-5 h-5 mr-2 text-white" />}
+            {!isLoading && <Search className="w-5 h-5 mr-2 text-white" />}
             <button
               type="button"
               disabled={isLoading}
               className="bg-transparent text-white font-semibold outline-none placeholder-white disabled:opacity-50 cursor-not-allowed"
             >
-              {isLoading ? <DotLoader />: "DISPLAY STAFF"}
+              {isLoading ? <DotLoader /> : "DISPLAY STAFF"}
             </button>
           </div>
         </div>

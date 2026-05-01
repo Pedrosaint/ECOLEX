@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { useEffect, useRef, useState } from "react";
 import {
   Plus,
   Printer,
@@ -17,109 +14,41 @@ import SearchComp from "./search-comp";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import { EmptyStudentState } from "./empty-state";
 
-
 import AddStudentFormModal from "../modal/add-student.modal";
 import EditStudentModal from "../modal/edit-student.modal";
 import ViewStudentFormModal from "../modal/view-student.modal";
 import ChangeStudentModal from "../modal/change-student-modal/change-student.modal";
 
-import { useGetAllStudentQuery } from "../api/student.api";
 import type { Student } from "../response/get-student-response";
-import { printContent } from "../../../../utils/print-content";
 import { getImageUrl } from "../../../../utils/get-image-url";
+import { useListOfStudent } from "../hooks";
 
 export default function StudentsList() {
-  const [filters, setFilters] = useState({
-    campusId: undefined as string | undefined,
-    classId: undefined as string | undefined,
-    name: undefined as string | undefined,
-    classGroupId: undefined as string | undefined,
-    gender: undefined as string | undefined,
-    page: 1,
-    pageSize: 10,
-  });
-
-  const [hasFilters, setHasFilters] = useState(false);
-  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(
-    null
-  );
-  const [selectedStudentData, setSelectedStudentData] = useState<any>(null);
-
-  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
-  const [isEditStudentModalOpen, setIsEditStudentModalOpen] = useState(false);
-  const [isViewStudentModalOpen, setIsViewStudentModalOpen] = useState(false);
-  const [isChangeStudentModalOpen, setIsChangeStudentModalOpen] =
-    useState(false);
-
-  // ref for printable content
-  const contentRef = useRef<HTMLDivElement>(null);
-
-
-
-  //  Data fetching
-  const { data, isLoading, isFetching } =
-    useGetAllStudentQuery(filters);
-
-  // Clear any legacy removed state from localStorage
-  useEffect(() => {
-    localStorage.removeItem("studentTableRemoved");
-  }, []);
-
-
-
-  //  Search handler
-  const handleDisplayStudent = (newFilters: {
-    campusId?: string;
-    classId?: string;
-    name?: string;
-    classGroupId?: string;
-    gender?: string;
-  }) => {
-    const hasActiveFilters =
-      !!newFilters.campusId ||
-      !!newFilters.classId ||
-      !!newFilters.name ||
-      !!newFilters.classGroupId ||
-      !!newFilters.gender;
-    setHasFilters(hasActiveFilters);
-
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-      page: 1,
-    }));
-  };
-
-  const handleClearFilters = () => {
-    setHasFilters(false);
-    setFilters({
-      campusId: undefined,
-      classId: undefined,
-      name: undefined,
-      classGroupId: undefined,
-      gender: undefined,
-      page: 1,
-      pageSize: 10,
-    });
-  };
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage < 1) return;
-    setFilters((prev) => ({ ...prev, page: newPage }));
-  };
-
-  const handleEdit = () => {
-    setIsViewStudentModalOpen(false);
-    setTimeout(() => setIsEditStudentModalOpen(true), 300);
-  };
-
-  const handlePrint = () => {
-    if (contentRef.current) {
-      printContent(contentRef.current.innerHTML, "All Student List");
-    }
-  };
-
-
+  const {
+    filters,
+    data,
+    isLoading,
+    isFetching,
+    hasFilters,
+    selectedStudentId,
+    setSelectedStudentId,
+    selectedStudentData,
+    setSelectedStudentData,
+    isAddStudentModalOpen,
+    setIsAddStudentModalOpen,
+    isEditStudentModalOpen,
+    setIsEditStudentModalOpen,
+    isViewStudentModalOpen,
+    setIsViewStudentModalOpen,
+    isChangeStudentModalOpen,
+    setIsChangeStudentModalOpen,
+    contentRef,
+    handleDisplayStudent,
+    handleClearFilters,
+    handlePageChange,
+    handleEdit,
+    handlePrint,
+  } = useListOfStudent();
 
   return (
     <>

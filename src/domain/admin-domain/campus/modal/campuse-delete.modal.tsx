@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, AlertTriangle } from "lucide-react";
+import { useDeleteCampus } from "../hooks";
 
 interface CampuseDeleteModalProps {
   isOpen: boolean;
@@ -20,9 +21,7 @@ const CampuseDeleteModal = ({
   title = "Delete Campus",
   description = "Are you sure you want to delete this campus? This action cannot be undone.",
 }: CampuseDeleteModalProps) => {
-  const handleConfirm = () => {
-    onConfirm();
-  };
+  const { handleConfirm } = useDeleteCampus(onConfirm);
 
   return (
     <AnimatePresence>

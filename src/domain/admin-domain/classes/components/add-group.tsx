@@ -1,102 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, X, Check } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useGetClassesQuery, useAddGroupMutation } from "../api/class-api";
-
-interface GroupForm {
-  classId: string;
-  groupName: string;
-  isClassOpen: boolean;
-  isSubmitted: boolean;
-  isLoading: boolean;
-  isError: boolean;
-}
-
-interface DropdownOption {
-  value: string;
-  label: string;
-}
+import { useAddGroup } from "../hooks";
 
 export default function AddGroup() {
-  const [groups, setGroups] = useState<GroupForm[]>([
-    { classId: "", groupName: "", isClassOpen: false, isSubmitted: false, isLoading: false, isError: false },
-  ]);
- const [showSuccess, setShowSuccess] = useState(false);
-      
-  const { data } = useGetClassesQuery();
-  const [addGroup, { error, isError, isSuccess }] = useAddGroupMutation();
-    useEffect(() => {
-      if (isSuccess) {
-        setShowSuccess(true);
-        const timer = setTimeout(() => setShowSuccess(false), 3000);
-        return () => clearTimeout(timer);
-      }
-    }, [isSuccess]);
-
-  const classOptions: DropdownOption[] = [
-    { value: "", label: "Select Class" },
-    ...(data?.classes
-      ?.filter((c: any) => c.classGroups?.length === 0)
-      ?.map((c: any) => ({
-        value: String(c.id),
-        label: c.name,
-      })) || []),
-  ];
-
-  const getSelectedLabel = (value: string, options: DropdownOption[]): string => {
-    if (!options || options.length === 0) return "";
-    const found = options.find((option) => option.value === value);
-    return found ? found.label : options[0].label;
-  };
-
-  // Add new group row
-  const handleAddGroupRow = () => {
-    setGroups([...groups, { classId: "", groupName: "", isClassOpen: false, isSubmitted: false, isLoading: false, isError: false }]);
-  };
-
-  // Remove group row by index
-  const handleRemoveGroup = (index: number) => {
-    const updated = groups.filter((_, i) => i !== index);
-    setGroups(updated);
-  };
-
-  // Handle updates for both string and boolean
-  const handleChange = <K extends keyof GroupForm>(
-    index: number,
-    field: K,
-    value: GroupForm[K]
-  ) => {
-    const updated = [...groups];
-    updated[index][field] = value;
-    setGroups(updated);
-  };
-
-  //  Submit group to backend
-  const handleSubmitGroup = async (index: number) => {
-    const group = groups[index];
-    
-    // Mark as loading
-    handleChange(index, "isLoading", true);
-    handleChange(index, "isError", false);
-    
-    try {
-      await addGroup({
-        name: group.groupName,
-        classId: group.classId,
-      }).unwrap();
-
-      // Mark as submitted successfully
-      handleChange(index, "isSubmitted", true);
-      handleChange(index, "isLoading", false);
-      console.log("Group added successfully");
-    } catch (error) {
-      // Mark as error
-      handleChange(index, "isError", true);
-      handleChange(index, "isLoading", false);
-      console.error("Failed to add group", error);
-    }
-  };
+  const {
+    groups,
+    showSuccess,
+    classOptions,
+    error,
+    isError,
+    getSelectedLabel,
+    handleAddGroupRow,
+    handleRemoveGroup,
+    handleChange,
+    handleSubmitGroup,
+  } = useAddGroup();
 
   return (
     <motion.div
@@ -105,7 +24,6 @@ export default function AddGroup() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="w-full border border-gray-300 rounded-lg p-6 bg-white shadow-md"
     >
-
       {groups.map((group, index) => {
         const isFormComplete =
           group.groupName.trim() !== "" && group.classId.trim() !== "";
@@ -167,7 +85,6 @@ export default function AddGroup() {
                     {classOptions
                       .filter((option) => {
                         if (option.value === "") return true;
-                        // Check if this class is already selected in ANY other row
                         const isSelectedElsewhere = groups.some(
                           (g, i) => i !== index && g.classId === option.value
                         );

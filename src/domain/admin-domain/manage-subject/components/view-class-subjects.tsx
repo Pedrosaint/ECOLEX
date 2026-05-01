@@ -1,22 +1,21 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { useGetClassesQuery } from "../../classes/api/class-api";
-import { useGetClassSubjectsQuery } from "../api/subject.api";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
+import { useViewClassSubjects } from "../hooks";
 
 export default function ViewClassSubjects() {
-  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const { data: classesData, isLoading: classesLoading } = useGetClassesQuery();
-  const { data, isLoading, isError } = useGetClassSubjectsQuery(selectedClassId!, {
-    skip: !selectedClassId,
-  });
-
-  const selectedClass = classesData?.classes.find((c) => c.id === selectedClassId);
-
-  const subjects = data?.data.subjects ?? [];
+  const {
+    selectedClassId,
+    dropdownOpen,
+    classesData,
+    classesLoading,
+    isLoading,
+    isError,
+    selectedClass,
+    subjects,
+    handleClassSelect,
+    toggleDropdown,
+  } = useViewClassSubjects();
 
   return (
     <motion.div
@@ -34,7 +33,7 @@ export default function ViewClassSubjects() {
         <div className="relative">
           <button
             type="button"
-            onClick={() => setDropdownOpen((v) => !v)}
+            onClick={toggleDropdown}
             disabled={classesLoading}
             className="w-full px-3 py-3 border border-gray-300 rounded bg-white text-sm text-left flex items-center justify-between focus:outline-none"
           >
@@ -49,7 +48,7 @@ export default function ViewClassSubjects() {
               {classesData?.classes.map((cls) => (
                 <div
                   key={cls.id}
-                  onClick={() => { setSelectedClassId(cls.id); setDropdownOpen(false); }}
+                  onClick={() => handleClassSelect(cls.id)}
                   className={`px-3 py-2 cursor-pointer text-sm hover:bg-[#6a00a1] hover:text-white ${
                     cls.id === selectedClassId ? "bg-purple-50 font-medium text-[#8000BD]" : "text-gray-700"
                   }`}

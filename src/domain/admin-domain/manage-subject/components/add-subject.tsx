@@ -1,75 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { useAddSubjectMutation } from "../api/subject.api";
-import { useGetCampusQuery } from "../../campus/api/campus.api";
-import { toast } from "sonner";
 import { ChevronDown } from "lucide-react";
-
-import { NIGERIA_SUBJECTS } from "../data/nigeria-subjects";
+import { useAddSubject } from "../hooks";
 
 export default function AddSubject() {
-  const [subject, setSubject] = useState("");
-  const [subjectSearch, setSubjectSearch] = useState("");
-  const [isSubjectDropdownOpen, setIsSubjectDropdownOpen] = useState(false);
-  const [campusId, setCampusId] = useState("");
-  const [code, setCode] = useState("");
-  const [isCampusOpen, setIsCampusOpen] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const subjectDropdownRef = useRef<HTMLDivElement>(null);
-
-  const { data: campusData, isLoading: campusLoading } = useGetCampusQuery();
-  const [createSubject, { isLoading: isCreating, isSuccess }] =
-    useAddSubjectMutation();
-
-  useEffect(() => {
-    if (isSuccess) {
-      setShowSuccess(true);
-      const timer = setTimeout(() => setShowSuccess(false), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        subjectDropdownRef.current &&
-        !subjectDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsSubjectDropdownOpen(false);
-        setSubjectSearch("");
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const filteredSubjects = NIGERIA_SUBJECTS.filter((s) =>
-    s.toLowerCase().includes(subjectSearch.toLowerCase())
-  );
-
-  const isFormComplete = subject.trim() !== "";
-
-  const handleSubmit = async () => {
-    try {
-      const payload = {
-        name: subject,
-        campusId: campusId ? Number(campusId) : undefined,
-        code: code || undefined,
-      };
-      await createSubject(payload).unwrap();
-      setSubject("");
-      setSubjectSearch("");
-      setCampusId("");
-      setCode("");
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to add subject");
-      console.error("Add subject error:", error);
-    }
-  };
+  const {
+    subject,
+    subjectSearch,
+    setSubjectSearch,
+    isSubjectDropdownOpen,
+    campusId,
+    setCampusId,
+    code,
+    setCode,
+    isCampusOpen,
+    setIsCampusOpen,
+    showSuccess,
+    subjectDropdownRef,
+    campusData,
+    campusLoading,
+    isCreating,
+    filteredSubjects,
+    isFormComplete,
+    handleSubmit,
+    toggleSubjectDropdown,
+    selectSubject,
+    applyCustomSubjectName,
+  } = useAddSubject();
 
   return (
     <motion.div
@@ -90,13 +47,7 @@ export default function AddSubject() {
 
           <button
             type="button"
-            onClick={() => {
-              setIsSubjectDropdownOpen((v) => {
-                if (v) setSubjectSearch("");
-                return !v;
-              });
-              setIsCampusOpen(false);
-            }}
+            onClick={toggleSubjectDropdown}
             className="w-full px-3 py-4 border border-gray-300 rounded bg-white text-sm text-left flex items-center justify-between focus:outline-none"
           >
             <span className={subject ? "text-gray-800 truncate max-w-[85%]" : "text-gray-400"}>
@@ -134,11 +85,7 @@ export default function AddSubject() {
                   {filteredSubjects.length === 0 ? (
                     subjectSearch.trim() ? (
                       <div
-                        onClick={() => {
-                          setSubject(subjectSearch.trim());
-                          setIsSubjectDropdownOpen(false);
-                          setSubjectSearch("");
-                        }}
+                        onClick={() => applyCustomSubjectName(subjectSearch.trim())}
                         className="px-3 py-2 cursor-pointer text-sm text-[#8000BD] hover:bg-purple-50"
                       >
                         Use &quot;{subjectSearch.trim()}&quot; as subject name
@@ -150,11 +97,7 @@ export default function AddSubject() {
                     filteredSubjects.map((subj, index) => (
                       <div
                         key={index}
-                        onClick={() => {
-                          setSubject(subj);
-                          setIsSubjectDropdownOpen(false);
-                          setSubjectSearch("");
-                        }}
+                        onClick={() => selectSubject(subj)}
                         className={`px-3 py-2 cursor-pointer text-sm hover:bg-[#6a00a1] hover:text-white ${
                           subject === subj ? "bg-purple-50 text-[#8000BD] font-medium" : "text-gray-700"
                         }`}

@@ -1,43 +1,34 @@
-import { useState } from "react";
 import { Printer } from "lucide-react";
-import { skipToken } from "@reduxjs/toolkit/query";
 import { motion } from "framer-motion";
 import SearchStudentComp from "./search-student.comp";
-import type { StudentSearchParams } from "./search-student.comp";
-import { useGetStudentResultQuery } from "../api/grading.api";
+import { useViewStudentResult } from "../hooks";
 import Print from "../../../../general/common/print";
 import { getImageUrl } from "../../../../utils/get-image-url";
 import passport from "../../../../assets/image/passport.png";
 import EmptyBroadsheet from "../../../../assets/image/classResult.png";
 
 export default function ViewStudentResultTab() {
-  const [searchParams, setSearchParams] = useState<StudentSearchParams | null>(null);
-  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const {
+    searchParams, setSearchParams,
+    isPrintModalOpen, setIsPrintModalOpen,
+    result, caHeaders,
+    isFetching, isError,
+  } = useViewStudentResult();
 
-  const { data, isFetching, isError } = useGetStudentResultQuery(
-    searchParams
-      ? { studentId: searchParams.studentId, classId: searchParams.classId, academicSessionId: searchParams.academicSessionId }
-      : skipToken
-  );
-
-  const result = data?.data;
-  const caHeaders = result?.subjects[0]?.cas.map((ca) => ca.name) ?? [];
-
-  const StudentInfo = () => (
+  const StudentInfo = () => result ? (
     <div className="space-y-1 text-sm text-gray-600">
-      <div><span className="font-medium">Name:</span> {result!.student.name}</div>
-      <div><span className="font-medium">Registration Number:</span> {result!.student.registrationNumber}</div>
-      <div><span className="font-medium">Class:</span> {result!.student.class}</div>
-      <div><span className="font-medium">Campus:</span> {result!.student.campus}</div>
-      <div><span className="font-medium">Session:</span> {result!.student.session}</div>
+      <div><span className="font-medium">Name:</span> {result.student.name}</div>
+      <div><span className="font-medium">Registration Number:</span> {result.student.registrationNumber}</div>
+      <div><span className="font-medium">Class:</span> {result.student.class}</div>
+      <div><span className="font-medium">Campus:</span> {result.student.campus}</div>
+      <div><span className="font-medium">Session:</span> {result.student.session}</div>
     </div>
-  );
+  ) : null;
 
   return (
     <div>
       <SearchStudentComp onSearch={setSearchParams} isSearching={isFetching} />
 
-      {/* Empty state — before any search */}
       {!searchParams && (
         <div className="mt-6 flex flex-col items-center justify-center py-16 px-4 text-center">
           <img src={EmptyBroadsheet} alt="No result yet" className="w-52 h-52 object-contain" />
@@ -49,7 +40,6 @@ export default function ViewStudentResultTab() {
         </div>
       )}
 
-      {/* Show result area only after first search */}
       {searchParams && (
         <>
           {isFetching ? (
@@ -68,55 +58,35 @@ export default function ViewStudentResultTab() {
               No result found for the selected student.
             </div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="mt-6"
-            >
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="mt-6">
               <div className="flex justify-end mb-4">
-                <button
-                  onClick={() => setIsPrintModalOpen(true)}
-                  className="bg-[#4B0082] text-white cursor-pointer px-3 py-2 rounded-sm flex items-center gap-2 text-sm font-semibold hover:bg-[#3a006b] transition-colors"
-                >
-                  <Printer size={18} />
-                  PRINT RECORD
+                <button onClick={() => setIsPrintModalOpen(true)} className="bg-[#4B0082] text-white cursor-pointer px-3 py-2 rounded-sm flex items-center gap-2 text-sm font-semibold hover:bg-[#3a006b] transition-colors">
+                  <Printer size={18} /> PRINT RECORD
                 </button>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm p-6">
-                {/* Student info header */}
                 <div className="md:flex md:justify-between items-start bg-[#e6e7e8] border-b border-[#D1D1D1] p-5 rounded-t-2xl">
                   <div className="hidden md:block">
                     <h1 className="text-xl font-semibold text-gray-800 mb-4">Student Information</h1>
                     <StudentInfo />
                   </div>
-
                   <div className="w-32 h-32 bg-pink-200 rounded-lg overflow-hidden flex-shrink-0">
-                    <img
-                      src={result.student.passportUrl ? getImageUrl(result.student.passportUrl) : passport}
-                      className="w-full h-full object-cover"
-                      alt="passport"
-                      onError={(e) => { (e.target as HTMLImageElement).src = passport; }}
-                    />
+                    <img src={result.student.passportUrl ? getImageUrl(result.student.passportUrl) : passport} className="w-full h-full object-cover" alt="passport" onError={(e) => { (e.target as HTMLImageElement).src = passport; }} />
                   </div>
-
                   <div className="md:hidden mt-3">
                     <h1 className="text-xl font-semibold text-gray-800 mb-4">Student Information</h1>
                     <StudentInfo />
                   </div>
                 </div>
 
-                {/* Grades table */}
                 <div className="mb-8 rounded-b-2xl overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full border-separate border-spacing-0 bg-[#FAFAFA] min-w-[400px]">
                       <thead>
                         <tr className="bg-gray-50">
                           <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">Subject</th>
-                          {caHeaders.map((name) => (
-                            <th key={name} className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">{name}</th>
-                          ))}
+                          {caHeaders.map((name) => <th key={name} className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">{name}</th>)}
                           <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">CA Total</th>
                           <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Exam Score</th>
                           <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Total</th>
@@ -130,11 +100,7 @@ export default function ViewStudentResultTab() {
                             <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">{subject.subjectName}</td>
                             {caHeaders.map((name) => {
                               const ca = subject.cas.find((c) => c.name === name);
-                              return (
-                                <td key={name} className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">
-                                  {ca?.score ?? "—"}
-                                </td>
-                              );
+                              return <td key={name} className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">{ca?.score ?? "—"}</td>;
                             })}
                             <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">{subject.caTotal}</td>
                             <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">{subject.examTotal}</td>
@@ -148,7 +114,6 @@ export default function ViewStudentResultTab() {
                   </div>
                 </div>
 
-                {/* Performance summary */}
                 <div>
                   <h2 className="text-lg font-semibold text-gray-800 mb-4">Performance Summary</h2>
                   <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
@@ -162,9 +127,7 @@ export default function ViewStudentResultTab() {
                     </div>
                     <div className="border-t border-gray-300 py-2">
                       <div className="text-gray-600 mb-1">Class Position</div>
-                      <div className="font-semibold text-gray-800">
-                        {result.performance.position != null ? `${result.performance.position}` : "N/A"}
-                      </div>
+                      <div className="font-semibold text-gray-800">{result.performance.position != null ? `${result.performance.position}` : "N/A"}</div>
                     </div>
                     <div className="border-t border-gray-300 py-2">
                       <div className="text-gray-600 mb-1">Overall Grade</div>

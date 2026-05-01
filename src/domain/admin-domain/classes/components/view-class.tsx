@@ -1,35 +1,26 @@
 import { Printer, ChevronLeft, ChevronRight, Edit, Users } from "lucide-react";
-import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import EditClass from "../modal/edit-class";
-import { useGetClassesQuery } from "../api/class-api";
-import { printContent } from "../../../../utils/print-content";
+import { useViewClass } from "../hooks";
 
 export default function ViewClass() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedClass, setSelectedClass] = useState<{ id: number; name: string; customName: string } | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-
-   const handlePrint = () => {
-      if (contentRef.current) {
-        printContent(contentRef.current.innerHTML, "All Classes List");
-      }
-    };
-  
-
-  const { data, isLoading } = useGetClassesQuery();
-
-  const classes = data?.classes ?? [];
-  const total = data?.count ?? 0;
-
-
-  const itemsPerPage = 9;
-  const totalPages = Math.ceil(total / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedClasses = classes.slice(startIndex, startIndex + itemsPerPage);
+  const {
+    currentPage,
+    setCurrentPage,
+    isEditOpen,
+    selectedClass,
+    contentRef,
+    handlePrint,
+    isLoading,
+    total,
+    itemsPerPage,
+    totalPages,
+    startIndex,
+    paginatedClasses,
+    openEdit,
+    closeEdit,
+  } = useViewClass();
 
   return (
     <>
@@ -102,17 +93,16 @@ export default function ViewClass() {
                             </td>
                             <td className="py-3 px-5 no-print">
                               <div className="flex items-center justify-center space-x-1">
-                                  <button
-                                    onClick={() => {
-                                      setIsEditOpen(true);
-                                      setSelectedClass({
-                                        id: classItem.id,
-                                        name: classItem.name,
-                                        customName: classItem.customName,
-                                      });
-                                    }}
-                                    className="p-1 cursor-pointer"
-                                  >
+                                <button
+                                  onClick={() =>
+                                    openEdit({
+                                      id: classItem.id,
+                                      name: classItem.name,
+                                      customName: classItem.customName,
+                                    })
+                                  }
+                                  className="p-1 cursor-pointer"
+                                >
                                   <Edit
                                     size={20}
                                     className="text-gray-400 hover:text-gray-600"
@@ -133,7 +123,7 @@ export default function ViewClass() {
                                 No Classes Added Yet
                               </h3>
                               <p className="text-sm text-gray-500 max-w-sm">
-                                It looks like you haven’t created any classes.
+                                It looks like you haven't created any classes.
                                 Start by adding your first class to organize
                                 students and staff better.
                               </p>
@@ -197,7 +187,7 @@ export default function ViewClass() {
 
           {isEditOpen && selectedClass !== null && (
             <EditClass
-              onClose={() => setIsEditOpen(false)}
+              onClose={closeEdit}
               classId={selectedClass.id}
               initialName={selectedClass.name}
               initialCustomName={selectedClass.customName}

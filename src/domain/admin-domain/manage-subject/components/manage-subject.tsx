@@ -1,24 +1,26 @@
-import { useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import ViewSubject from "./view-subject";
 import AddSubject from "./add-subject";
 import AssignSubject from "./assign-subject";
 import ViewClassSubjects from "./view-class-subjects";
-
-const tabs = ["Add Subject", "View Subject", "Assign to Class", "View Class Subjects"] as const;
-type Tab = (typeof tabs)[number];
+import { useManageSubject } from "../hooks";
 
 export default function ManageSubject() {
-  const [activeTab, setActiveTab] = useState<Tab>("Add Subject");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const { activeTab, showDropdown, tabs, handleTabChange, toggleDropdown, setActiveTab } =
+    useManageSubject();
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "Add Subject":        return <AddSubject />;
-      case "View Subject":       return <ViewSubject />;
-      case "Assign to Class":    return <AssignSubject />;
-      case "View Class Subjects": return <ViewClassSubjects />;
-      default:                   return null;
+      case "Add Subject":
+        return <AddSubject />;
+      case "View Subject":
+        return <ViewSubject />;
+      case "Assign to Class":
+        return <AssignSubject />;
+      case "View Class Subjects":
+        return <ViewClassSubjects />;
+      default:
+        return null;
     }
   };
 
@@ -27,7 +29,7 @@ export default function ManageSubject() {
       {/* Mobile dropdown */}
       <div className="lg:hidden mb-4 relative">
         <button
-          onClick={() => setShowDropdown(!showDropdown)}
+          onClick={toggleDropdown}
           className="flex items-center justify-between w-full bg-[#8000BD] text-white px-4 py-2 rounded-md"
         >
           {activeTab}
@@ -39,7 +41,7 @@ export default function ManageSubject() {
             {tabs.map((tab) => (
               <button
                 key={tab}
-                onClick={() => { setActiveTab(tab); setShowDropdown(false); }}
+                onClick={() => handleTabChange(tab)}
                 className={`block w-full text-left px-4 py-2 text-sm ${
                   activeTab === tab
                     ? "bg-[#F3E8FF] text-[#8000BD] font-medium"

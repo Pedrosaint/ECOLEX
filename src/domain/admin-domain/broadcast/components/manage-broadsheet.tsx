@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import ViewBroadsheet from "./view-broadsheet";
 import ViewPendingResult from "./view-pending-result";
@@ -7,21 +6,10 @@ import ViewPromotion from "./view-promotion";
 import ViewRepeatStudents from "./view-repeat-students";
 import CustomizeCANaming from "./customize-ca-naming";
 import ViewClassTeacherRemark from "./view-class-teacher-remark";
+import { useManageBroadsheet } from "../hooks";
 
 export default function ManageBroadSheet() {
-  const [activeTab, setActiveTab] = useState("View Broadsheet");
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const tabs = [
-    "View Broadsheet",
-    "Pending Result",
-    "Approved Result",
-    "Promotion",
-    "Repeat Students",
-    "Customize CA Naming",
-    // "Update CA Setup",
-    "Class Teacher Remark Access",
-  ];
+  const { activeTab, showDropdown, tabs, selectTab, toggleDropdown } = useManageBroadsheet();
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -37,7 +25,7 @@ export default function ManageBroadSheet() {
         return <ViewRepeatStudents />;
       case "Customize CA Naming":
         return <CustomizeCANaming />;
-        case "Class Teacher Remark Access":
+      case "Class Teacher Remark Access":
         return <ViewClassTeacherRemark />;
       default:
         return null;
@@ -49,7 +37,7 @@ export default function ManageBroadSheet() {
       {/* Mobile dropdown filter */}
       <div className="xl:hidden mb-4 relative">
         <button
-          onClick={() => setShowDropdown(!showDropdown)}
+          onClick={toggleDropdown}
           className="flex items-center justify-between w-full bg-[#8000BD] text-white px-4 py-2 rounded-md"
         >
           {activeTab}
@@ -61,10 +49,7 @@ export default function ManageBroadSheet() {
             {tabs.map((tab) => (
               <button
                 key={tab}
-                onClick={() => {
-                  setActiveTab(tab);
-                  setShowDropdown(false);
-                }}
+                onClick={() => selectTab(tab)}
                 className={`block w-full text-left px-4 py-2 text-sm ${
                   activeTab === tab
                     ? "bg-[#F3E8FF] text-[#8000BD] font-medium"
@@ -83,7 +68,7 @@ export default function ManageBroadSheet() {
         {tabs.map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => selectTab(tab)}
             className={`
               relative pb-2 text-sm sm:text-base font-medium transition-colors duration-200
               ${

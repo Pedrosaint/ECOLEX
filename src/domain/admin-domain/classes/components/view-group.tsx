@@ -1,30 +1,25 @@
 import { Printer, ChevronLeft, ChevronRight, Edit } from "lucide-react";
-import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import EditGroup from "../modal/edit-group";
-import { useGetClassGroupsQuery } from "../api/class-api";
-import { printContent } from "../../../../utils/print-content";
+import { useViewGroup } from "../hooks";
 
 export default function ViewGroup() {
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const handlePrint = () => {
-    if (contentRef.current) {
-      printContent(contentRef.current.innerHTML, "All Group List");
-    }
-  };
-
-  const { data, isFetching, isError } = useGetClassGroupsQuery({
-    page: currentPage,
-    limit: 7,
-  });
-
-  const groups = data?.groups ?? [];
-  const pagination = data?.pagination;
+  const {
+    isEditOpen,
+    currentPage,
+    setCurrentPage,
+    selectedGroupId,
+    contentRef,
+    handlePrint,
+    isFetching,
+    isError,
+    groups,
+    pagination,
+    openEdit,
+    closeEdit,
+    getSelectedGroup,
+  } = useViewGroup();
 
   return (
     <>
@@ -104,10 +99,7 @@ export default function ViewGroup() {
                             <td className="py-3 px-5 no-print">
                               <div className="flex items-center justify-center space-x-1">
                                 <button
-                                  onClick={() => {
-                                    setIsEditOpen(true);
-                                    setSelectedGroupId(group.id);
-                                  }}
+                                  onClick={() => openEdit(group.id)}
                                   className="p-1 cursor-pointer"
                                 >
                                   <Edit
@@ -188,20 +180,19 @@ export default function ViewGroup() {
             </motion.div>
           </div>
 
-          {isEditOpen && selectedGroupId !== null && (
-            <EditGroup
-              onClose={() => setIsEditOpen(false)}
-              groupId={selectedGroupId}
-              initialClassId={
-                groups.find((g) => g.id === selectedGroupId)?.classId ??
-                groups.find((g) => g.id === selectedGroupId)?.class.id ??
-                0
-              }
-              initialGroupName={
-                groups.find((g) => g.id === selectedGroupId)?.name ?? ""
-              }
-            />
-          )}
+          {isEditOpen && selectedGroupId !== null && (() => {
+            const selectedGroup = getSelectedGroup();
+            return (
+              <EditGroup
+                onClose={closeEdit}
+                groupId={selectedGroupId}
+                initialClassId={
+                  selectedGroup?.classId ?? selectedGroup?.class.id ?? 0
+                }
+                initialGroupName={selectedGroup?.name ?? ""}
+              />
+            );
+          })()}
         </div>
       )}
     </>
