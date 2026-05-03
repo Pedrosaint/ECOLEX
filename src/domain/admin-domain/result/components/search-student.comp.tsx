@@ -61,7 +61,7 @@ export default function SearchStudentComp({ onSearch, isSearching }: Props) {
           <div className="relative">
             <select value={classId} onChange={(e) => handleClassChange(e.target.value)} disabled={classesLoading} className={`${selectBase} ${classId ? "text-gray-900" : "text-gray-400"}`}>
               <option value="">{classesLoading ? "Loading..." : "Select Class"}</option>
-              {(classesData?.classes ?? []).map((c) => <option key={c.id} value={String(c.id)}>{c.customName ?? c.name}</option>)}
+              {(classesData?.classes ?? []).map((c) => <option key={c.id} value={String(c.id)}>{c.name}</option>)}
             </select>
             {chevron}
           </div>

@@ -4,8 +4,9 @@ import {
   useCreateGradingSchemeMutation,
   useAddClassesToSchemeMutation,
 } from "../api/grading-scheme.api";
-import { useGetClassesQuery } from "../../../admin-domain/classes/api/class-api";
+import { useGetTeacherClassesQuery } from "../../overview/hooks";
 import type { GradeItem } from "../request/grading-scheme.request";
+
 
 const EMPTY_GRADE: GradeItem = { min: 0, max: 100, grade: "", remark: "" };
 
@@ -21,7 +22,7 @@ export function useGradingScheme() {
   const [addClassDropdownOpen, setAddClassDropdownOpen] = useState(false);
   const [manualSchemeId, setManualSchemeId] = useState("");
 
-  const { data: classesData, isLoading: classesLoading } = useGetClassesQuery();
+  const { data: classesData, isLoading: classesLoading } = useGetTeacherClassesQuery();
   const [createGradingScheme, { isLoading: isCreating }] = useCreateGradingSchemeMutation();
   const [addClassesToScheme, { isLoading: isAdding }] = useAddClassesToSchemeMutation();
 

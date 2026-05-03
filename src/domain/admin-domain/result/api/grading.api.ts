@@ -48,8 +48,8 @@ export const gradingApi = createApi({
     }),
 
     getStudentResult: builder.query<GetStudentResultResponse, GetStudentResultParams>({
-      query: ({ studentId, classId, academicSessionId }) => ({
-        url: `admin/result/student?studentId=${studentId}&classId=${classId}&academicSessionId=${academicSessionId}`,
+      query: ({ studentId, classId, academicSessionId, termId }) => ({
+        url: `admin/result/student?studentId=${studentId}&classId=${classId}&academicSessionId=${academicSessionId}&termId=${termId}`,
         method: "GET",
       }),
     }),
@@ -64,8 +64,8 @@ export const gradingApi = createApi({
     }),
 
     getTeacherResult: builder.query<GetTeacherResultResponse, GetTeacherResultParams>({
-      query: ({ staffId, classId, subjectId, academicSessionId, page = 1 }) => ({
-        url: `admin/result/teacher?staffId=${staffId}&classId=${classId}&subjectId=${subjectId}&academicSessionId=${academicSessionId}&page=${page}`,
+      query: ({ staffId, classId, subjectId, academicSessionId, termId, campusId, page = 1 }) => ({
+        url: `admin/result/teacher?staffId=${staffId}&classId=${classId}&subjectId=${subjectId}&academicSessionId=${academicSessionId}&termId=${termId}&campusId=${campusId}&page=${page}`,
         method: "GET",
       }),
     }),

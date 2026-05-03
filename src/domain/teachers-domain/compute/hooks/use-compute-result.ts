@@ -1,8 +1,29 @@
-import { useGetSessionsQuery } from "../../../admin-domain/overview/api/admin-overview.api";
+import {
+  useGetTeacherClassesQuery,
+  useGetTeacherCampusQuery,
+  useGetTeacherClassGroupsQuery,
+  useGetTeacherSessionQuery,
+  useGetActiveTermQuery,
+} from "../../overview/hooks";
 
 export function useComputeResult() {
-  const { data: sessionsData } = useGetSessionsQuery();
-  const sessions = sessionsData?.data ?? [];
+  const { data: classesData, isLoading: classesLoading } = useGetTeacherClassesQuery();
+  const { data: campusData, isLoading: campusLoading } = useGetTeacherCampusQuery();
+  const { data: classGroupsData, isLoading: classGroupsLoading } = useGetTeacherClassGroupsQuery();
+  const { data: sessionData, isLoading: sessionLoading } = useGetTeacherSessionQuery();
+  const { data: activeTermData, isLoading: activeTermLoading } = useGetActiveTermQuery();
 
-  return { sessions };
+  const classes = classesData?.data ?? [];
+  const campus = campusData?.data ?? null;
+  const classGroups = classGroupsData?.data ?? [];
+  const session = sessionData?.data ?? null;
+  const activeTerm = activeTermData?.data ?? null;
+
+  return {
+    classes, classesLoading,
+    campus, campusLoading,
+    classGroups, classGroupsLoading,
+    session, sessionLoading,
+    activeTerm, activeTermLoading,
+  };
 }

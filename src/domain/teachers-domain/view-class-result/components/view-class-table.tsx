@@ -1,184 +1,114 @@
-import { X } from "lucide-react";
+import { SearchX } from "lucide-react";
+import type { TeacherBroadsheetResponse, BroadsheetRow } from "../../overview/types";
 
-const ViewClassTable = () => {
-  // Student data array
-  const students = [
-    {
-      id: 1,
-      regNo: "FIS10550",
-      surname: "EZENWAJAKU",
-      otherNames: "JESSICA OLUEBUIBE",
-      gender: "Female",
-      totalScore: 1414.0,
-      average: 88.38,
-      remark: "Excellent",
-      position: "1st",
-    },
-    {
-      id: 2,
-      regNo: "FIS84545",
-      surname: "OLUGHU",
-      otherNames: "HENRIETTA CHIDIADI",
-      gender: "Female",
-      totalScore: 1387.0,
-      average: 86.69,
-      remark: "Excellent",
-      position: "2nd",
-    },
-    {
-      id: 3,
-      regNo: "FIS45544",
-      surname: "JEREMIAH",
-      otherNames: "EMMANUELLA CHIZARAM",
-      gender: "Female",
-      totalScore: 1370.0,
-      average: 85.63,
-      remark: "Excellent",
-      position: "3rd",
-    },
-    {
-      id: 4,
-      regNo: "FIS40556",
-      surname: "IHUMEZIE",
-      otherNames: "MICHAEL ONYEDIKACHI",
-      gender: "Male",
-      totalScore: 1357.0,
-      average: 84.81,
-      remark: "Excellent",
-      position: "4th",
-    },
-    {
-      id: 5,
-      regNo: "FIS4259",
-      surname: "Uzoma",
-      otherNames: "Emmanuella",
-      gender: "Female",
-      totalScore: 1244.0,
-      average: 77.75,
-      remark: "Very Good",
-      position: "5th",
-    },
-    {
-      id: 6,
-      regNo: "FIS4549",
-      surname: "EZENWAJAKU",
-      otherNames: "JUDITH NMESOMA",
-      gender: "Female",
-      totalScore: 1210.0,
-      average: 75.63,
-      remark: "Very Good",
-      position: "6th",
-    },
-    {
-      id: 7,
-      regNo: "FIS30561",
-      surname: "BARTHOLOMEOW",
-      otherNames: "EMMANUEL CHINEMEREM",
-      gender: "Male",
-      totalScore: 1172.0,
-      average: 73.25,
-      remark: "Good",
-      position: "7th",
-    },
-  ];
+interface Props {
+  broadsheetData: TeacherBroadsheetResponse | undefined;
+  isLoading: boolean;
+  hasFiltered: boolean;
+}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getRemarkColor = (remark: any) => {
-    switch (remark) {
-      case "Excellent":
-        return "text-green-600";
-      case "Very Good":
-        return "text-blue-600";
-      case "Good":
-        return "text-orange-600";
-      default:
-        return "text-gray-600";
-    }
-  };
+const ViewClassTable = ({ broadsheetData, isLoading, hasFiltered }: Props) => {
+  if (!hasFiltered) {
+    return (
+      <div className="p-10 bg-white mt-5 border border-gray-200 flex flex-col items-center justify-center gap-3 text-center">
+        <SearchX className="w-12 h-12 text-gray-300" />
+        <p className="text-gray-500 font-medium">No results to display</p>
+        <p className="text-sm text-gray-400">
+          Select a class and click{" "}
+          <span className="font-semibold text-[#8000BD]">Display Result</span>{" "}
+          to view the broadsheet.
+        </p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="p-6 bg-white mt-5 border border-gray-200 space-y-3">
+        <div className="h-6 w-64 bg-gray-200 rounded animate-pulse mb-4" />
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="h-10 bg-gray-100 rounded animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  const data = broadsheetData?.data;
+  const subjects = data?.subjects ?? [];
+  const rows: BroadsheetRow[] = data?.rows ?? [];
+  const usePosition = data?.usePosition ?? false;
+
+  if (rows.length === 0) {
+    return (
+      <div className="p-10 bg-white mt-5 border border-gray-200 flex flex-col items-center justify-center gap-3 text-center">
+        <SearchX className="w-12 h-12 text-gray-300" />
+        <p className="text-gray-500 font-medium">No students found</p>
+        <p className="text-sm text-gray-400">
+          No results available for the selected class and term.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-white mt-5 border border-gray-200">
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-lg font-medium text-gray-800">
-          Result for JSS 3 - 2023/2024 Second Term
-        </h1>
-        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex items-center gap-2 text-sm cursor-pointer">
-          <span>
-            <X />
-          </span>
-          REMOVE
-        </button>
-      </div>
-
-      {/* Results Table */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse bg-white">
+        <table className="w-full border-collapse bg-white text-sm">
           <thead>
+            {/* Top header row */}
             <tr className="bg-gray-50">
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                S/N
-              </th>
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Reg. No.
-              </th>
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Surname
-              </th>
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Other Names
-              </th>
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Gender
-              </th>
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Total Score
-              </th>
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Average
-              </th>
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Remark
-              </th>
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Position
-              </th>
+              <th rowSpan={2} className="border border-gray-300 px-3 py-2 text-center font-semibold text-gray-700">S/N</th>
+              <th rowSpan={2} className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">Reg. No.</th>
+              <th rowSpan={2} className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">Student Name</th>
+              {subjects.map((subject) => (
+                <th
+                  key={subject}
+                  colSpan={4}
+                  className="border border-gray-300 px-3 py-2 text-center font-semibold text-gray-700"
+                >
+                  {subject.trim()}
+                </th>
+              ))}
+              <th rowSpan={2} className="border border-gray-300 px-3 py-2 text-center font-semibold text-gray-700">Grand Total</th>
+              {usePosition && (
+                <th rowSpan={2} className="border border-gray-300 px-3 py-2 text-center font-semibold text-gray-700">Position</th>
+              )}
+            </tr>
+
+            {/* Sub-header row for CA / Exam / Total / Grade */}
+            <tr className="bg-gray-50">
+              {subjects.map((subject) => (
+                <>
+                  <th key={`${subject}-ca`} className="border border-gray-300 px-2 py-1 text-center text-xs text-gray-500 font-medium">CA</th>
+                  <th key={`${subject}-exam`} className="border border-gray-300 px-2 py-1 text-center text-xs text-gray-500 font-medium">Exam</th>
+                  <th key={`${subject}-total`} className="border border-gray-300 px-2 py-1 text-center text-xs text-gray-500 font-medium">Total</th>
+                  <th key={`${subject}-grade`} className="border border-gray-300 px-2 py-1 text-center text-xs text-gray-500 font-medium">Grade</th>
+                </>
+              ))}
             </tr>
           </thead>
+
           <tbody>
-            {students.map((student) => (
-              <tr key={student.id} className="hover:bg-gray-50">
-                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                  {student.id}
-                </td>
-                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                  {student.regNo}
-                </td>
-                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                  {student.surname}
-                </td>
-                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                  {student.otherNames}
-                </td>
-                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                  {student.gender}
-                </td>
-                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                  {student.totalScore.toFixed(2)}
-                </td>
-                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                  {student.average.toFixed(2)}
-                </td>
-                <td
-                  className={`border border-gray-300 px-4 py-3 text-sm ${getRemarkColor(
-                    student.remark
-                  )}`}
-                >
-                  {student.remark}
-                </td>
-                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                  {student.position}
-                </td>
+            {rows.map((row, index) => (
+              <tr key={row.studentId} className="hover:bg-gray-50">
+                <td className="border border-gray-300 px-3 py-2 text-center text-gray-700">{index + 1}</td>
+                <td className="border border-gray-300 px-3 py-2 text-[#8000BD]">{row.registrationNumber}</td>
+                <td className="border border-gray-300 px-3 py-2 text-gray-800 whitespace-nowrap">{row.studentName}</td>
+                {subjects.map((subject) => {
+                  const score = row.scores[subject];
+                  return (
+                    <>
+                      <td key={`${row.studentId}-${subject}-ca`} className="border border-gray-300 px-2 py-2 text-center text-gray-700">{score?.caTotal ?? "—"}</td>
+                      <td key={`${row.studentId}-${subject}-exam`} className="border border-gray-300 px-2 py-2 text-center text-gray-700">{score?.examTotal ?? "—"}</td>
+                      <td key={`${row.studentId}-${subject}-total`} className="border border-gray-300 px-2 py-2 text-center font-medium text-gray-800">{score?.subjectTotal ?? "—"}</td>
+                      <td key={`${row.studentId}-${subject}-grade`} className="border border-gray-300 px-2 py-2 text-center font-semibold text-[#8000BD]">{score?.grade ?? "—"}</td>
+                    </>
+                  );
+                })}
+                <td className="border border-gray-300 px-3 py-2 text-center font-semibold text-gray-800">{row.grandTotal}</td>
+                {usePosition && (
+                  <td className="border border-gray-300 px-3 py-2 text-center text-gray-700">{row.position ?? "—"}</td>
+                )}
               </tr>
             ))}
           </tbody>

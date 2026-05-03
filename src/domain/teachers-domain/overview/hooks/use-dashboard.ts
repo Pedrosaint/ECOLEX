@@ -1,7 +1,8 @@
-import { useGetTeacherOverviewQuery } from "../api/teacher-overview.api";
+import { useGetTeacherOverviewQuery, useGetActiveTermQuery } from "../api/teacher-overview.api";
 
 export function useDashboard() {
   const { data, isLoading, isError } = useGetTeacherOverviewQuery();
+  const { data: activeTermData, isLoading: isActiveTermLoading } = useGetActiveTermQuery();
 
   const cards = [
     {
@@ -28,5 +29,5 @@ export function useDashboard() {
     },
   ];
 
-  return { data, isLoading, isError, cards };
+  return { data, isLoading, isError, cards, activeTermData, isActiveTermLoading };
 }

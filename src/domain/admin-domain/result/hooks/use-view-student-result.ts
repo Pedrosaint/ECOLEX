@@ -9,12 +9,17 @@ export function useViewStudentResult() {
 
   const { data, isFetching, isError } = useGetStudentResultQuery(
     searchParams
-      ? { studentId: searchParams.studentId, classId: searchParams.classId, academicSessionId: searchParams.academicSessionId }
+      ? { 
+          studentId: searchParams.studentId, 
+          classId: searchParams.classId, 
+          academicSessionId: searchParams.academicSessionId,
+          termId: searchParams.termId 
+        }
       : skipToken
   );
 
   const result = data?.data;
-  const caHeaders = result?.subjects[0]?.cas.map((ca) => ca.name) ?? [];
+  const caHeaders = result?.subjects?.[0]?.cas.map((ca) => ca.name) ?? [];
 
   return {
     searchParams, setSearchParams,

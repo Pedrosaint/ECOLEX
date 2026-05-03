@@ -48,7 +48,7 @@ export default function StaffSetupRecord() {
               type="text"
               value={schemeName}
               onChange={(e) => setSchemeName(e.target.value)}
-              placeholder="e.g. Primary Remark Setup"
+              placeholder="e.g. JSS grading scheme"
               className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#4B0082]"
             />
           </div>
@@ -57,14 +57,12 @@ export default function StaffSetupRecord() {
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <div
                 onClick={() => setUsePosition((v) => !v)}
-                className={`w-11 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0 cursor-pointer ${
-                  usePosition ? "bg-[#4B0082]" : "bg-gray-300"
-                }`}
+                className={`w-11 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0 cursor-pointer ${usePosition ? "bg-[#4B0082]" : "bg-gray-300"
+                  }`}
               >
                 <span
-                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
-                    usePosition ? "translate-x-5" : "translate-x-0"
-                  }`}
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${usePosition ? "translate-x-5" : "translate-x-0"
+                    }`}
                 />
               </div>
               <span className="text-sm font-semibold text-gray-900">
@@ -167,7 +165,7 @@ export default function StaffSetupRecord() {
             <p className="text-sm text-gray-400">Loading classes...</p>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-y-2">
-              {classesData?.classes.map((cls) => (
+              {classesData?.data?.map((cls) => (
                 <div key={cls.id} className="flex items-center">
                   <input
                     type="checkbox"
@@ -180,7 +178,7 @@ export default function StaffSetupRecord() {
                     htmlFor={`class-${cls.id}`}
                     className="ml-2 text-sm text-gray-700 cursor-pointer"
                   >
-                    {cls.name}
+                    {cls.class?.name ?? cls.name}
                   </label>
                 </div>
               ))}
@@ -193,9 +191,8 @@ export default function StaffSetupRecord() {
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className={`w-full max-w-lg bg-[#4B0082] text-white px-6 py-3 rounded-md text-base font-medium transition-colors ${
-              isLoading ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-[#3a0066]"
-            }`}
+            className={`w-full max-w-lg bg-[#4B0082] text-white px-6 py-3 rounded-md text-base font-medium transition-colors ${isLoading ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-[#3a0066]"
+              }`}
           >
             {isLoading ? "Saving..." : "Add Teachers Remark"}
           </button>

@@ -1,5 +1,6 @@
 import { Trash2, Plus, ChevronDown, Check } from "lucide-react";
 import { useGradingScheme } from "../hooks";
+import type { TeacherClass } from "../../overview/types";
 
 export default function GradingScheme() {
   const {
@@ -80,10 +81,10 @@ export default function GradingScheme() {
 
               {classDropdownOpen && (
                 <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
-                  {classesData?.classes.length === 0 && (
+                  {classesData?.data?.length === 0 && (
                     <p className="text-sm text-gray-400 px-3 py-2">No classes found</p>
                   )}
-                  {classesData?.classes.map((cls) => (
+                  {classesData?.data?.map((cls: TeacherClass) => (
                     <button
                       key={cls.id}
                       type="button"
@@ -102,7 +103,7 @@ export default function GradingScheme() {
                         )}
                       </div>
                       <span className={selectedClassIds.includes(cls.id) ? "text-[#8000BD] font-medium" : "text-gray-700"}>
-                        {cls.name}
+                        {cls.class?.name ?? cls.name}
                       </span>
                     </button>
                   ))}
@@ -273,10 +274,10 @@ export default function GradingScheme() {
 
               {addClassDropdownOpen && (
                 <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
-                  {classesData?.classes.length === 0 && (
+                  {classesData?.data?.length === 0 && (
                     <p className="text-sm text-gray-400 px-3 py-2">No classes found</p>
                   )}
-                  {classesData?.classes.map((cls) => (
+                  {classesData?.data?.map((cls: TeacherClass) => (
                     <button
                       key={cls.id}
                       type="button"
@@ -295,7 +296,7 @@ export default function GradingScheme() {
                         )}
                       </div>
                       <span className={addClassIds.includes(cls.id) ? "text-[#8000BD] font-medium" : "text-gray-700"}>
-                        {cls.name}
+                        {cls.customName ?? cls.name}
                       </span>
                     </button>
                   ))}

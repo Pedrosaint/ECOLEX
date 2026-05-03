@@ -1,4 +1,4 @@
-import { Printer } from "lucide-react";
+import { Printer, SearchX } from "lucide-react";
 import { motion } from "framer-motion";
 import SearchStudentComp from "./search-student.comp";
 import { useViewStudentResult } from "../hooks";
@@ -53,9 +53,15 @@ export default function ViewStudentResultTab() {
             <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center text-sm text-red-500">
               Failed to load result. Please try again.
             </div>
-          ) : !result ? (
-            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center text-sm text-gray-400">
-              No result found for the selected student.
+          ) : !result?.subjects?.length ? (
+            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-16 flex flex-col items-center justify-center text-center">
+              <div className="bg-gray-50 p-4 rounded-full mb-4">
+                <SearchX className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-1">No Results Found</h3>
+              <p className="text-sm text-gray-500 max-w-sm">
+                We couldn't find any records matching your selected criteria. Please try adjusting your filters.
+              </p>
             </div>
           ) : (
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="mt-6">
@@ -119,19 +125,19 @@ export default function ViewStudentResultTab() {
                   <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
                     <div className="border-t border-gray-300 py-2">
                       <div className="text-gray-600 mb-1">Total Score</div>
-                      <div className="font-semibold text-gray-800">{result.performance.totalScore}</div>
+                      <div className="font-semibold text-gray-800">{result.performance?.totalScore ?? "—"}</div>
                     </div>
                     <div className="border-t border-gray-300 py-2">
                       <div className="text-gray-600 mb-1">Average Score</div>
-                      <div className="font-semibold text-gray-800">{result.performance.averageScore}</div>
+                      <div className="font-semibold text-gray-800">{result.performance?.averageScore ?? "—"}</div>
                     </div>
                     <div className="border-t border-gray-300 py-2">
                       <div className="text-gray-600 mb-1">Class Position</div>
-                      <div className="font-semibold text-gray-800">{result.performance.position != null ? `${result.performance.position}` : "N/A"}</div>
+                      <div className="font-semibold text-gray-800">{result.performance?.position != null ? `${result.performance.position}` : "N/A"}</div>
                     </div>
                     <div className="border-t border-gray-300 py-2">
                       <div className="text-gray-600 mb-1">Overall Grade</div>
-                      <div className="font-semibold text-gray-800">{result.performance.overallGrade}</div>
+                      <div className="font-semibold text-gray-800">{result.performance?.overallGrade ?? "—"}</div>
                     </div>
                   </div>
                 </div>

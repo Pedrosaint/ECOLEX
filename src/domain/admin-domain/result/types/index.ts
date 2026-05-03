@@ -124,6 +124,7 @@ export interface GetStudentResultParams {
   studentId: number;
   classId: number;
   academicSessionId: number;
+  termId: number;
 }
 
 export interface PublishResultsRequest {
@@ -189,6 +190,8 @@ export interface GetTeacherResultParams {
   classId: number;
   subjectId: number;
   academicSessionId: number;
+  termId: number;
+  campusId: number;
   page?: number;
 }
 
@@ -219,4 +222,6 @@ export interface TeacherSearchParams {
   classId: number;
   subjectId: number;
   academicSessionId: number;
+  termId: number;
+  campusId: number;
 }

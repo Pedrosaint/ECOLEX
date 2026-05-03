@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { useSearchTeachers } from "../hooks";
 import type { TeacherSearchParams } from "../types";
+import type { Campuse } from "../../campus/response/campuse.response";
 
 export type { TeacherSearchParams };
 
@@ -23,10 +24,12 @@ export default function SearchTeachersComp({ onSearch, isSearching }: Props) {
   const {
     sessionId, termId, setTermId,
     staffId, setStaffId, classId, subjectId, setSubjectId,
+    campusId, setCampusId,
     sessionsData, sessionsLoading,
     classesData, classesLoading,
     staffData, staffLoading,
     subjectsLoading, subjects,
+    campusesLoading, campuses,
     terms, canSearch,
     handleSessionChange, handleClassChange, handleSearch,
   } = useSearchTeachers({ onSearch, isSearching });
@@ -73,7 +76,7 @@ export default function SearchTeachersComp({ onSearch, isSearching }: Props) {
           <div className="relative">
             <select value={classId} onChange={(e) => handleClassChange(e.target.value)} disabled={classesLoading} className={`${selectBase} ${classId ? "text-gray-900" : "text-gray-400"}`}>
               <option value="">{classesLoading ? "Loading..." : "Select Class"}</option>
-              {(classesData?.classes ?? []).map((c) => <option key={c.id} value={String(c.id)}>{c.customName ?? c.name}</option>)}
+              {(classesData?.classes ?? []).map((c) => <option key={c.id} value={String(c.id)}>{c.name}</option>)}
             </select>
             {chevron}
           </div>
@@ -91,10 +94,11 @@ export default function SearchTeachersComp({ onSearch, isSearching }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">Select Campus</label>
+          <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">Select Campus <span className="text-red-500">*</span></label>
           <div className="relative">
-            <select disabled className={`${selectBase} text-gray-400 bg-gray-50 cursor-not-allowed`}>
-              <option value="">Coming soon</option>
+            <select value={campusId} onChange={(e) => setCampusId(e.target.value)} disabled={campusesLoading} className={`${selectBase} ${campusId ? "text-gray-900" : "text-gray-400"}`}>
+              <option value="">{campusesLoading ? "Loading..." : "Select Campus"}</option>
+              {campuses.map((c: Campuse) => <option key={c.id} value={String(c.id)}>{c.name}</option>)}
             </select>
             {chevron}
           </div>

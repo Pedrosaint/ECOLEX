@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Printer } from "lucide-react";
+import { ChevronLeft, ChevronRight, Printer, SearchX } from "lucide-react";
 import { motion } from "framer-motion";
 import SearchClassComp from "./search-class.comp";
 import { useViewClassResult } from "../hooks";
@@ -44,8 +44,14 @@ const ViewClassResult = () => {
               Failed to load broadsheet. Please try again.
             </div>
           ) : !broadsheet || allRows.length === 0 ? (
-            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center text-sm text-gray-400">
-              No results found for the selected criteria.
+            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-16 flex flex-col items-center justify-center text-center">
+              <div className="bg-gray-50 p-4 rounded-full mb-4">
+                <SearchX className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-1">No Results Found</h3>
+              <p className="text-sm text-gray-500 max-w-sm">
+                We couldn't find any records matching your selected criteria. Please try adjusting your filters.
+              </p>
             </div>
           ) : (
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="mt-6">

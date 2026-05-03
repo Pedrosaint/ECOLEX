@@ -7,6 +7,13 @@ import type {
   SubmitExamScoresRequest,
   SubmitResultsRequest,
   ScoreSubmitResponse,
+  ActiveTermResponse,
+  TeacherClassesResponse,
+  TeacherCampusResponse,
+  TeacherClassGroupsResponse,
+  TeacherSessionResponse,
+  TeacherBroadsheetParams,
+  TeacherBroadsheetResponse,
 } from "../types";
 
 export const teacherOverviewApi = createApi({
@@ -23,6 +30,31 @@ export const teacherOverviewApi = createApi({
   endpoints: (builder) => ({
     getTeacherOverview: builder.query<TeacherOverviewResponse, void>({
       query: () => "teacher/overview",
+    }),
+
+    getActiveTerm: builder.query<ActiveTermResponse, void>({
+      query: () => "teacher/active-term",
+    }),
+
+    getTeacherClasses: builder.query<TeacherClassesResponse, void>({
+      query: () => "teacher/classes",
+    }),
+
+    getTeacherCampus: builder.query<TeacherCampusResponse, void>({
+      query: () => "teacher/campuses",
+    }),
+
+    getTeacherClassGroups: builder.query<TeacherClassGroupsResponse, void>({
+      query: () => "teacher/class-groups",
+    }),
+
+    getTeacherSession: builder.query<TeacherSessionResponse, void>({
+      query: () => "teacher/sessions",
+    }),
+
+    getTeacherBroadsheet: builder.query<TeacherBroadsheetResponse, TeacherBroadsheetParams>({
+      query: ({ classId, academicSessionId, termId }) =>
+        `teacher/broadsheet?classId=${classId}&academicSessionId=${academicSessionId}&termId=${termId}`,
     }),
 
     submitCaScores: builder.mutation<ScoreSubmitResponse, SubmitCaScoresRequest>({
@@ -59,4 +91,10 @@ export const {
   useSubmitCaScoresMutation,
   useSubmitExamScoresMutation,
   useSubmitResultsMutation,
+  useGetActiveTermQuery,
+  useGetTeacherClassesQuery,
+  useGetTeacherCampusQuery,
+  useGetTeacherClassGroupsQuery,
+  useGetTeacherSessionQuery,
+  useGetTeacherBroadsheetQuery,
 } = teacherOverviewApi;

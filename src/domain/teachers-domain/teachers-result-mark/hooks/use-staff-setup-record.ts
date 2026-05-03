@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useCreateGradingSchemeMutation } from "../../grading-scheme/api/grading-scheme.api";
-import { useGetClassesQuery } from "../../../admin-domain/classes/api/class-api";
+import { useGetTeacherClassesQuery } from "../../overview/hooks";
 
 interface GradeRow {
   min: string;
@@ -24,7 +24,7 @@ export function useStaffSetupRecord() {
   const [grades, setGrades] = useState<GradeRow[]>(DEFAULT_GRADES);
   const [selectedClassIds, setSelectedClassIds] = useState<number[]>([]);
 
-  const { data: classesData, isLoading: classesLoading } = useGetClassesQuery();
+  const { data: classesData, isLoading: classesLoading } = useGetTeacherClassesQuery();
   const [createGradingScheme, { isLoading }] = useCreateGradingSchemeMutation();
 
   const handleAddGrade = () => {
@@ -69,6 +69,10 @@ export function useStaffSetupRecord() {
         })),
       }).unwrap();
       toast.success("Grading scheme saved successfully");
+      setSchemeName("");
+      setUsePosition(false);
+      setGrades(DEFAULT_GRADES);
+      setSelectedClassIds([]);
     } catch (error) {
       toast.error((error as { data?: { message?: string } })?.data?.message || "Failed to save grading scheme");
     }
