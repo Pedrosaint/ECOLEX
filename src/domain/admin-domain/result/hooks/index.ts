@@ -5,6 +5,8 @@ export {
   useGetStudentResultQuery,
   usePublishResultsMutation,
   useGetTeacherResultQuery,
+  useGetPendingSubmissionsQuery,
+  useRejectResultsMutation,
 } from '../api/grading.api';
 
 export { useSetupGrade } from './use-setup-grade';
@@ -15,3 +17,4 @@ export { useViewClassResult } from './use-view-class-result';
 export { useViewStudentResult } from './use-view-student-result';
 export { useViewTeacherResult } from './use-view-teacher-result';
 export { useManageResult } from './use-manage-result';
+export { usePendingResults } from './use-pending-results';

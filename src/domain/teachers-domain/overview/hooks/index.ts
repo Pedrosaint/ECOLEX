@@ -9,5 +9,9 @@ export {
   useGetTeacherClassGroupsQuery,
   useGetTeacherSessionQuery,
   useGetTeacherBroadsheetQuery,
+  useGetTeacherCaTemplatesQuery,
+  useGetTeacherExamTemplatesQuery,
+  useGetTeacherSubjectsQuery,
+  useGetTeacherSubjectsByGroupQuery,
 } from "../api/teacher-overview.api";
 export { useDashboard } from "./use-dashboard";

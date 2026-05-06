@@ -1,5 +1,5 @@
-import { Search, X, ChevronDown } from "lucide-react";
-import DotLoader from "../../../../general/ui/dot-loader";
+import { useState } from "react";
+import { ListFilter, ChevronDown } from "lucide-react";
 import { useSearchComp } from "../hooks";
 
 interface SearchStudentCompProps {
@@ -21,6 +21,8 @@ export default function SearchStudentComp({
   onClearFilters,
   hasFilters,
 }: SearchStudentCompProps) {
+  const [showFilters, setShowFilters] = useState(false);
+
   const {
     campusId,
     setCampusId,
@@ -53,224 +55,141 @@ export default function SearchStudentComp({
     getSelectedLabel,
   } = useSearchComp({ onDisplayStudents, onClearFilters });
 
-  return (
-    <div className="w-full">
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 items-end">
-        {/* Campus Dropdown */}
-        <div className="flex flex-col" ref={campusRef}>
-          <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
-            Campus
-          </label>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setIsCampusOpen(!isCampusOpen)}
-              disabled={isLoading}
-              className="w-full px-3 py-3 border border-gray-300 rounded bg-white text-sm flex items-center justify-between disabled:opacity-50"
-            >
-              {getSelectedLabel(campusId, campusOptions)}
-              <ChevronDown
-                size={16}
-                className={`transition-transform ${isCampusOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-            {isCampusOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
-                {campusOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    onClick={() => {
-                      setCampusId(option.value);
-                      setIsCampusOpen(false);
-                    }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                      campusId === option.value ? "bg-gray-100 font-medium" : ""
-                    }`}
-                  >
-                    {option.label}
-                  </div>
-                ))}
+  const Dropdown = ({
+    label,
+    value,
+    options,
+    isOpen,
+    setIsOpen,
+    setValue,
+    ref: divRef,
+  }: {
+    label: string;
+    value: string;
+    options: { value: string; label: string }[];
+    isOpen: boolean;
+    setIsOpen: (v: boolean) => void;
+    setValue: (v: string) => void;
+    ref?: React.RefObject<HTMLDivElement>;
+  }) => (
+    <div className="flex flex-col" ref={divRef}>
+      <label className="text-sm font-semibold text-gray-700 mb-1">{label}</label>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          disabled={isLoading}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm text-left focus:outline-none flex items-center justify-between disabled:opacity-50"
+        >
+          <span className={value ? "text-gray-900" : "text-gray-400"}>
+            {getSelectedLabel(value, options)}
+          </span>
+          <ChevronDown size={15} className={`transition-transform text-gray-500 ${isOpen ? "rotate-180" : ""}`} />
+        </button>
+        {isOpen && (
+          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+            {options.map((opt) => (
+              <div
+                key={opt.value}
+                onClick={() => { setValue(opt.value); setIsOpen(false); }}
+                className={`px-3 py-2 text-sm cursor-pointer hover:bg-purple-600 hover:text-white ${value === opt.value ? "bg-gray-100 font-medium" : "text-gray-700"}`}
+              >
+                {opt.label}
               </div>
-            )}
+            ))}
           </div>
-        </div>
-
-        {/* Name Input */}
-        <div className="flex flex-col">
-          <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
-            Search By Name
-          </label>
-          <input
-            type="text"
-            placeholder="e.g Emeka"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-            className="w-full px-3 py-3 border border-gray-300 rounded text-sm placeholder-gray-400 focus:outline-none"
-            disabled={isLoading}
-          />
-        </div>
-
-        {/* Gender Dropdown */}
-        <div className="flex flex-col" ref={genderRef}>
-          <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
-            Gender
-          </label>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setIsGenderOpen(!isGenderOpen)}
-              disabled={isLoading}
-              className="w-full px-3 py-3 border border-gray-300 rounded bg-white text-sm flex items-center justify-between disabled:opacity-50"
-            >
-              {getSelectedLabel(gender, genderOptions)}
-              <ChevronDown
-                size={16}
-                className={`transition-transform ${isGenderOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-            {isGenderOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
-                {genderOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    onClick={() => {
-                      setGender(option.value);
-                      setIsGenderOpen(false);
-                    }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                      gender === option.value ? "bg-gray-100 font-medium" : ""
-                    }`}
-                  >
-                    {option.label}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Class Dropdown */}
-        <div className="flex flex-col" ref={classRef}>
-          <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
-            Class
-          </label>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setIsClassOpen(!isClassOpen)}
-              disabled={isLoading}
-              className="w-full px-3 py-3 border border-gray-300 rounded bg-white text-sm flex items-center justify-between disabled:opacity-50"
-            >
-              {getSelectedLabel(classId, classOptions)}
-              <ChevronDown
-                size={16}
-                className={`transition-transform ${isClassOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-            {isClassOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
-                {classOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    onClick={() => {
-                      setClassId(option.value);
-                      setIsClassOpen(false);
-                    }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                      classId === option.value ? "bg-gray-100 font-medium" : ""
-                    }`}
-                  >
-                    {option.label}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Group Dropdown */}
-        <div className="flex flex-col" ref={groupRef}>
-          <label className="text-sm font-bold text-[#120D1C] font-poppins mb-2">
-            Group
-          </label>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setIsGroupOpen(!isGroupOpen)}
-              disabled={isLoading}
-              className="w-full px-3 py-3 border border-gray-300 rounded bg-white text-sm flex items-center justify-between disabled:opacity-50"
-            >
-              {getSelectedLabel(groupId, groupOptions)}
-              <ChevronDown
-                size={16}
-                className={`transition-transform ${isGroupOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-            {isGroupOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
-                {groupOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    onClick={() => {
-                      setGroupId(option.value);
-                      setIsGroupOpen(false);
-                    }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-[#6a00a1] hover:text-white ${
-                      groupId === option.value ? "bg-gray-100 font-medium" : ""
-                    }`}
-                  >
-                    {option.label}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Clear Filters Button */}
-      <div className="flex justify-end mt-3 mb-2 gap-4">
-        {hasFilters && (
-          <button
-            type="button"
-            onClick={handleClearFilters}
-            disabled={isLoading}
-            className="bg-red-600 text-[13px] text-white px-3 py-1 rounded flex items-center gap-2 font-semibold disabled:opacity-50 hover:bg-red-700 transition-colors cursor-pointer"
-          >
-            <X size={20} />
-            CLEAR FILTERS
-          </button>
         )}
       </div>
+    </div>
+  );
 
-      {/* Display Button */}
-      {isLoading ||
-      (!campusId && !searchName.trim() && !gender && !classId && !groupId) ? (
-        <div className="bg-[#8000BD]/80 px-6 py-3 mb-4 rounded cursor-not-allowed opacity-50">
-          <div className="flex items-center justify-center">
-            {!isLoading && <Search className="w-5 h-5 mr-2 text-white" />}
-            <button
-              type="button"
-              disabled
-              className="bg-transparent text-white font-semibold cursor-not-allowed"
-            >
-              {isLoading ? <DotLoader /> : "DISPLAY STUDENTS"}
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div
-          onClick={handleDisplayStudents}
-          className="bg-[#8000BD] px-6 py-3 mb-4 rounded cursor-pointer hover:bg-[#6a00a1] transition-colors"
+  return (
+    <div className="w-full">
+      {/* Top row: name search + Filters toggle */}
+      <div className="flex items-center gap-3 mb-3">
+        <input
+          type="text"
+          placeholder="Search students by name..."
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          disabled={isLoading}
+          className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-purple-400 disabled:opacity-50"
+        />
+        <button
+          type="button"
+          onClick={() => setShowFilters((prev) => !prev)}
+          className={`flex items-center gap-2 px-3 py-2 border rounded-md text-sm font-medium transition-colors cursor-pointer ${
+            showFilters
+              ? "bg-purple-50 border-purple-400 text-purple-700"
+              : "border-gray-300 text-gray-700 hover:bg-gray-50"
+          }`}
         >
-          <div className="flex items-center justify-center">
-            <Search className="w-5 h-5 mr-2 text-white" />
+          <ListFilter size={15} />
+          Filters
+        </button>
+      </div>
+
+      {/* Collapsible filter panel */}
+      {showFilters && (
+        <div className="border border-gray-200 rounded-lg p-4 mb-4 bg-white">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <Dropdown
+              label="Campus"
+              value={campusId}
+              options={campusOptions}
+              isOpen={isCampusOpen}
+              setIsOpen={setIsCampusOpen}
+              setValue={setCampusId}
+              ref={campusRef}
+            />
+            <Dropdown
+              label="Class"
+              value={classId}
+              options={classOptions}
+              isOpen={isClassOpen}
+              setIsOpen={setIsClassOpen}
+              setValue={setClassId}
+              ref={classRef}
+            />
+            <Dropdown
+              label="Group"
+              value={groupId}
+              options={groupOptions}
+              isOpen={isGroupOpen}
+              setIsOpen={setIsGroupOpen}
+              setValue={setGroupId}
+              ref={groupRef}
+            />
+            <Dropdown
+              label="Gender"
+              value={gender}
+              options={genderOptions}
+              isOpen={isGenderOpen}
+              setIsOpen={setIsGenderOpen}
+              setValue={setGender}
+              ref={genderRef}
+            />
+          </div>
+
+          {/* Footer actions */}
+          <div className="flex justify-end gap-2 mt-4">
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                disabled={isLoading}
+                className="px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                Clear Filters
+              </button>
+            )}
             <button
               type="button"
-              className="bg-transparent text-white font-semibold cursor-pointer"
+              onClick={handleDisplayStudents}
+              disabled={isLoading || (!campusId && !classId && !groupId && !gender && !searchName.trim())}
+              className="px-4 py-2 rounded-md text-sm font-semibold text-white bg-[#8000BD] hover:bg-[#6a00a1] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
-              DISPLAY STUDENTS
+              {isLoading ? "Loading..." : "Display Students"}
             </button>
           </div>
         </div>

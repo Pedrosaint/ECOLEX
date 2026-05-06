@@ -15,8 +15,8 @@ export function useViewTeacherResult() {
   const [publishResults, { isLoading: isPublishing }] = usePublishResultsMutation();
 
   const result = data?.data;
-  const caHeaders = result?.rows[0]?.caScores.map((c) => c.name) ?? [];
-  const totalPages = result?.meta.totalPages ?? 1;
+  const caHeaders = result?.rows?.[0]?.caScores?.map((c) => c.name) ?? [];
+  const totalPages = result?.meta?.totalPages ?? 1;
 
   const handleSearch = (params: TeacherSearchParams) => {
     setSearchParams(params);
@@ -30,6 +30,7 @@ export function useViewTeacherResult() {
         classId: searchParams.classId,
         subjectId: searchParams.subjectId,
         academicSessionId: searchParams.academicSessionId,
+        termId: searchParams.termId,
       }).unwrap();
       toast.success("Results published successfully");
     } catch {

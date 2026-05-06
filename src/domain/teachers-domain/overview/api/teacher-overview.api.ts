@@ -6,6 +6,7 @@ import type {
   SubmitCaScoresRequest,
   SubmitExamScoresRequest,
   SubmitResultsRequest,
+  SubmitResultsResponse,
   ScoreSubmitResponse,
   ActiveTermResponse,
   TeacherClassesResponse,
@@ -14,6 +15,12 @@ import type {
   TeacherSessionResponse,
   TeacherBroadsheetParams,
   TeacherBroadsheetResponse,
+  TeacherCaTemplatesResponse,
+  TeacherCaTemplatesParams,
+  TeacherExamTemplatesResponse,
+  TeacherExamTemplatesParams,
+  TeacherSubjectsResponse,
+  TeacherSubjectsByGroupResponse,
 } from "../types";
 
 export const teacherOverviewApi = createApi({
@@ -57,6 +64,16 @@ export const teacherOverviewApi = createApi({
         `teacher/broadsheet?classId=${classId}&academicSessionId=${academicSessionId}&termId=${termId}`,
     }),
 
+    getTeacherCaTemplates: builder.query<TeacherCaTemplatesResponse, TeacherCaTemplatesParams>({
+      query: ({ classId, classGroupId }) =>
+        `teacher/ca?classId=${classId}&classGroupId=${classGroupId}`,
+    }),
+
+    getTeacherExamTemplates: builder.query<TeacherExamTemplatesResponse, TeacherExamTemplatesParams>({
+      query: ({ classId, classGroupId }) =>
+        `teacher/exam?classId=${classId}&classGroupId=${classGroupId}`,
+    }),
+
     submitCaScores: builder.mutation<ScoreSubmitResponse, SubmitCaScoresRequest>({
       query: (body) => ({
         url: "teacher/scores/ca",
@@ -75,7 +92,15 @@ export const teacherOverviewApi = createApi({
       invalidatesTags: ["TeacherResults"],
     }),
 
-    submitResults: builder.mutation<ScoreSubmitResponse, SubmitResultsRequest>({
+    getTeacherSubjects: builder.query<TeacherSubjectsResponse, { classId: number }>({
+      query: ({ classId }) => `teacher/subjects?classId=${classId}`,
+    }),
+
+    getTeacherSubjectsByGroup: builder.query<TeacherSubjectsByGroupResponse, { classGroupId: number; classId: number }>({
+      query: ({ classGroupId, classId }) => `teacher/subjects/${classGroupId}/cas?classId=${classId}`,
+    }),
+
+    submitResults: builder.mutation<SubmitResultsResponse, SubmitResultsRequest>({
       query: (body) => ({
         url: "teacher/results/submit",
         method: "POST",
@@ -97,4 +122,8 @@ export const {
   useGetTeacherClassGroupsQuery,
   useGetTeacherSessionQuery,
   useGetTeacherBroadsheetQuery,
+  useGetTeacherCaTemplatesQuery,
+  useGetTeacherExamTemplatesQuery,
+  useGetTeacherSubjectsQuery,
+  useGetTeacherSubjectsByGroupQuery,
 } = teacherOverviewApi;

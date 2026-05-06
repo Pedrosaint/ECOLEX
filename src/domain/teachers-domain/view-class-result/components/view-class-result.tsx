@@ -35,7 +35,7 @@ const ViewClassResult = () => {
   const session = sessionData?.data ?? null;
   const activeTerm = activeTermData?.data ?? null;
 
-  const { data: broadsheetData, isLoading: broadsheetLoading, isFetching } = useGetTeacherBroadsheetQuery(
+  const { data: broadsheetData, isLoading: broadsheetLoading, isFetching, error: broadsheetError } = useGetTeacherBroadsheetQuery(
     filter!,
     { skip: !filter }
   );
@@ -132,6 +132,7 @@ const ViewClassResult = () => {
         broadsheetData={broadsheetData}
         isLoading={broadsheetLoading || isFetching}
         hasFiltered={!!filter}
+        error={broadsheetError}
       />
     </div>
   );

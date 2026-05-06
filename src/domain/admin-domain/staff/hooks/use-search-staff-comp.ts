@@ -66,6 +66,24 @@ export function useSearchStaffComp({
     return found ? found.label : options[0].label;
   };
 
+  // Keep a ref to latest dropdown values so the debounce closure isn't stale
+  const dropdownRef = useRef({ campusId, duty });
+  useEffect(() => { dropdownRef.current = { campusId, duty }; }, [campusId, duty]);
+
+  // Debounce: fire search 400ms after the user stops typing
+  useEffect(() => {
+    if (!searchName.trim()) return;
+    const timer = setTimeout(() => {
+      onDisplayStaff({
+        campusId: dropdownRef.current.campusId || undefined,
+        duty: dropdownRef.current.duty || undefined,
+        name: searchName,
+      });
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchName]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (

@@ -12,6 +12,10 @@ import type {
   PublishResultsRequest,
   GetTeacherResultResponse,
   GetTeacherResultParams,
+  PendingSubmissionsResponse,
+  PendingSubmissionsParams,
+  RejectResultsRequest,
+  RejectResultsResponse,
 } from '../types';
 
 export * from '../types';
@@ -69,6 +73,27 @@ export const gradingApi = createApi({
         method: "GET",
       }),
     }),
+
+    getPendingSubmissions: builder.query<PendingSubmissionsResponse, PendingSubmissionsParams>({
+      query: ({ campusId, classId, termId, subjectId } = {}) => {
+        const params = new URLSearchParams();
+        if (campusId) params.set("campusId", String(campusId));
+        if (classId) params.set("classId", String(classId));
+        if (termId) params.set("termId", String(termId));
+        if (subjectId) params.set("subjectId", String(subjectId));
+        return { url: `admin/results/submissions?${params.toString()}`, method: "GET" };
+      },
+      providesTags: ["Results"],
+    }),
+
+    rejectResults: builder.mutation<RejectResultsResponse, RejectResultsRequest>({
+      query: (body) => ({
+        url: "admin/results/reject",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Results"],
+    }),
   }),
 });
 
@@ -79,4 +104,6 @@ export const {
   useGetStudentResultQuery,
   usePublishResultsMutation,
   useGetTeacherResultQuery,
+  useGetPendingSubmissionsQuery,
+  useRejectResultsMutation,
 } = gradingApi;

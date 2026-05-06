@@ -78,42 +78,68 @@ export interface TeacherSessionResponse {
   data: TeacherSession;
 }
 
-export interface StudentScoreEntry {
+export interface SubmitCaEntry {
   studentId: number;
-  ca1?: number;
-  ca2?: number;
-  ca3?: number;
+  caId: number;
+  score: number;
 }
 
 export interface SubmitCaScoresRequest {
+  academicSessionId: number;
   termId: number;
-  classId: number;
-  subjectId: number;
-  scores: StudentScoreEntry[];
+  entries: SubmitCaEntry[];
 }
 
-export interface StudentExamEntry {
+export interface SubmitExamEntry {
   studentId: number;
-  exam?: number;
+  examId: number;
+  score: number;
 }
 
 export interface SubmitExamScoresRequest {
+  academicSessionId: number;
   termId: number;
-  classId: number;
-  subjectId: number;
-  scores: StudentExamEntry[];
+  entries: SubmitExamEntry[];
 }
 
 export interface SubmitResultsRequest {
-  termId: number;
   classId: number;
   subjectId: number;
+  academicSessionId: number;
+  termId: number;
+}
+
+export interface SubmitResultsData {
+  id: number;
+  classId: number;
+  subjectId: number;
+  academicSessionId: number;
+  status: string;
+  submittedAt: string;
+}
+
+export interface SubmitResultsResponse {
+  success: boolean;
+  message: string;
+  data: SubmitResultsData;
+}
+
+export interface TeacherSubject {
+  id: number;
+  name: string;
+}
+
+export interface TeacherSubjectsResponse {
+  success: boolean;
+  data: TeacherSubject[];
 }
 
 export interface ScoreSubmitResponse {
   success: boolean;
   message: string;
+  updated?: number;
 }
+
 
 export interface TeacherBroadsheetParams {
   classId: number;
@@ -148,4 +174,65 @@ export interface TeacherBroadsheetData {
 export interface TeacherBroadsheetResponse {
   success: boolean;
   data: TeacherBroadsheetData;
+}
+
+export interface CaTemplate {
+  id: number;
+  studentId?: number;
+  registrationNumber?: string;
+  studentName?: string;
+  classId: number;
+  subjectId: number;
+  name: string;
+  maxScore: number;
+  createdAt: string;
+  createdByAdminId: number;
+  class: { id: number; name: string };
+  subject: { id: number; name: string };
+}
+
+export interface TeacherCaTemplatesResponse {
+  success: boolean;
+  data: CaTemplate[];
+}
+
+export interface TeacherCaTemplatesParams {
+  classId: number;
+  classGroupId: number;
+}
+
+export interface ExamTemplate {
+  id: number;
+  studentId: number;
+  registrationNumber: string;
+  studentName: string;
+  classId: number;
+  subjectId: number;
+  name: string;
+  weightage: number | null;
+  maxScore: number;
+  createdAt: string;
+  createdByAdminId: number;
+  scheduledDate: string | null;
+  class: { id: number; name: string };
+  subject: { id: number; name: string };
+}
+
+export interface TeacherExamTemplatesResponse {
+  success: boolean;
+  data: ExamTemplate[];
+}
+
+export interface TeacherExamTemplatesParams {
+  classId: number;
+  classGroupId: number;
+}
+
+export interface TeacherSubjectsByGroupResponse {
+  success: boolean;
+  data: {
+    subject: { id: number; name: string };
+    class: { id: number; name: string };
+    cas: { id: number; name: string; maxScore: number }[];
+  };
 }

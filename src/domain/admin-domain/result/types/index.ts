@@ -131,6 +131,7 @@ export interface PublishResultsRequest {
   classId: number;
   subjectId: number;
   academicSessionId: number;
+  termId: number;
 }
 
 export interface PublishResultsResponse {
@@ -193,6 +194,40 @@ export interface GetTeacherResultParams {
   termId: number;
   campusId: number;
   page?: number;
+}
+
+export interface PendingSubmission {
+  id: number;
+  status: string;
+  submittedAt: string;
+  class: { id: number; name: string; campus: { id: number; name: string } };
+  subject: { id: number; name: string };
+  academicSession: { id: number; name: string };
+  term: { id: number; name: string };
+  staff: { id: number; name: string };
+}
+
+export interface PendingSubmissionsResponse {
+  success: boolean;
+  data: PendingSubmission[];
+}
+
+export interface PendingSubmissionsParams {
+  campusId?: number;
+  classId?: number;
+  termId?: number;
+  subjectId?: number;
+}
+
+export interface RejectResultsRequest {
+  classId: number;
+  subjectId: number;
+  academicSessionId: number;
+}
+
+export interface RejectResultsResponse {
+  success: boolean;
+  message: string;
 }
 
 export interface GradeRow {

@@ -5,9 +5,10 @@ interface Props {
   broadsheetData: TeacherBroadsheetResponse | undefined;
   isLoading: boolean;
   hasFiltered: boolean;
+  error?: unknown;
 }
 
-const ViewClassTable = ({ broadsheetData, isLoading, hasFiltered }: Props) => {
+const ViewClassTable = ({ broadsheetData, isLoading, hasFiltered, error }: Props) => {
   if (!hasFiltered) {
     return (
       <div className="p-10 bg-white mt-5 border border-gray-200 flex flex-col items-center justify-center gap-3 text-center">
@@ -39,12 +40,13 @@ const ViewClassTable = ({ broadsheetData, isLoading, hasFiltered }: Props) => {
   const usePosition = data?.usePosition ?? false;
 
   if (rows.length === 0) {
+    const errorMessage = (error as { data?: { message?: string } })?.data?.message;
     return (
       <div className="p-10 bg-white mt-5 border border-gray-200 flex flex-col items-center justify-center gap-3 text-center">
         <SearchX className="w-12 h-12 text-gray-300" />
-        <p className="text-gray-500 font-medium">No students found</p>
+        <p className="text-gray-500 font-medium">No results found</p>
         <p className="text-sm text-gray-400">
-          No results available for the selected class and term.
+          {errorMessage ?? "No results available for the selected class and term."}
         </p>
       </div>
     );

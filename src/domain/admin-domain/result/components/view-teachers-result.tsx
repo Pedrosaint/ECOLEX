@@ -10,25 +10,25 @@ export default function ViewTeacherResultTab() {
     searchParams, page, setPage,
     isPrintModalOpen, setIsPrintModalOpen,
     result, caHeaders, totalPages,
-    isFetching, isError, isPublishing,
-    handleSearch, handleApprove, renderPageButtons,
+    isFetching, isError,
+    handleSearch, renderPageButtons,
   } = useViewTeacherResult();
 
   const TeacherInfo = () => result ? (
     <div className="space-y-1 text-sm text-gray-600">
-      <div><span className="font-medium">Name:</span> {result.teacher.name}</div>
-      <div><span className="font-medium">Registration Number:</span> {result.teacher.registrationNumber}</div>
-      {result.teacher.campus && <div><span className="font-medium">Campus:</span> {result.teacher.campus}</div>}
-      <div><span className="font-medium">Class:</span> {result.class}</div>
-      <div><span className="font-medium">Subject:</span> {result.subject}</div>
-      <div><span className="font-medium">Session:</span> {result.session}</div>
+      <div><span className="font-medium">Name:</span> {result.teacher?.name ?? "—"}</div>
+      <div><span className="font-medium">Registration Number:</span> {result.teacher?.registrationNumber ?? "—"}</div>
+      {result.teacher?.campus && <div><span className="font-medium">Campus:</span> {result.teacher.campus}</div>}
+      <div><span className="font-medium">Class:</span> {result.class ?? "—"}</div>
+      <div><span className="font-medium">Subject:</span> {result.subject ?? "—"}</div>
+      <div><span className="font-medium">Session:</span> {result.session ?? "—"}</div>
       <div>
         <span className="font-medium">Submission Status:</span>{" "}
-        <span className={result.submission.status === "PENDING" ? "text-yellow-600 font-semibold" : "text-green-600 font-semibold"}>
-          {result.submission.status}
+        <span className={result.submission?.status === "PENDING" ? "text-yellow-600 font-semibold" : "text-green-600 font-semibold"}>
+          {result.submission?.status ?? "—"}
         </span>
       </div>
-      <div><span className="font-medium">Date Submitted:</span> {new Date(result.submission.submittedAt).toLocaleDateString()}</div>
+      <div><span className="font-medium">Date Submitted:</span> {result.submission?.submittedAt ? new Date(result.submission.submittedAt).toLocaleDateString() : "—"}</div>
     </div>
   ) : null;
 
@@ -96,12 +96,12 @@ export default function ViewTeacherResultTab() {
                         </tr>
                       </thead>
                       <tbody>
-                        {result.rows.map((row) => (
+                        {(result.rows ?? []).map((row) => (
                           <tr key={row.registrationNumber}>
                             <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">{row.registrationNumber}</td>
                             <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">{row.studentName}</td>
                             {caHeaders.map((name) => {
-                              const ca = row.caScores.find((c) => c.name === name);
+                              const ca = row.caScores?.find((c) => c.name === name);
                               return <td key={name} className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">{ca?.score ?? "—"}</td>;
                             })}
                             <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">{row.caTotal}</td>
@@ -119,7 +119,7 @@ export default function ViewTeacherResultTab() {
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between px-2 mb-4">
                     <p className="text-sm text-gray-500">
-                      Showing {(page - 1) * result.meta.pageSize + 1}–{Math.min(page * result.meta.pageSize, result.meta.total)} of {result.meta.total}
+                      Showing {(page - 1) * (result.meta?.pageSize ?? 10) + 1}–{Math.min(page * (result.meta?.pageSize ?? 10), result.meta?.total ?? 0)} of {result.meta?.total ?? 0}
                     </p>
                     <div className="flex items-center gap-1">
                       <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40">
@@ -139,14 +139,6 @@ export default function ViewTeacherResultTab() {
                   </div>
                 )}
 
-                <div className="flex md:justify-end gap-3 pt-2">
-                  <button onClick={handleApprove} disabled={isPublishing} className="bg-[#4B0082] text-white px-6 py-2 rounded-sm text-sm font-semibold cursor-pointer hover:bg-[#3a006b] transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
-                    {isPublishing ? "Publishing..." : "Approve Result"}
-                  </button>
-                  <button className="bg-[#EBE5F5] text-gray-700 px-6 py-2 rounded-sm text-sm font-semibold cursor-pointer hover:bg-[#d8cff0] transition-colors">
-                    Reject Result
-                  </button>
-                </div>
               </div>
             </motion.div>
           )}
