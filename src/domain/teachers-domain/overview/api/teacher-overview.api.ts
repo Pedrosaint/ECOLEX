@@ -66,12 +66,12 @@ export const teacherOverviewApi = createApi({
 
     getTeacherCaTemplates: builder.query<TeacherCaTemplatesResponse, TeacherCaTemplatesParams>({
       query: ({ classId, classGroupId }) =>
-        `teacher/ca?classId=${classId}&classGroupId=${classGroupId}`,
+        `teacher/students-with-scores?classId=${classId}&classGroupId=${classGroupId}`,
     }),
 
     getTeacherExamTemplates: builder.query<TeacherExamTemplatesResponse, TeacherExamTemplatesParams>({
       query: ({ classId, classGroupId }) =>
-        `teacher/exam?classId=${classId}&classGroupId=${classGroupId}`,
+        `teacher/students-with-scores?classId=${classId}&classGroupId=${classGroupId}`,
     }),
 
     submitCaScores: builder.mutation<ScoreSubmitResponse, SubmitCaScoresRequest>({
@@ -96,8 +96,8 @@ export const teacherOverviewApi = createApi({
       query: ({ classId }) => `teacher/subjects?classId=${classId}`,
     }),
 
-    getTeacherSubjectsByGroup: builder.query<TeacherSubjectsByGroupResponse, { classGroupId: number; classId: number }>({
-      query: ({ classGroupId, classId }) => `teacher/subjects/${classGroupId}/cas?classId=${classId}`,
+    getTeacherSubjectsByGroup: builder.query<TeacherSubjectsByGroupResponse, { classGroupId?: number; classId?: number } | void>({
+      query: () => `teacher/my-subjects`,
     }),
 
     submitResults: builder.mutation<SubmitResultsResponse, SubmitResultsRequest>({

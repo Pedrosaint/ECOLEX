@@ -405,6 +405,7 @@ export default function ListOfStaff() {
                 ) : (
                   <EmptyStaffData
                     onAddStaffClick={() => setIsAddStaffModalOpen(true)}
+                    activeTab={activeTab}
                   />
                 )
               ) : (
@@ -413,6 +414,7 @@ export default function ListOfStaff() {
                 !isTabLoading && (
                   <EmptyStaffData
                     onAddStaffClick={() => setIsAddStaffModalOpen(true)}
+                    activeTab={activeTab}
                   />
                 )
               )}

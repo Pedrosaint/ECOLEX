@@ -140,7 +140,6 @@ export function useCcaSetup() {
 
     setLoading(true);
     try {
-      const allClassData = getClassData();
       const allAssessments: any[] = [];
 
       selectedClasses.forEach((classItem) => {

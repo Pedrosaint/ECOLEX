@@ -1,4 +1,5 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { toast } from "sonner";
 import {
@@ -27,7 +28,40 @@ export function useExamPage() {
   const classes = classesData?.data ?? [];
   const allGroups = classGroupsData?.data ?? [];
   const filteredGroups = classId ? allGroups.filter((g) => g.classId === classId) : [];
-  const examTemplates = examData?.data ?? [];
+
+  const responseData = examData?.data;
+  const exams = responseData?.exams ?? [];
+  const students = responseData?.students ?? [];
+  const primaryExam = exams[0];
+
+  const examTemplates = students.flatMap((s) => {
+    if (!primaryExam) return [];
+    return [{
+      id: primaryExam.id,
+      studentId: s.id,
+      registrationNumber: s.registrationNumber || "-",
+      studentName: `${s.surname || ""} ${s.name || ""} ${s.otherNames || ""}`.trim() || "-",
+      subject: { id: primaryExam.subject?.id ?? 0, name: primaryExam.subject?.name ?? "-" },
+      maxScore: primaryExam.maxScore,
+    }];
+  });
+
+  // Score key: unique per student × exam
+  const scoreKey = (studentId: number | undefined, examId: number) =>
+    `${studentId ?? "none"}_${examId}`;
+
+  // Prepopulate scores
+  useEffect(() => {
+    if (students.length > 0 && primaryExam) {
+      const initialScores: Record<string, string> = {};
+      students.forEach((s) => {
+        if (s.examScore && s.examScore.score !== null && s.examScore.score !== undefined) {
+          initialScores[scoreKey(s.id, primaryExam.id)] = String(s.examScore.score);
+        }
+      });
+      setScores(initialScores);
+    }
+  }, [students, primaryExam]);
 
   const setClassId = (id: number | null) => {
     setClassIdState(id);
@@ -55,10 +89,6 @@ export function useExamPage() {
     setScores({});
   };
 
-  // Score key: unique per student × exam
-  const scoreKey = (studentId: number | undefined, examId: number) =>
-    `${studentId ?? "none"}_${examId}`;
-
   const setScore = (studentId: number | undefined, examId: number, value: string) => {
     setScores((prev) => ({ ...prev, [scoreKey(studentId, examId)]: value }));
   };
@@ -80,6 +110,7 @@ export function useExamPage() {
     const result = await submitExamScores({ academicSessionId, termId, entries });
     if ("data" in result) {
       toast.success(result.data?.message || "Exam scores saved successfully.");
+      handleClearFilters();
     } else {
       const err = result.error as { data?: { message?: string } };
       toast.error(err?.data?.message || "Failed to submit exam scores.");

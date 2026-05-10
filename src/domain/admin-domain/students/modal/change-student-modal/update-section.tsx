@@ -25,7 +25,7 @@ const UpdateSection = ({
   } = useUpdateSection({ campusData, classData, groupData, onUpdate });
 
   // Reusable dropdown component (local to UpdateSection)
-  const Dropdown = ({ label, options, selectedValue, onSelect, name }: any) => (
+  const Dropdown = ({ label, options, selectedValue, name }: any) => (
     <div className="relative">
       <label className="text-sm font-bold text-[#120D1C] mb-2 block">
         {label}

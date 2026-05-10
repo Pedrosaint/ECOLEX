@@ -24,7 +24,6 @@ export default function AddStudentFormModal({
     setFormData,
     errors,
     setErrors,
-    passportFile,
     setPassportFile,
     passportPreview,
     setPassportPreview,

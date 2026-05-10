@@ -117,12 +117,11 @@ export default function PendingResultsTab() {
                   <tr key={sub.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3 text-gray-500">{idx + 1}</td>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-800">{sub.teacher?.name ?? "—"}</p>
-                      <p className="text-xs text-gray-400">{sub.teacher?.registrationNumber ?? ""}</p>
+                      <p className="font-medium text-gray-800">{sub.staff?.name ?? "—"}</p>
                     </td>
-                    <td className="px-4 py-3 text-gray-700">{sub.class ?? `Class ${sub.classId}`}</td>
-                    <td className="px-4 py-3 text-gray-700">{sub.subject ?? `Subject ${sub.subjectId}`}</td>
-                    <td className="px-4 py-3 text-gray-700">{sub.session ?? "—"}</td>
+                    <td className="px-4 py-3 text-gray-700">{sub.class?.name ?? "—"}</td>
+                    <td className="px-4 py-3 text-gray-700">{sub.subject?.name ?? "—"}</td>
+                    <td className="px-4 py-3 text-gray-700">{sub.academicSession?.name ?? "—"}</td>
                     <td className="px-4 py-3 text-center">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
                         sub.status === "PENDING"

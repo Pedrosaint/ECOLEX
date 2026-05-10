@@ -66,18 +66,20 @@ export interface BroadsheetParams {
   termId: number;
 }
 
+export interface BroadsheetData {
+  classId: number;
+  academicSessionId: number;
+  subjects: string[];
+  usePosition: boolean;
+  rows: BroadsheetRow[];
+  className: string;
+  classTeacher: string | null;
+  sessionName: string;
+}
+
 export interface BroadsheetResponse {
   success: boolean;
-  data: {
-    classId: number;
-    academicSessionId: number;
-    subjects: string[];
-    usePosition: boolean;
-    rows: BroadsheetRow[];
-    className: string;
-    classTeacher: string | null;
-    sessionName: string;
-  };
+  data: BroadsheetData[];
 }
 
 export interface CaScore {
@@ -95,29 +97,32 @@ export interface SubjectResult {
   remark: string;
 }
 
-export interface StudentResultPerformance {
-  totalScore: number;
-  averageScore: number;
-  position: number | null;
-  overallGrade: string;
-}
-
-export interface StudentResultData {
-  student: {
-    name: string;
-    registrationNumber: string;
-    passportUrl: string;
-    class: string;
-    campus: string;
-    session: string;
-  };
-  subjects: SubjectResult[];
-  performance: StudentResultPerformance;
+export interface PaginatedStudentResultData {
+  studentId: number;
+  studentName: string;
+  registrationNumber: string;
+  subjects: {
+    subjectName: string;
+    caTotal: number | null;
+    examTotal: number | null;
+    subjectTotal?: number | null;
+    grade?: string | null;
+    remark?: string | null;
+  }[];
+  grandTotal: number;
 }
 
 export interface GetStudentResultResponse {
   success: boolean;
-  data: StudentResultData;
+  data: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      totalCount: number;
+      totalPages: number;
+    };
+    data: PaginatedStudentResultData[];
+  };
 }
 
 export interface GetStudentResultParams {
@@ -147,43 +152,31 @@ export interface PublishResultsResponse {
   };
 }
 
-export interface TeacherResultRow {
-  registrationNumber: string;
-  studentName: string;
-  caScores: { name: string; score: number }[];
-  caTotal: number;
-  examTotal: number;
-  subjectTotal: number;
-  grade: string;
-  remark: string;
+export interface TeacherResultAssignment {
+  classId: number;
+  className: string;
+  subjectId: number;
+  subjectName: string;
 }
 
-export interface TeacherResultData {
-  teacher: {
-    name: string;
-    registrationNumber: string;
-    campus: string | null;
-  };
-  subject: string;
-  class: string;
-  session: string;
-  submission: {
-    id: number;
-    status: string;
-    submittedAt: string;
-  };
-  rows: TeacherResultRow[];
-  meta: {
-    total: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-  };
+export interface TeacherResultStaff {
+  staffId: number;
+  staffName: string;
+  registrationNumber: string;
+  assignments: TeacherResultAssignment[];
 }
 
 export interface GetTeacherResultResponse {
   success: boolean;
-  data: TeacherResultData;
+  data: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      totalCount: number;
+      totalPages: number;
+    };
+    data: TeacherResultStaff[];
+  };
 }
 
 export interface GetTeacherResultParams {

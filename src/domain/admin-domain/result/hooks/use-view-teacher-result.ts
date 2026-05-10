@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
-import { toast } from "sonner";
-import { useGetTeacherResultQuery, usePublishResultsMutation } from "./index";
+import { useGetTeacherResultQuery } from "./index";
 import type { TeacherSearchParams } from "../types";
+
+const PAGE_SIZE = 10;
 
 export function useViewTeacherResult() {
   const [searchParams, setSearchParams] = useState<TeacherSearchParams | null>(null);
@@ -12,30 +13,14 @@ export function useViewTeacherResult() {
   const { data, isFetching, isError } = useGetTeacherResultQuery(
     searchParams ? { ...searchParams, page } : skipToken
   );
-  const [publishResults, { isLoading: isPublishing }] = usePublishResultsMutation();
 
-  const result = data?.data;
-  const caHeaders = result?.rows?.[0]?.caScores?.map((c) => c.name) ?? [];
-  const totalPages = result?.meta?.totalPages ?? 1;
+  const staffArray = data?.data?.data ?? [];
+  const totalCount = data?.data?.pagination?.totalCount ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const handleSearch = (params: TeacherSearchParams) => {
     setSearchParams(params);
     setPage(1);
-  };
-
-  const handleApprove = async () => {
-    if (!searchParams) return;
-    try {
-      await publishResults({
-        classId: searchParams.classId,
-        subjectId: searchParams.subjectId,
-        academicSessionId: searchParams.academicSessionId,
-        termId: searchParams.termId,
-      }).unwrap();
-      toast.success("Results published successfully");
-    } catch {
-      toast.error("Failed to publish results. Please try again.");
-    }
   };
 
   const renderPageButtons = () => {
@@ -56,8 +41,8 @@ export function useViewTeacherResult() {
     searchParams,
     page, setPage,
     isPrintModalOpen, setIsPrintModalOpen,
-    result, caHeaders, totalPages,
-    isFetching, isError, isPublishing,
-    handleSearch, handleApprove, renderPageButtons,
+    staffArray, totalCount, totalPages, PAGE_SIZE,
+    isFetching, isError,
+    handleSearch, renderPageButtons,
   };
 }

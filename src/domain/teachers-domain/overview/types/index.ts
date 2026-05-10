@@ -152,6 +152,7 @@ export interface BroadsheetSubjectScore {
   examTotal: number;
   subjectTotal: number;
   grade: string;
+  remark?: string;
 }
 
 export interface BroadsheetRow {
@@ -160,7 +161,7 @@ export interface BroadsheetRow {
   registrationNumber: string;
   scores: Record<string, BroadsheetSubjectScore>;
   grandTotal: number;
-  position: string | null;
+  position: string | number | null;
 }
 
 export interface TeacherBroadsheetData {
@@ -173,7 +174,7 @@ export interface TeacherBroadsheetData {
 
 export interface TeacherBroadsheetResponse {
   success: boolean;
-  data: TeacherBroadsheetData;
+  data: TeacherBroadsheetData[];
 }
 
 export interface CaTemplate {
@@ -191,36 +192,55 @@ export interface CaTemplate {
   subject: { id: number; name: string };
 }
 
-export interface TeacherCaTemplatesResponse {
-  success: boolean;
-  data: CaTemplate[];
+// New combined response for CA and Exam tabs
+export interface StudentsWithScoresData {
+  academicSessionId: number;
+  termId: number | null;
+  classIds: number[];
+  cas: { id: number; name: string; maxScore: number; subject?: { id: number; name: string } }[];
+  exams: { id: number; name: string; maxScore: number; subject?: { id: number; name: string } }[];
+  students: {
+    id: number;
+    registrationNumber: string;
+    surname: string;
+    name: string;
+    otherNames: string;
+    className: string;
+    caScores: {
+      caId: number;
+      caName: string;
+      score: number | null;
+      maxScore: number;
+    }[];
+    examScore: {
+      examId: number;
+      examName: string;
+      score: number | null;
+      maxScore: number;
+    } | null;
+    caTotal: number;
+    examTotal: number;
+    grandTotal: number;
+  }[];
 }
 
-export interface TeacherCaTemplatesParams {
+export interface TeacherStudentsWithScoresResponse {
+  success: boolean;
+  data: StudentsWithScoresData;
+}
+
+export interface TeacherStudentsWithScoresParams {
   classId: number;
   classGroupId: number;
 }
 
-export interface ExamTemplate {
-  id: number;
-  studentId: number;
-  registrationNumber: string;
-  studentName: string;
-  classId: number;
-  subjectId: number;
-  name: string;
-  weightage: number | null;
-  maxScore: number;
-  createdAt: string;
-  createdByAdminId: number;
-  scheduledDate: string | null;
-  class: { id: number; name: string };
-  subject: { id: number; name: string };
-}
+// Keeping old names for hooks but changing to the new response type
+export type TeacherCaTemplatesResponse = TeacherStudentsWithScoresResponse;
+export type TeacherExamTemplatesResponse = TeacherStudentsWithScoresResponse;
 
-export interface TeacherExamTemplatesResponse {
-  success: boolean;
-  data: ExamTemplate[];
+export interface TeacherCaTemplatesParams {
+  classId: number;
+  classGroupId: number;
 }
 
 export interface TeacherExamTemplatesParams {
@@ -230,9 +250,14 @@ export interface TeacherExamTemplatesParams {
 
 export interface TeacherSubjectsByGroupResponse {
   success: boolean;
-  data: {
-    subject: { id: number; name: string };
-    class: { id: number; name: string };
-    cas: { id: number; name: string; maxScore: number }[];
-  };
+  total: number;
+  subjects: {
+    id: number;
+    name: string;
+    code: string;
+    class: {
+      id: number;
+      name: string;
+    };
+  }[];
 }

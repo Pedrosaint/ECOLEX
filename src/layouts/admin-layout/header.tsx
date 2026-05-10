@@ -1,6 +1,8 @@
-import { Search, Bell, Menu } from "lucide-react";
+import { useState } from "react";
+import { Search, Bell, Menu, Eye, EyeOff } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import Profile from "../../assets/image/profile.png";
+import { useGetStaffQuery } from "../../domain/admin-domain/staff/api/staff-api";
 
 interface HeaderProps {
   userRole: string;
@@ -12,6 +14,7 @@ interface HeaderProps {
 export default function Header({ toggleSidebar, userRole}: HeaderProps) {
 
   const location = useLocation();
+  const [showRegNo, setShowRegNo] = useState(false);
 
   // Get current module name from URL path
   const getModuleName = () => {
@@ -22,6 +25,20 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
 
   const moduleName = getModuleName();
   const isOverview = !moduleName && userRole === "admin"
+
+  // Fetch teacher details
+  const teacherIdStr = localStorage.getItem("teacherId");
+  const teacherId = teacherIdStr ? parseInt(teacherIdStr, 10) : 0;
+  const { data: staffData } = useGetStaffQuery({ id: teacherId }, { skip: userRole !== "staff" || !teacherId });
+
+  const teacherName = staffData?.staff?.name || "Teacher's name";
+  const teacherRegNo = staffData?.staff?.registrationNumber || "";
+
+  const maskRegNo = (regNo: string) => {
+    if (!regNo) return "";
+    const half = Math.floor(regNo.length / 2);
+    return regNo.substring(0, regNo.length - half) + "*".repeat(half);
+  };
 
   return (
     <header className="py-3 px-3 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0 bg-">
@@ -51,8 +68,8 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
                   Admin name
                 </span>
               ) : (
-                <span className="text-sm text-gray-700 font-sans">
-                  Teacher's name
+                <span className="text-sm text-gray-700 font-sans truncate max-w-[150px]">
+                  {teacherName}
                 </span>
               )}
               {/* <ChevronDown className="w-4 h-4 text-gray-600" /> */}
@@ -75,8 +92,19 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
           <div className="md:hidden">
             {userRole === "staff" && (
               <div className="flex justify-end mt-3">
-                <h1 className="border border-gray-100 px-3 py-1 bg-white">
-                  Role: <span>Teacher</span>
+                <h1 className="border border-gray-100 px-3 py-1 bg-white flex items-center gap-2">
+                  <span>Role: Teacher</span>
+                  {teacherRegNo && (
+                    <>
+                      <span className="text-gray-300">|</span>
+                      <span className="text-gray-600 text-sm">
+                        {showRegNo ? teacherRegNo : maskRegNo(teacherRegNo)}
+                      </span>
+                      <button type="button" onClick={() => setShowRegNo(!showRegNo)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
+                        {showRegNo ? <EyeOff size={14} /> : <Eye size={14} />}
+                      </button>
+                    </>
+                  )}
                 </h1>
               </div>
             )}
@@ -117,7 +145,7 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
                 </span>
               ) : (
                 <span className="text-sm text-gray-700 font-sans">
-                  Teacher's name
+                  {teacherName}
                 </span>
               )}
               {/* <ChevronDown className="w-4 h-4 text-gray-600" /> */}
@@ -140,8 +168,19 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
           <div className="hidden md:block">
             {userRole === "staff" && (
               <div className="flex justify-end mt-3">
-                <h1 className="border border-gray-100 px-3 py-1 bg-white">
-                  Role: <span>Teacher</span>
+                <h1 className="border border-gray-100 px-3 py-1 bg-white flex items-center gap-2">
+                  <span>Role: Teacher</span>
+                  {teacherRegNo && (
+                    <>
+                      <span className="text-gray-300">|</span>
+                      <span className="text-gray-600 text-sm">
+                        {showRegNo ? teacherRegNo : maskRegNo(teacherRegNo)}
+                      </span>
+                      <button type="button" onClick={() => setShowRegNo(!showRegNo)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
+                        {showRegNo ? <EyeOff size={14} /> : <Eye size={14} />}
+                      </button>
+                    </>
+                  )}
                 </h1>
               </div>
             )}

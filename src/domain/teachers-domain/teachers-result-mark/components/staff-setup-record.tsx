@@ -145,7 +145,7 @@ export default function StaffSetupRecord() {
         <div className="flex justify-end mb-6">
           <button
             onClick={handleAddGrade}
-            className="bg-[#E8EDF5] text-[#545454] px-4 py-2 cursor-pointer shadow-md rounded-md border border-gray-300 text-sm font-medium"
+            className="bg-[#E8EDF5] text-[#545454] px-4 py-2 cursor-pointer rounded-md border border-gray-300 text-sm font-medium"
           >
             Add Another Grade
           </button>

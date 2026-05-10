@@ -70,7 +70,7 @@ export default function SearchStudentComp({
     isOpen: boolean;
     setIsOpen: (v: boolean) => void;
     setValue: (v: string) => void;
-    ref?: React.RefObject<HTMLDivElement>;
+    ref?: React.RefObject<HTMLDivElement | null>;
   }) => (
     <div className="flex flex-col" ref={divRef}>
       <label className="text-sm font-semibold text-gray-700 mb-1">{label}</label>

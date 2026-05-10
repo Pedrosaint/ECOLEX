@@ -18,13 +18,12 @@ export function useViewStudentResult() {
       : skipToken
   );
 
-  const result = data?.data;
-  const caHeaders = result?.subjects?.[0]?.cas.map((ca) => ca.name) ?? [];
+  const resultsArray = data?.data?.data ?? [];
 
   return {
     searchParams, setSearchParams,
     isPrintModalOpen, setIsPrintModalOpen,
-    result, caHeaders,
+    resultsArray,
     isFetching, isError,
   };
 }

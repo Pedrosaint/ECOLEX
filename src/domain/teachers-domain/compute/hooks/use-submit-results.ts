@@ -27,7 +27,8 @@ export function useSubmitResults() {
   const allGroups = classGroupsData?.data ?? [];
   const filteredGroups = classId ? allGroups.filter((g) => g.classId === classId) : [];
 
-  const subjects = subjectsData?.data?.subject ? [subjectsData.data.subject] : [];
+  const allSubjects = subjectsData?.subjects || [];
+  const subjects = classId ? allSubjects.filter(s => s.class.id === classId) : allSubjects;
 
   const setClassId = (id: number | null) => {
     setClassIdState(id);

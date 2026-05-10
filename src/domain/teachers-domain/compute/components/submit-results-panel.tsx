@@ -27,7 +27,7 @@ export default function SubmitResultsPanel() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="mt-6 bg-white border border-gray-200 rounded-lg overflow-hidden"
+        className="mt-6 bg-white border border-gray-200 rounded overflow-hidden"
       >
         <div className="border-l-4 border-green-500 p-6 flex items-start gap-4">
           <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
@@ -115,13 +115,12 @@ export default function SubmitResultsPanel() {
             <label className="block text-xs font-semibold text-gray-600 mb-1.5">Select Group</label>
             <div className="relative">
               <select
-                className={`${selectBase} ${
-                  !classId
-                    ? "text-gray-400 bg-gray-50 cursor-not-allowed"
-                    : classGroupId
+                className={`${selectBase} ${!classId
+                  ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                  : classGroupId
                     ? "text-gray-900"
                     : "text-gray-400"
-                }`}
+                  }`}
                 disabled={!classId || classGroupsLoading}
                 value={classGroupId ?? ""}
                 onChange={(e) => setClassGroupId(e.target.value ? Number(e.target.value) : null)}
@@ -130,10 +129,10 @@ export default function SubmitResultsPanel() {
                   {!classId
                     ? "Select a class first"
                     : classGroupsLoading
-                    ? "Loading..."
-                    : filteredGroups.length === 0
-                    ? "No groups for class"
-                    : "Select Group"}
+                      ? "Loading..."
+                      : filteredGroups.length === 0
+                        ? "No groups for class"
+                        : "Select Group"}
                 </option>
                 {filteredGroups.map((g) => (
                   <option key={g.id} value={g.id}>{g.name}</option>
@@ -148,13 +147,12 @@ export default function SubmitResultsPanel() {
             <label className="block text-xs font-semibold text-gray-600 mb-1.5">Select Subject</label>
             <div className="relative">
               <select
-                className={`${selectBase} ${
-                  !classGroupId
-                    ? "text-gray-400 bg-gray-50 cursor-not-allowed"
-                    : subjectId
+                className={`${selectBase} ${!classGroupId
+                  ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                  : subjectId
                     ? "text-gray-900"
                     : "text-gray-400"
-                }`}
+                  }`}
                 disabled={!classGroupId || subjectsLoading}
                 value={subjectId ?? ""}
                 onChange={(e) => setSubjectId(e.target.value ? Number(e.target.value) : null)}
@@ -163,10 +161,10 @@ export default function SubmitResultsPanel() {
                   {!classGroupId
                     ? "Select a group first"
                     : subjectsLoading
-                    ? "Loading..."
-                    : subjects.length === 0
-                    ? "No subjects found"
-                    : "Select Subject"}
+                      ? "Loading..."
+                      : subjects.length === 0
+                        ? "No subjects found"
+                        : "Select Subject"}
                 </option>
                 {subjects.map((s) => (
                   <option key={s.id} value={s.id}>{s.name}</option>
