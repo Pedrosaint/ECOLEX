@@ -7,7 +7,11 @@ export {
   useGetTeacherResultQuery,
   useGetPendingSubmissionsQuery,
   useRejectResultsMutation,
+  useGetRemarkSchemesQuery,
+  useCreateRemarkSchemeMutation,
 } from '../api/grading.api';
+
+export { useRemarkScheme } from './use-remark-scheme';
 
 export { useSetupGrade } from './use-setup-grade';
 export { useSearchClass } from './use-search-class';

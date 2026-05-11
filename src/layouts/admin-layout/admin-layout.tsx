@@ -7,6 +7,18 @@ import LogoutModal from "../../domain/admin-domain/logout/modal/logout.modal";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { classesApi } from "../../domain/admin-domain/classes/api/class-api";
+import { staffApi } from "../../domain/admin-domain/staff/api/staff-api";
+import { studentApi } from "../../domain/admin-domain/students/api/student.api";
+import { campusApi } from "../../domain/admin-domain/campus/api/campus.api";
+import { subjectApi } from "../../domain/admin-domain/manage-subject/api/subject.api";
+import { caTemplateApi } from "../../domain/admin-domain/ca-template/api/ca-template.api";
+import { gradingSchemeApi } from "../../domain/teachers-domain/grading-scheme/api/grading-scheme.api";
+import { gradingApi } from "../../domain/admin-domain/result/api/grading.api";
+import { teacherOverviewApi } from "../../domain/teachers-domain/overview/api/teacher-overview.api";
+import { adminOverviewApi } from "../../domain/admin-domain/overview/api/admin-overview.api";
+import { studentResultApi } from "../../domain/student-domain/check-result/api/student-result.api";
+import { studentDashboardApi } from "../../domain/student-domain/dashboard/api/student-dashboard.api";
+import { authApi } from "../../auth/api/auth-api";
 
 
 export default function DashboardLayout() {
@@ -21,13 +33,23 @@ export default function DashboardLayout() {
      setIsLoggingOut(true);
      localStorage.clear();
      sessionStorage.clear();
+
+     // Reset ALL API caches so the next user never sees stale data
+     dispatch(authApi.util.resetApiState());
      dispatch(classesApi.util.resetApiState());
+     dispatch(staffApi.util.resetApiState());
+     dispatch(studentApi.util.resetApiState());
+     dispatch(campusApi.util.resetApiState());
+     dispatch(subjectApi.util.resetApiState());
+     dispatch(caTemplateApi.util.resetApiState());
+     dispatch(gradingSchemeApi.util.resetApiState());
+     dispatch(gradingApi.util.resetApiState());
+     dispatch(teacherOverviewApi.util.resetApiState());
+     dispatch(adminOverviewApi.util.resetApiState());
+     dispatch(studentResultApi.util.resetApiState());
+     dispatch(studentDashboardApi.util.resetApiState());
+
      toast.success("Logged out successfully!");
-
-     // optional: if you want to call backend logout API
-     // await api.post("/logout");
-
-     // redirect to login page
      navigate("/");
    } catch (error) {
     toast.error("Failed to logout!");

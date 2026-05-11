@@ -21,6 +21,7 @@ import type {
   TeacherExamTemplatesParams,
   TeacherSubjectsResponse,
   TeacherSubjectsByGroupResponse,
+  TeacherProfileResponse,
 } from "../types";
 
 export const teacherOverviewApi = createApi({
@@ -65,13 +66,13 @@ export const teacherOverviewApi = createApi({
     }),
 
     getTeacherCaTemplates: builder.query<TeacherCaTemplatesResponse, TeacherCaTemplatesParams>({
-      query: ({ classId, classGroupId }) =>
-        `teacher/students-with-scores?classId=${classId}&classGroupId=${classGroupId}`,
+      query: ({ classId, classGroupId, subjectId }) =>
+        `teacher/students-with-scores?classId=${classId}&classGroupId=${classGroupId}${subjectId ? `&subjectId=${subjectId}` : ""}`,
     }),
 
     getTeacherExamTemplates: builder.query<TeacherExamTemplatesResponse, TeacherExamTemplatesParams>({
-      query: ({ classId, classGroupId }) =>
-        `teacher/students-with-scores?classId=${classId}&classGroupId=${classGroupId}`,
+      query: ({ classId, classGroupId, subjectId }) =>
+        `teacher/students-with-scores?classId=${classId}&classGroupId=${classGroupId}${subjectId ? `&subjectId=${subjectId}` : ""}`,
     }),
 
     submitCaScores: builder.mutation<ScoreSubmitResponse, SubmitCaScoresRequest>({
@@ -108,6 +109,10 @@ export const teacherOverviewApi = createApi({
       }),
       invalidatesTags: ["TeacherResults"],
     }),
+
+    getTeacherProfile: builder.query<TeacherProfileResponse, void>({
+      query: () => "teacher/profile",
+    }),
   }),
 });
 
@@ -126,4 +131,5 @@ export const {
   useGetTeacherExamTemplatesQuery,
   useGetTeacherSubjectsQuery,
   useGetTeacherSubjectsByGroupQuery,
+  useGetTeacherProfileQuery,
 } = teacherOverviewApi;

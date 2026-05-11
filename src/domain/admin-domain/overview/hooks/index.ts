@@ -3,6 +3,7 @@ export {
   useGetSessionsQuery,
   useCreateSessionMutation,
   useCreateTermMutation,
+  useUpdateTermMutation,
   useActivateTermMutation,
 } from '../api/admin-overview.api';
 

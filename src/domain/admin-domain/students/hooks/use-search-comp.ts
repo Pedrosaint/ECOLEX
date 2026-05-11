@@ -112,13 +112,32 @@ export function useSearchComp({ onDisplayStudents, onClearFilters }: UseSearchCo
 
   // Debounce: fire search 400ms after the user stops typing
   useEffect(() => {
-    if (!searchName.trim()) return;
     const timer = setTimeout(() => {
+      const { campusId: cId, classId: clId, groupId: gId, gender: gn } = dropdownRef.current;
+      const hasOtherFilters = !!cId || !!clId || !!gId || !!gn;
+
+      if (!searchName.trim()) {
+        // Name was cleared — if no other filters active, clear everything;
+        // otherwise re-search with just the remaining dropdown filters
+        if (!hasOtherFilters) {
+          onClearFilters();
+        } else {
+          onDisplayStudents({
+            campusId: cId || undefined,
+            classId: clId || undefined,
+            classGroupId: gId || undefined,
+            gender: gn || undefined,
+            name: undefined,
+          });
+        }
+        return;
+      }
+
       onDisplayStudents({
-        campusId: dropdownRef.current.campusId || undefined,
-        classId: dropdownRef.current.classId || undefined,
-        classGroupId: dropdownRef.current.groupId || undefined,
-        gender: dropdownRef.current.gender || undefined,
+        campusId: cId || undefined,
+        classId: clId || undefined,
+        classGroupId: gId || undefined,
+        gender: gn || undefined,
         name: searchName,
       });
     }, 400);

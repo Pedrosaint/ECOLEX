@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useGetStudentMetricsQuery } from "../api/student-dashboard.api";
 
 interface StatsCardProps {
   title: string;
@@ -9,7 +10,9 @@ interface StatsCardProps {
 
 export function useStudentDashboard() {
   const [loading, setLoading] = useState(true);
-  const [userRole] = useState("student");
+  const [cardsToShow, setCardsToShow] = useState<Array<StatsCardProps>>([]);
+
+  const { data: metricsData, isLoading } = useGetStudentMetricsQuery();
 
   const adminCards: Array<StatsCardProps> = [
     { title: "Total Students", value: "1,200", isPrimary: true },
@@ -18,35 +21,39 @@ export function useStudentDashboard() {
     { title: "Revenue", value: "N5,000,000" },
   ];
 
-  const studentCards: Array<StatsCardProps> = [
-    {
-      title: "Total School Fee For Current Term",
-      value: "N60,000",
-      isPrimary: true,
-      flipLayout: true,
-    },
-    { title: "Total Students in Your Class", value: "60", flipLayout: true },
-    {
-      title: "Pending Debt For You To Pay",
-      value: "12",
-      isPrimary: true,
-      flipLayout: true,
-    },
-    {
-      title: "Active Assignments For Your Class",
-      value: "0",
-      flipLayout: true,
-    },
-  ];
-
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (!isLoading && metricsData?.data) {
+      const stats = metricsData.data.stats;
+      const studentCards: Array<StatsCardProps> = [
+        {
+          title: "Total School Fee For Current Term",
+          value: `N${stats.totalSchoolFee.toLocaleString()}`,
+          isPrimary: true,
+          flipLayout: true,
+        },
+        {
+          title: "Total Students in Your Class",
+          value: stats.totalStudentsInClass.toString(),
+          flipLayout: true,
+        },
+        {
+          title: "Pending Debt For You To Pay",
+          value: stats.pendingDebt.toString(),
+          isPrimary: true,
+          flipLayout: true,
+        },
+        {
+          title: "Active Assignments For Your Class",
+          value: stats.activeAssignments.toString(),
+          flipLayout: true,
+        },
+      ];
+      setCardsToShow(studentCards);
       setLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const cardsToShow = userRole === "admin" ? adminCards : studentCards;
+    } else if (isLoading) {
+      setLoading(true);
+    }
+  }, [metricsData, isLoading]);
 
   return { loading, cardsToShow };
 }

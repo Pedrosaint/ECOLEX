@@ -34,15 +34,10 @@
 // export type RootState = ReturnType<typeof store.getState>;
 // export type AppDispatch = typeof store.dispatch;
 
-
-
-
-
-
 // redux/store.ts (Alternative - only school persistence)
 import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import schoolReducer from "../auth/redux/school-slice";
 import schoolSetupReducer from "../auth/redux/school-setup-slice";
 import { authApi } from "../auth/api/auth-api";
@@ -58,6 +53,7 @@ import { gradingApi } from "../domain/admin-domain/result/api/grading.api";
 import { teacherOverviewApi } from "../domain/teachers-domain/overview/api/teacher-overview.api";
 import { adminOverviewApi } from "../domain/admin-domain/overview/api/admin-overview.api";
 import { studentResultApi } from "../domain/student-domain/check-result/api/student-result.api";
+import { studentDashboardApi } from "../domain/student-domain/dashboard/api/student-dashboard.api";
 
 // Persist config for school slice only
 const schoolSetupPersistConfig = {
@@ -66,7 +62,10 @@ const schoolSetupPersistConfig = {
   whitelist: ["schoolId", "schoolName", "schoolEmail"],
 };
 
-const persistedSchoolReducer = persistReducer(schoolSetupPersistConfig, schoolSetupReducer);
+const persistedSchoolReducer = persistReducer(
+  schoolSetupPersistConfig,
+  schoolSetupReducer,
+);
 
 export const store = configureStore({
   reducer: {
@@ -85,6 +84,7 @@ export const store = configureStore({
     [teacherOverviewApi.reducerPath]: teacherOverviewApi.reducer,
     [adminOverviewApi.reducerPath]: adminOverviewApi.reducer,
     [studentResultApi.reducerPath]: studentResultApi.reducer,
+    [studentDashboardApi.reducerPath]: studentDashboardApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -109,6 +109,7 @@ export const store = configureStore({
       teacherOverviewApi.middleware,
       adminOverviewApi.middleware,
       studentResultApi.middleware,
+      studentDashboardApi.middleware,
     ]),
 });
 

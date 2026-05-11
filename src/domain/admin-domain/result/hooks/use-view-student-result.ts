@@ -9,21 +9,20 @@ export function useViewStudentResult() {
 
   const { data, isFetching, isError } = useGetStudentResultQuery(
     searchParams
-      ? { 
-          studentId: searchParams.studentId, 
-          classId: searchParams.classId, 
+      ? {
+          studentId: searchParams.studentId,
           academicSessionId: searchParams.academicSessionId,
-          termId: searchParams.termId 
+          termId: searchParams.termId,
         }
       : skipToken
   );
 
-  const resultsArray = data?.data?.data ?? [];
+  const result = data?.data ?? null;
 
   return {
     searchParams, setSearchParams,
     isPrintModalOpen, setIsPrintModalOpen,
-    resultsArray,
+    result,
     isFetching, isError,
   };
 }

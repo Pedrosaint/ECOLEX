@@ -82,14 +82,26 @@ export interface BroadsheetResponse {
   data: BroadsheetData[];
 }
 
-export interface CaScore {
+export interface StudentCA {
+  id: number;
   name: string;
-  score: number;
+  maxScore: number;
+  score: number | null;
 }
 
-export interface SubjectResult {
-  subjectName: string;
-  cas: CaScore[];
+export interface StudentExam {
+  id: number;
+  name: string;
+  maxScore: number;
+  score: number | null;
+}
+
+export interface StudentSubjectResult {
+  id: number;
+  name: string;
+  code: string;
+  cas: StudentCA[];
+  exam: StudentExam;
   caTotal: number;
   examTotal: number;
   subjectTotal: number;
@@ -97,37 +109,51 @@ export interface SubjectResult {
   remark: string;
 }
 
-export interface PaginatedStudentResultData {
-  studentId: number;
-  studentName: string;
+export interface StudentInformation {
+  id: number;
+  name: string;
+  surname: string;
+  otherNames: string;
   registrationNumber: string;
-  subjects: {
-    subjectName: string;
-    caTotal: number | null;
-    examTotal: number | null;
-    subjectTotal?: number | null;
-    grade?: string | null;
-    remark?: string | null;
-  }[];
-  grandTotal: number;
+  className: string;
+  classId: number;
+  campus: string;
+  dateOfBirth: string;
+  gender: string;
+  passportUrl: string | null;
+}
+
+export interface StudentAcademicInfo {
+  academicSessionId: number;
+  academicSessionName: string;
+  termId: number;
+  termName: string;
+}
+
+export interface StudentPerformanceSummary {
+  totalScore: number;
+  averageScore: number;
+  classPosition: string;
+  overallGrade: string;
+  sessionLength: number;
+}
+
+export interface StudentResultData {
+  studentInformation: StudentInformation;
+  academicInfo: StudentAcademicInfo;
+  subjects: StudentSubjectResult[];
+  performanceSummary: StudentPerformanceSummary;
+  teacherRemark: string;
+  schoolRecommendationDate: string;
 }
 
 export interface GetStudentResultResponse {
   success: boolean;
-  data: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      totalCount: number;
-      totalPages: number;
-    };
-    data: PaginatedStudentResultData[];
-  };
+  data: StudentResultData;
 }
 
 export interface GetStudentResultParams {
   studentId: number;
-  classId: number;
   academicSessionId: number;
   termId: number;
 }
@@ -223,6 +249,44 @@ export interface RejectResultsResponse {
   message: string;
 }
 
+export interface RemarkRule {
+  minScore: number;
+  maxScore: number;
+  remark: string;
+}
+
+export interface CreateRemarkSchemeRequest {
+  name: string;
+  rules: RemarkRule[];
+}
+
+export interface RemarkSchemeRule {
+  id: number;
+  schemeId: number;
+  minScore: number;
+  maxScore: number;
+  remark: string;
+}
+
+export interface RemarkScheme {
+  id: number;
+  schoolId: number;
+  name: string;
+  createdAt: string;
+  rules: RemarkSchemeRule[];
+}
+
+export interface CreateRemarkSchemeResponse {
+  success: boolean;
+  message: string;
+  data: RemarkScheme;
+}
+
+export interface GetRemarkSchemesResponse {
+  success: boolean;
+  data: RemarkScheme[];
+}
+
 export interface GradeRow {
   min: string;
   max: string;
@@ -240,7 +304,6 @@ export interface ClassSearchParams {
 
 export interface StudentSearchParams {
   studentId: number;
-  classId: number;
   academicSessionId: number;
   termId: number;
 }

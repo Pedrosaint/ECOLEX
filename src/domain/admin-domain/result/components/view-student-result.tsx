@@ -1,133 +1,139 @@
 import { motion } from "framer-motion";
-import { Printer, SearchX } from "lucide-react";
+import { Printer, SearchX, UserX } from "lucide-react";
 import SearchStudentComp from "./search-student.comp";
 import { useViewStudentResult } from "../hooks";
 import Print from "../../../../general/common/print";
 import passport from "../../../../assets/image/passport.png";
 import EmptyBroadsheet from "../../../../assets/image/classResult.png";
-import type { PaginatedStudentResultData } from "../types";
+import type { StudentResultData } from "../types";
 
-const StudentBlock = ({ student }: { student: PaginatedStudentResultData }) => (
-  <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-    {/* Student Info Header */}
-    <div className="md:flex md:justify-between items-start bg-[#e6e7e8] border-b border-[#D1D1D1] p-5 rounded-t-2xl">
-      <div className="hidden md:block">
-        <h1 className="text-xl font-semibold text-gray-800 mb-4">Student Information</h1>
-        <div className="space-y-1 text-sm text-gray-600">
-          <div><span className="font-medium">Name:</span> {student.studentName || "—"}</div>
-          <div><span className="font-medium">Registration Number:</span> {student.registrationNumber || "—"}</div>
-          <div><span className="font-medium">Class:</span> —</div>
-          <div><span className="font-medium">Session:</span> —</div>
-          <div><span className="font-medium">Campus:</span> —</div>
-          <div><span className="font-medium">Academic Year:</span> —</div>
-          <div><span className="font-medium">Term:</span> —</div>
+const StudentBlock = ({ result }: { result: StudentResultData }) => {
+  const { studentInformation: info, academicInfo, subjects, performanceSummary, teacherRemark, schoolRecommendationDate } = result;
+
+  const maxCAs = Math.max(...subjects.map((s) => s.cas.length), 0);
+  const caHeaders = Array.from({ length: maxCAs }, (_, i) => `CA ${i + 1}`);
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+      {/* Student Info Header */}
+      <div className="md:flex md:justify-between items-start bg-[#e6e7e8] border-b border-[#D1D1D1] p-5 rounded-t-2xl gap-6">
+        <div className="flex-1">
+          <h1 className="text-xl font-semibold text-gray-800 mb-4">Student Information</h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 text-sm text-gray-600">
+            <div><span className="font-medium">Name:</span> {info.surname} {info.name} {info.otherNames}</div>
+            <div><span className="font-medium">Reg. Number:</span> {info.registrationNumber}</div>
+            <div><span className="font-medium">Class:</span> {info.className}</div>
+            <div><span className="font-medium">Campus:</span> {info.campus}</div>
+            <div><span className="font-medium">Gender:</span> {info.gender}</div>
+            <div><span className="font-medium">Date of Birth:</span> {new Date(info.dateOfBirth).toLocaleDateString()}</div>
+            <div><span className="font-medium">Academic Session:</span> {academicInfo.academicSessionName}</div>
+            <div><span className="font-medium">Term:</span> {academicInfo.termName}</div>
+          </div>
+        </div>
+
+        <div className="w-28 h-28 bg-pink-200 rounded-lg overflow-hidden flex-shrink-0 mt-4 md:mt-0">
+          <img
+            src={info.passportUrl ?? passport}
+            className="w-full h-full object-cover"
+            alt="passport"
+          />
         </div>
       </div>
 
-      {/* Avatar */}
-      <div className="w-32 h-32 bg-pink-200 rounded-lg overflow-hidden flex-shrink-0">
-        <img src={passport} className="w-full h-full object-cover" alt="passport" />
-      </div>
-
-      {/* Mobile info */}
-      <div className="md:hidden mt-3">
-        <h1 className="text-xl font-semibold text-gray-800 mb-4">Student Information</h1>
-        <div className="space-y-1 text-sm text-gray-600">
-          <div><span className="font-medium">Name:</span> {student.studentName || "—"}</div>
-          <div><span className="font-medium">Registration Number:</span> {student.registrationNumber || "—"}</div>
-          <div><span className="font-medium">Class:</span> —</div>
-          <div><span className="font-medium">Session:</span> —</div>
-          <div><span className="font-medium">Campus:</span> —</div>
-          <div><span className="font-medium">Academic Year:</span> —</div>
-          <div><span className="font-medium">Term:</span> —</div>
-        </div>
-      </div>
-    </div>
-
-    {/* Subjects Table */}
-    <div className="mb-8 rounded-b-2xl overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full border-separate border-spacing-0 bg-[#FAFAFA] min-w-[400px]">
-          <thead>
-            <tr className="bg-gray-50">
-              <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">Subject</th>
-              <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">1st CA</th>
-              <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">2nd CA</th>
-              <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Exam Score</th>
-              <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Total</th>
-              <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Grade</th>
-              <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Remarks</th>
-            </tr>
-          </thead>
-          <tbody>
-            {student.subjects.length > 0 ? (
-              student.subjects.map((subj, i) => (
-                <tr key={i}>
-                  <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">{subj.subjectName || "—"}</td>
-                  <td className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">—</td>
-                  <td className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">—</td>
-                  <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">{subj.examTotal ?? "—"}</td>
-                  <td className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">
-                    {subj.caTotal != null && subj.examTotal != null ? subj.caTotal + subj.examTotal : "—"}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-green-600">—</td>
-                  <td className="border border-gray-300 px-4 py-3 text-center text-sm text-green-600">—</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={7} className="border border-gray-300 px-4 py-6 text-center text-sm text-gray-400">
-                  No subject data found
-                </td>
+      {/* Subjects Table */}
+      <div className="mb-8 rounded-b-2xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full border-separate border-spacing-0 bg-[#FAFAFA]" style={{ minWidth: `${400 + maxCAs * 80}px` }}>
+            <thead>
+              <tr className="bg-gray-50">
+                <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">Subject</th>
+                {caHeaders.map((h) => (
+                  <th key={h} className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">{h}</th>
+                ))}
+                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">CA Total</th>
+                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Exam Score</th>
+                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Total</th>
+                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Grade</th>
+                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Remark</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {subjects.length > 0 ? (
+                subjects.map((subj) => (
+                  <tr key={subj.id}>
+                    <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
+                      {subj.name} <span className="text-xs text-gray-400">({subj.code})</span>
+                    </td>
+                    {caHeaders.map((_, i) => (
+                      <td key={i} className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">
+                        {subj.cas[i] != null ? (subj.cas[i].score ?? "—") : "—"}
+                      </td>
+                    ))}
+                    <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">{subj.caTotal}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">{subj.examTotal}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-gray-800">{subj.subjectTotal}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-green-600">{subj.grade}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-600">{subj.remark}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5 + maxCAs} className="border border-gray-300 px-4 py-6 text-center text-sm text-gray-400">
+                    No subject data found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
-    {/* Performance Summary */}
-    <div>
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">Performance Summary</h2>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
-        <div className="border-t border-gray-300 py-2">
-          <div className="text-gray-600 mb-1">Total Score</div>
-          <div className="font-semibold text-gray-800">{student.grandTotal ?? "—"}</div>
+      {/* Performance Summary */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Performance Summary</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4 text-sm mb-6">
+          <div className="border-t border-gray-300 py-2">
+            <div className="text-gray-500 mb-1">Total Score</div>
+            <div className="font-semibold text-gray-800">{performanceSummary.totalScore}</div>
+          </div>
+          <div className="border-t border-gray-300 py-2">
+            <div className="text-gray-500 mb-1">Average Score</div>
+            <div className="font-semibold text-gray-800">{performanceSummary.averageScore}</div>
+          </div>
+          <div className="border-t border-gray-300 py-2">
+            <div className="text-gray-500 mb-1">Class Position</div>
+            <div className="font-semibold text-gray-800">{performanceSummary.classPosition}</div>
+          </div>
+          <div className="border-t border-gray-300 py-2">
+            <div className="text-gray-500 mb-1">Overall Grade</div>
+            <div className="font-semibold text-green-600">{performanceSummary.overallGrade}</div>
+          </div>
+          <div className="border-t border-gray-300 py-2">
+            <div className="text-gray-500 mb-1">No. of Subjects</div>
+            <div className="font-semibold text-gray-800">{performanceSummary.sessionLength}</div>
+          </div>
+          <div className="border-t border-gray-300 py-2">
+            <div className="text-gray-500 mb-1">School Resumption Date</div>
+            <div className="font-semibold text-gray-800">
+              {schoolRecommendationDate ? new Date(schoolRecommendationDate).toLocaleDateString() : "—"}
+            </div>
+          </div>
         </div>
-        <div className="border-t border-gray-300 py-2">
-          <div className="text-gray-600 mb-1">Average Score</div>
-          <div className="font-semibold text-gray-800">—</div>
-        </div>
-        <div className="border-t border-gray-300 py-2">
-          <div className="text-gray-600 mb-1">Class Position</div>
-          <div className="font-semibold text-gray-800">—</div>
-        </div>
-        <div className="border-t border-gray-300 py-2">
-          <div className="text-gray-600 mb-1">Overall Grade</div>
-          <div className="font-semibold text-gray-800">—</div>
-        </div>
-        <div className="border-t border-gray-300 py-2">
-          <div className="text-gray-600 mb-1">Teacher's Remark</div>
-          <div className="font-semibold text-gray-800">—</div>
-        </div>
-        <div className="border-t border-gray-300 py-2">
-          <div className="text-gray-600 mb-1">School Resumption Date</div>
-          <div className="font-semibold text-gray-800">—</div>
-        </div>
-        <div className="border-t border-gray-300 py-2">
-          <div className="text-gray-600 mb-1">Session Length</div>
-          <div className="font-semibold text-gray-800">—</div>
+
+        <div className="border-t border-gray-300 py-3">
+          <div className="text-gray-500 text-sm mb-1">Teacher's Remark</div>
+          <div className="text-sm font-medium text-gray-800 italic">"{teacherRemark}"</div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function ViewStudentResultTab() {
   const {
     searchParams, setSearchParams,
     isPrintModalOpen, setIsPrintModalOpen,
-    resultsArray,
+    result,
     isFetching, isError,
   } = useViewStudentResult();
 
@@ -156,10 +162,16 @@ export default function ViewStudentResultTab() {
               </div>
             </div>
           ) : isError ? (
-            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center text-sm text-red-500">
-              Failed to load result. Please try again.
+            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 rounded-full bg-red-50 border border-red-100 flex items-center justify-center mb-4">
+                <UserX className="text-red-400" size={28} />
+              </div>
+              <h3 className="text-base font-semibold text-gray-800 mb-1">Result Not Found</h3>
+              <p className="text-sm text-gray-400 max-w-xs">
+                We couldn't load the result for this student. Please check your filters and try again.
+              </p>
             </div>
-          ) : resultsArray.length === 0 ? (
+          ) : !result ? (
             <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-16 flex flex-col items-center justify-center text-center">
               <div className="bg-gray-50 p-4 rounded-full mb-4">
                 <SearchX className="h-8 w-8 text-gray-400" />
@@ -185,9 +197,7 @@ export default function ViewStudentResultTab() {
                 </button>
               </div>
 
-              {resultsArray.map((student) => (
-                <StudentBlock key={student.studentId} student={student} />
-              ))}
+              <StudentBlock result={result} />
             </motion.div>
           )}
         </>

@@ -16,6 +16,9 @@ import type {
   PendingSubmissionsParams,
   RejectResultsRequest,
   RejectResultsResponse,
+  CreateRemarkSchemeRequest,
+  CreateRemarkSchemeResponse,
+  GetRemarkSchemesResponse,
 } from '../types';
 
 export * from '../types';
@@ -30,7 +33,7 @@ export const gradingApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Results"],
+  tagTypes: ["Results", "RemarkSchemes"],
   endpoints: (builder) => ({
     createGrading: builder.mutation<CreateGradingResponse, CreateGradingRequest>({
       query: (body) => ({
@@ -52,8 +55,8 @@ export const gradingApi = createApi({
     }),
 
     getStudentResult: builder.query<GetStudentResultResponse, GetStudentResultParams>({
-      query: ({ studentId, classId, academicSessionId, termId }) => ({
-        url: `admin/result/student?studentId=${studentId}&classId=${classId}&academicSessionId=${academicSessionId}&termId=${termId}`,
+      query: ({ studentId, academicSessionId, termId }) => ({
+        url: `admin/result/student/${studentId}?academicSessionId=${academicSessionId}&termId=${termId}`,
         method: "GET",
       }),
     }),
@@ -94,6 +97,20 @@ export const gradingApi = createApi({
       }),
       invalidatesTags: ["Results"],
     }),
+
+    getRemarkSchemes: builder.query<GetRemarkSchemesResponse, void>({
+      query: () => ({ url: "admin/remark-scheme", method: "GET" }),
+      providesTags: ["RemarkSchemes"],
+    }),
+
+    createRemarkScheme: builder.mutation<CreateRemarkSchemeResponse, CreateRemarkSchemeRequest>({
+      query: (body) => ({
+        url: "admin/remark-scheme/create",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["RemarkSchemes"],
+    }),
   }),
 });
 
@@ -106,4 +123,6 @@ export const {
   useGetTeacherResultQuery,
   useGetPendingSubmissionsQuery,
   useRejectResultsMutation,
+  useGetRemarkSchemesQuery,
+  useCreateRemarkSchemeMutation,
 } = gradingApi;

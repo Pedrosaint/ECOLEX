@@ -1,4 +1,4 @@
-import { Plus, ChevronDown, ChevronRight, CheckCircle2, Circle, Zap } from "lucide-react";
+import { Plus, ChevronDown, ChevronRight, CheckCircle2, Circle, Zap, Pencil, X, Check } from "lucide-react";
 import { useCurrentAcademyInfo } from "../hooks";
 
 export default function SessionTermSetup() {
@@ -9,6 +9,8 @@ export default function SessionTermSetup() {
     setSelectedSessionId,
     newTermName,
     setNewTermName,
+    resumptionDate,
+    setResumptionDate,
     expandedSessions,
     sessions,
     activeSession,
@@ -16,7 +18,16 @@ export default function SessionTermSetup() {
     isLoading,
     creatingSession,
     creatingTerm,
+    updatingTerm,
     activatingId,
+    editingTermId,
+    editTermName,
+    setEditTermName,
+    editResumptionDate,
+    setEditResumptionDate,
+    startEditTerm,
+    cancelEditTerm,
+    handleUpdateTerm,
     toggleSession,
     handleCreateSession,
     handleCreateTerm,
@@ -87,41 +98,56 @@ export default function SessionTermSetup() {
           <p className="text-xs font-semibold text-gray-800 uppercase tracking-wide mb-3">
             Add Term
           </p>
-          <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-            <select
-              value={selectedSessionId}
-              onChange={(e) =>
-                setSelectedSessionId(e.target.value ? Number(e.target.value) : "")
-              }
-              className="w-full sm:w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD] text-gray-700"
-            >
-              <option value="">Select session</option>
-              {sessions.map((s) => (
-                <option key={s.id} value={s.id}>{s.name}</option>
-              ))}
-            </select>
-            <select
-              value={newTermName}
-              onChange={(e) => setNewTermName(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD] text-gray-700"
-            >
-              <option value="">Select term</option>
-              <option value="First Term">First Term</option>
-              <option value="Second Term">Second Term</option>
-              <option value="Third Term">Third Term</option>
-            </select>
-            <button
-              onClick={handleCreateTerm}
-              disabled={!selectedSessionId || !newTermName.trim() || creatingTerm}
-              className={`px-3 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-1 whitespace-nowrap transition-colors ${
-                !selectedSessionId || !newTermName.trim() || creatingTerm
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-[#8000BD] hover:bg-[#640094] cursor-pointer"
-              }`}
-            >
-              <Plus size={14} />
-              {creatingTerm ? "..." : "Add"}
-            </button>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <select
+                value={selectedSessionId}
+                onChange={(e) =>
+                  setSelectedSessionId(e.target.value ? Number(e.target.value) : "")
+                }
+                className="w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD] text-gray-700"
+              >
+                <option value="">Select session</option>
+                {sessions.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+              <select
+                value={newTermName}
+                onChange={(e) => setNewTermName(e.target.value)}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD] text-gray-700"
+              >
+                <option value="">Select term</option>
+                <option value="First Term">First Term</option>
+                <option value="Second Term">Second Term</option>
+                <option value="Third Term">Third Term</option>
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="block text-xs text-gray-500 mb-1">Resumption Date</label>
+                <input
+                  type="date"
+                  value={resumptionDate}
+                  onChange={(e) => setResumptionDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD] text-gray-700"
+                />
+              </div>
+              <div className="flex items-end">
+                <button
+                  onClick={handleCreateTerm}
+                  disabled={!selectedSessionId || !newTermName.trim() || creatingTerm}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-1 whitespace-nowrap transition-colors ${
+                    !selectedSessionId || !newTermName.trim() || creatingTerm
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-[#8000BD] hover:bg-[#640094] cursor-pointer"
+                  }`}
+                >
+                  <Plus size={14} />
+                  {creatingTerm ? "..." : "Add"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -188,20 +214,79 @@ export default function SessionTermSetup() {
                       <p className="text-xs text-gray-400 italic">No terms added yet.</p>
                     ) : (
                       session.terms.map((term) => (
-                        <div key={term.id} className="flex items-center justify-between">
+                        <div key={term.id}>
+                          {editingTermId === term.id ? (
+                            <div className="flex flex-col gap-2 py-1">
+                              <div className="flex gap-2">
+                                <div className="flex-1">
+                                  <label className="block text-xs text-gray-500 mb-1">Term</label>
+                                  <select
+                                    value={editTermName}
+                                    onChange={(e) => setEditTermName(e.target.value)}
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD] text-gray-700"
+                                  >
+                                    <option value="">Select term</option>
+                                    <option value="First Term">First Term</option>
+                                    <option value="Second Term">Second Term</option>
+                                    <option value="Third Term">Third Term</option>
+                                  </select>
+                                </div>
+                                <div className="flex-1">
+                                  <label className="block text-xs text-gray-500 mb-1">Resumption Date</label>
+                                  <input
+                                    type="date"
+                                    value={editResumptionDate}
+                                    onChange={(e) => setEditResumptionDate(e.target.value)}
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#8000BD] text-gray-700"
+                                  />
+                                </div>
+                              </div>
+                              <div className="flex gap-2 justify-end">
+                                <button
+                                  onClick={() => handleUpdateTerm(term.id)}
+                                  disabled={!editTermName.trim() || updatingTerm}
+                                  className="flex items-center gap-1 text-xs text-white bg-[#8000BD] px-2.5 py-1 rounded-lg hover:bg-[#640094] transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                  <Check size={11} />
+                                  {updatingTerm ? "Saving..." : "Save"}
+                                </button>
+                                <button
+                                  onClick={cancelEditTerm}
+                                  className="flex items-center gap-1 text-xs text-gray-500 border border-gray-300 px-2.5 py-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                                >
+                                  <X size={11} />
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                          <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-sm text-gray-700">
                             {term.isActive ? (
                               <CheckCircle2 size={13} className="text-green-500" />
                             ) : (
                               <Circle size={13} className="text-gray-300" />
                             )}
-                            {term.name}
+                            <span>{term.name}</span>
+                            {term.resumptionDate && (
+                              <span className="text-xs text-gray-400">
+                                Resumes {new Date(term.resumptionDate).toLocaleDateString()}
+                              </span>
+                            )}
                             {term.isActive && (
                               <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-medium">
                                 Active
                               </span>
                             )}
                           </div>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => startEditTerm(term)}
+                              className="flex items-center gap-1 text-xs text-gray-500 border border-gray-300 px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                            >
+                              <Pencil size={11} />
+                              Edit
+                            </button>
                           {!term.isActive && (
                             <button
                               onClick={() => handleActivateTerm(term.id)}
@@ -211,6 +296,9 @@ export default function SessionTermSetup() {
                               <Zap size={11} />
                               Activate
                             </button>
+                          )}
+                          </div>
+                        </div>
                           )}
                         </div>
                       ))

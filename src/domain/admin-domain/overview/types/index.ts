@@ -2,6 +2,7 @@ export interface TermData {
   id: number;
   name: string;
   isActive: boolean;
+  resumptionDate?: string | null;
   createdAt?: string;
 }
 
@@ -54,6 +55,19 @@ export interface CreateTermResponse {
     id: number;
     name: string;
     isActive: boolean;
+    resumptionDate: string | null;
+    session: { id: number; name: string };
+  };
+}
+
+export interface UpdateTermResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    name: string;
+    isActive: boolean;
+    resumptionDate: string | null;
     session: { id: number; name: string };
   };
 }

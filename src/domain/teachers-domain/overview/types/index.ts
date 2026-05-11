@@ -241,11 +241,13 @@ export type TeacherExamTemplatesResponse = TeacherStudentsWithScoresResponse;
 export interface TeacherCaTemplatesParams {
   classId: number;
   classGroupId: number;
+  subjectId?: number;
 }
 
 export interface TeacherExamTemplatesParams {
   classId: number;
   classGroupId: number;
+  subjectId?: number;
 }
 
 export interface TeacherSubjectsByGroupResponse {
@@ -260,4 +262,21 @@ export interface TeacherSubjectsByGroupResponse {
       name: string;
     };
   }[];
+}
+
+export interface TeacherProfile {
+  id: number;
+  name: string;
+  registrationNumber: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  duty: string;
+  dateEmployed: string;
+  schoolId: number;
+}
+
+export interface TeacherProfileResponse {
+  success: boolean;
+  data: TeacherProfile;
 }

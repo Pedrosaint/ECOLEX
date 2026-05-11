@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Search, Bell, Menu, Eye, EyeOff } from "lucide-react";
+import { Search, Menu, Eye, EyeOff } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import Profile from "../../assets/image/profile.png";
-import { useGetStaffQuery } from "../../domain/admin-domain/staff/api/staff-api";
+import { useGetTeacherProfileQuery } from "../../domain/teachers-domain/overview/api/teacher-overview.api";
+import { useGetStudentMetricsQuery } from "../../domain/student-domain/dashboard/api/student-dashboard.api";
 
 interface HeaderProps {
   userRole: string;
@@ -11,8 +11,7 @@ interface HeaderProps {
   setShowSensitiveData: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Header({ toggleSidebar, userRole}: HeaderProps) {
-
+export default function Header({ toggleSidebar, userRole }: HeaderProps) {
   const location = useLocation();
   const [showRegNo, setShowRegNo] = useState(false);
 
@@ -24,15 +23,25 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
   };
 
   const moduleName = getModuleName();
-  const isOverview = !moduleName && userRole === "admin"
+  const isOverview = !moduleName && userRole === "admin";
 
-  // Fetch teacher details
-  const teacherIdStr = localStorage.getItem("teacherId");
-  const teacherId = teacherIdStr ? parseInt(teacherIdStr, 10) : 0;
-  const { data: staffData } = useGetStaffQuery({ id: teacherId }, { skip: userRole !== "staff" || !teacherId });
+  // Fetch teacher profile from teacher/profile (no ID needed)
+  const { data: teacherProfileData } = useGetTeacherProfileQuery(undefined, {
+    skip: userRole !== "staff",
+  });
 
-  const teacherName = staffData?.staff?.name || "Teacher's name";
-  const teacherRegNo = staffData?.staff?.registrationNumber || "";
+  const teacherName = teacherProfileData?.data?.name || "—";
+  const teacherDuty = teacherProfileData?.data?.duty || "Staff";
+  const teacherRegNo = teacherProfileData?.data?.registrationNumber || "";
+
+  // Fetch student metrics for student role
+  const { data: studentMetricsData } = useGetStudentMetricsQuery(undefined, {
+    skip: userRole !== "student",
+  });
+
+  const studentName = studentMetricsData?.data?.student?.name || "—";
+  const studentClass = studentMetricsData?.data?.student?.class || "";
+  const studentRegNo = studentMetricsData?.data?.student?.registrationNumber || "";
 
   const maskRegNo = (regNo: string) => {
     if (!regNo) return "";
@@ -41,80 +50,21 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
   };
 
   return (
-    <header className="py-3 px-3 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0 bg-">
+    <header className="py-3 px-4 flex items-center justify-between flex-wrap gap-y-3 sm:flex-nowrap sm:gap-0">
       {/* Left Section */}
-      <div className="flex items-center justify-between  w-full md:w-auto">
-        {/* Hamburger Menu - Visible only on mobile */}
+      <div className="flex items-center gap-3 w-full md:w-auto">
+        {/* Hamburger Menu - mobile only */}
         <button
-          className="bg-white shadow-2xl border-2 border-[#f8f5f5] rounded-xl p-2 lg:hidden mr-2"
+          className="bg-white shadow border border-gray-200 rounded-xl p-2 lg:hidden"
           onClick={toggleSidebar}
         >
           <Menu className="w-5 h-5 text-gray-600 cursor-pointer" />
         </button>
-        <div className="flex flex-col">
-          <div className="md:hidden flex items-center space-x-3 cursor-pointer">
-            {" "}
-            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-              <img src={Profile} alt="" />
-            </div>
-            {/* Admin Name */}
-            <div className="flex items-center space-x-1 cursor-pointer">
-              {userRole === "student" ? (
-                <span className="text-sm text-gray-700 font-sans">
-                  Student name
-                </span>
-              ) : userRole === "admin" ? (
-                <span className="text-sm text-gray-700 font-sans">
-                  Admin name
-                </span>
-              ) : (
-                <span className="text-sm text-gray-700 font-sans truncate max-w-[150px]">
-                  {teacherName}
-                </span>
-              )}
-              {/* <ChevronDown className="w-4 h-4 text-gray-600" /> */}
-            </div>
-            {/* Notification Bell */}
-            <Bell
-              size={30}
-              className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
-            />
-          </div>
-          <div className="md:hidden">
-            {userRole === "student" && (
-              <div className="flex justify-end mt-3">
-                <h1 className="border border-gray-100 px-3 py-1 bg-white">
-                  ECO345 JSS 2
-                </h1>
-              </div>
-            )}
-          </div>
-          <div className="md:hidden">
-            {userRole === "staff" && (
-              <div className="flex justify-end mt-3">
-                <h1 className="border border-gray-100 px-3 py-1 bg-white flex items-center gap-2">
-                  <span>Role: Teacher</span>
-                  {teacherRegNo && (
-                    <>
-                      <span className="text-gray-300">|</span>
-                      <span className="text-gray-600 text-sm">
-                        {showRegNo ? teacherRegNo : maskRegNo(teacherRegNo)}
-                      </span>
-                      <button type="button" onClick={() => setShowRegNo(!showRegNo)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
-                        {showRegNo ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </>
-                  )}
-                </h1>
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Search Bar - Only shown in Overview */}
         {isOverview && (
-          <div className="md:flex items-center flex-1 hidden gap-2 bg-[#EBEAEF] rounded-3xl p-2">
-            <Search className="w-5 h-5 text-gray-400" />
+          <div className="md:flex items-center hidden gap-2 bg-[#EBEAEF] rounded-3xl px-3 py-2 w-60">
+            <Search className="w-4 h-4 text-gray-400 shrink-0" />
             <input
               type="text"
               placeholder="Search"
@@ -125,72 +75,80 @@ export default function Header({ toggleSidebar, userRole}: HeaderProps) {
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center space-x-3 justify-end w-full sm:w-auto">
-        {/* Avatar */}
-        <div className="">
-          <div className="hidden md:flex items-center space-x-3 cursor-pointer ">
-            {" "}
-            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-              <img src={Profile} alt="" />
+      <div className="flex items-center gap-3 justify-end w-full sm:w-auto">
+        {/* Teacher info card */}
+        {userRole === "staff" && (
+          <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2">
+            {/* Name + Role */}
+            <div className="flex flex-col leading-tight gap-0.5">
+              <span className="text-xs text-gray-500">
+                Name: <span className="font-semibold text-gray-800">{teacherName}</span>
+              </span>
+              <span className="text-xs text-gray-500">
+                Role: <span className="font-semibold text-[#8000BD]">{teacherDuty}</span>
+              </span>
             </div>
-            {/* Admin Name */}
-            <div className="flex items-center space-x-1 cursor-pointer">
-              {userRole === "student" ? (
-                <span className="text-sm text-gray-700 font-sans">
-                  Student name
-                </span>
-              ) : userRole === "admin" ? (
-                <span className="text-sm text-gray-700 font-sans">
-                  Admin name
-                </span>
-              ) : (
-                <span className="text-sm text-gray-700 font-sans">
-                  {teacherName}
-                </span>
-              )}
-              {/* <ChevronDown className="w-4 h-4 text-gray-600" /> */}
-            </div>
-            {/* Notification Bell */}
-            <Bell
-              size={30}
-              className="text-gray-600 cursor-pointer bg-gray-200 p-2 rounded-full"
-            />
-          </div>
-          <div className="hidden md:block">
-            {userRole === "student" && (
-              <div className="flex justify-end mt-3">
-                <h1 className="border border-gray-100 px-3 py-1 bg-white">
-                  ECO345 JSS 2
-                </h1>
-              </div>
+
+            {/* Divider */}
+            {teacherRegNo && (
+              <>
+                <span className="text-gray-300 text-lg">|</span>
+                {/* Reg Number with toggle */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-gray-700 font-mono tracking-wide">
+                    {showRegNo ? teacherRegNo : maskRegNo(teacherRegNo)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowRegNo(!showRegNo)}
+                    className="text-gray-600 hover:text-gray-700 focus:outline-none"
+                  >
+                    {showRegNo ? <EyeOff size={13} /> : <Eye size={13} />}
+                  </button>
+                </div>
+              </>
             )}
           </div>
-          <div className="hidden md:block">
-            {userRole === "staff" && (
-              <div className="flex justify-end mt-3">
-                <h1 className="border border-gray-100 px-3 py-1 bg-white flex items-center gap-2">
-                  <span>Role: Teacher</span>
-                  {teacherRegNo && (
-                    <>
-                      <span className="text-gray-300">|</span>
-                      <span className="text-gray-600 text-sm">
-                        {showRegNo ? teacherRegNo : maskRegNo(teacherRegNo)}
-                      </span>
-                      <button type="button" onClick={() => setShowRegNo(!showRegNo)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
-                        {showRegNo ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </>
-                  )}
-                </h1>
-              </div>
+        )}
+
+        {/* Student info card */}
+        {userRole === "student" && (
+          <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2">
+            {/* Name + Class */}
+            <div className="flex flex-col leading-tight gap-0.5">
+              <span className="text-xs text-gray-500">
+                Name: <span className="font-semibold text-gray-800">{studentName}</span>
+              </span>
+              <span className="text-xs text-gray-500">
+                Class: <span className="font-semibold text-[#8000BD]">{studentClass}</span>
+              </span>
+            </div>
+
+            {/* Divider + Reg Number */}
+            {studentRegNo && (
+              <>
+                <span className="text-gray-300 text-lg">|</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-gray-700 font-mono tracking-wide">
+                    {showRegNo ? studentRegNo : maskRegNo(studentRegNo)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowRegNo(!showRegNo)}
+                    className="text-gray-600 hover:text-gray-700 focus:outline-none"
+                  >
+                    {showRegNo ? <EyeOff size={13} /> : <Eye size={13} />}
+                  </button>
+                </div>
+              </>
             )}
           </div>
-        </div>
+        )}
 
         {/* Mobile Search - Only shown in Overview */}
         {isOverview && (
-          <div className="flex items-center flex-1 md:hidden gap-2 bg-[#EBEAEF] rounded-3xl p-2">
-            <Search className="w-5 h-5 text-gray-400" />
+          <div className="flex items-center flex-1 md:hidden gap-2 bg-[#EBEAEF] rounded-3xl px-3 py-2">
+            <Search className="w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search"

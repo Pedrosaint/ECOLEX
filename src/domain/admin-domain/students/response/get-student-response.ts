@@ -27,6 +27,7 @@ export interface Student {
   class?: Class
   campus?: Campus
   academicSession?: AcademicSession
+  classGroup?: ClassGroup | null
 }
 
 export interface Class {

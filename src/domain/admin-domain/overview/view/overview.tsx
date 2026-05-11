@@ -75,10 +75,7 @@ export default function Overview() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.35 }}
       >
-        <UpcomingExams
-          exams={stats?.upcomingExams ?? []}
-          isLoading={isLoading}
-        />
+        <UpcomingExams />
       </motion.div>
     </div>
   );

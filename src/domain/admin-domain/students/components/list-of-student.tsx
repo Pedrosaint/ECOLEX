@@ -129,8 +129,8 @@ export default function StudentsList() {
                             "Surname",
                             "Name",
                             "Gender",
-                            "DOB",
                             "Class",
+                            "Class Group",
                             "Passport",
                             "Action",
                           ].map((th) => (
@@ -167,11 +167,11 @@ export default function StudentsList() {
                             <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                               {student.gender ?? "—"}
                             </td>
-                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200 whitespace-nowrap">
-                              {student.dateOfBirth ?? "—"}
-                            </td>
                             <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
                               {student.class?.name ?? "—"}
+                            </td>
+                            <td className="py-3 px-2 text-sm text-gray-600 border-r border-gray-200">
+                              {student?.classGroup?.name ?? "—"}
                             </td>
                             <td className="py-3 px-2 text-sm border-r border-gray-200">
                               <div className="flex flex-col items-center">

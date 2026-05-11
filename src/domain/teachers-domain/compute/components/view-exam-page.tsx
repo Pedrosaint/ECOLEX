@@ -6,7 +6,11 @@ import { useExamPage } from "../hooks";
 
 const chevron = (
   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+    <svg
+      className="fill-current h-4 w-4"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+    >
       <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
     </svg>
   </div>
@@ -17,12 +21,30 @@ const selectBase =
 
 export default function ViewExamPage() {
   const {
-    classId, setClassId, classGroupId, setClassGroupId,
-    isFiltered, classes, classesLoading, filteredGroups, classGroupsLoading,
-    examTemplates, examLoading,
-    handleFilter, handleClearFilters,
-    hasActiveFilters, canFilter,
-    resetScores, setScore, getScore, handleSubmit, isSubmitting,
+    classId,
+    setClassId,
+    classGroupId,
+    setClassGroupId,
+    subjectId,
+    setSubjectId,
+    isFiltered,
+    classes,
+    classesLoading,
+    filteredGroups,
+    classGroupsLoading,
+    filteredSubjects,
+    subjectsLoading,
+    examTemplates,
+    examLoading,
+    handleFilter,
+    handleClearFilters,
+    hasActiveFilters,
+    canFilter,
+    resetScores,
+    setScore,
+    getScore,
+    handleSubmit,
+    isSubmitting,
   } = useExamPage();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -60,9 +82,13 @@ export default function ViewExamPage() {
                     setIsEditing(false);
                   }}
                 >
-                  <option value="">{classesLoading ? "Loading..." : "Select Class"}</option>
+                  <option value="">
+                    {classesLoading ? "Loading..." : "Select Class"}
+                  </option>
                   {classes.map((c) => (
-                    <option key={c.id} value={c.id}>{c.class?.name ?? c.name}</option>
+                    <option key={c.id} value={c.id}>
+                      {c.class?.name ?? c.name}
+                    </option>
                   ))}
                 </select>
                 {chevron}
@@ -79,13 +105,15 @@ export default function ViewExamPage() {
                     !classId
                       ? "text-gray-400 bg-gray-50 cursor-not-allowed"
                       : classGroupId
-                      ? "text-gray-900"
-                      : "text-gray-400"
+                        ? "text-gray-900"
+                        : "text-gray-400"
                   }`}
                   disabled={!classId || classGroupsLoading}
                   value={classGroupId ?? ""}
                   onChange={(e) => {
-                    setClassGroupId(e.target.value ? Number(e.target.value) : null);
+                    setClassGroupId(
+                      e.target.value ? Number(e.target.value) : null,
+                    );
                     setIsEditing(false);
                   }}
                 >
@@ -93,13 +121,60 @@ export default function ViewExamPage() {
                     {!classId
                       ? "Select a class first"
                       : classGroupsLoading
-                      ? "Loading..."
-                      : filteredGroups.length === 0
-                      ? "No groups for class"
-                      : "Select Group"}
+                        ? "Loading..."
+                        : filteredGroups.length === 0
+                          ? "No groups for class"
+                          : "Select Group"}
                   </option>
                   {filteredGroups.map((g) => (
-                    <option key={g.id} value={g.id}>{g.name}</option>
+                    <option key={g.id} value={g.id}>
+                      {g.name}
+                    </option>
+                  ))}
+                </select>
+                {chevron}
+              </div>
+            </div>
+
+            {/* Subject (Optional) */}
+            <div>
+              <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">
+                Select Subject{" "}
+                <span className="text-gray-400 text-xs font-normal">
+                  (Optional)
+                </span>
+              </label>
+              <div className="relative">
+                <select
+                  className={`${selectBase} ${
+                    !classId
+                      ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                      : subjectId
+                        ? "text-gray-900"
+                        : "text-gray-400"
+                  }`}
+                  disabled={!classId || subjectsLoading}
+                  value={subjectId ?? ""}
+                  onChange={(e) => {
+                    setSubjectId(
+                      e.target.value ? Number(e.target.value) : null,
+                    );
+                    setIsEditing(false);
+                  }}
+                >
+                  <option value="">
+                    {!classId
+                      ? "Select a class first"
+                      : subjectsLoading
+                        ? "Loading..."
+                        : filteredSubjects.length === 0
+                          ? "No subjects for class"
+                          : "All Subjects"}
+                  </option>
+                  {filteredSubjects.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
                   ))}
                 </select>
                 {chevron}
@@ -111,7 +186,10 @@ export default function ViewExamPage() {
             {hasActiveFilters && (
               <button
                 type="button"
-                onClick={() => { handleClearFilters(); setIsEditing(false); }}
+                onClick={() => {
+                  handleClearFilters();
+                  setIsEditing(false);
+                }}
                 className="px-4 py-3 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 Clear Filters
@@ -120,7 +198,10 @@ export default function ViewExamPage() {
             <button
               type="button"
               disabled={!canFilter}
-              onClick={() => { handleFilter(); setIsEditing(false); }}
+              onClick={() => {
+                handleFilter();
+                setIsEditing(false);
+              }}
               className="flex-1 bg-[#8000BD] px-6 py-3 text-white font-semibold text-sm disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed rounded-sm"
             >
               FILTER RECORD
@@ -139,11 +220,15 @@ export default function ViewExamPage() {
           <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-4">
             <FiEdit2 className="w-8 h-8 text-purple-400" />
           </div>
-          <h3 className="text-gray-700 font-semibold text-base mb-1">No exam records to display</h3>
+          <h3 className="text-gray-700 font-semibold text-base mb-1">
+            No exam records to display
+          </h3>
           <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
-            Select a <span className="font-medium text-gray-500">class</span> and{" "}
-            <span className="font-medium text-gray-500">group</span> above, then click{" "}
-            <span className="font-medium text-purple-600">Filter Record</span> to view exam data.
+            Select a <span className="font-medium text-gray-500">class</span>{" "}
+            and <span className="font-medium text-gray-500">group</span> above,
+            then click{" "}
+            <span className="font-medium text-purple-600">Filter Record</span>{" "}
+            to view exam data.
           </p>
         </motion.div>
       )}
@@ -193,21 +278,35 @@ export default function ViewExamPage() {
           </div>
 
           {examLoading ? (
-            <div className="text-center py-12 text-gray-400 text-sm">Loading exam data...</div>
+            <div className="text-center py-12 text-gray-400 text-sm">
+              Loading exam data...
+            </div>
           ) : examTemplates.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-gray-500 font-medium text-sm">No exam templates found</p>
-              <p className="text-gray-400 text-xs mt-1">No exams have been configured for this class.</p>
+              <p className="text-gray-500 font-medium text-sm">
+                No exam templates found
+              </p>
+              <p className="text-gray-400 text-xs mt-1">
+                No exams have been configured for this class.
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse border border-gray-200 text-sm min-w-[600px]">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-300 h-12">
-                    <th className="border-r border-gray-300 px-4 py-3 text-left font-medium text-gray-700">S/N</th>
-                    <th className="border-r border-gray-300 px-4 py-3 text-left font-medium text-gray-700">Reg. No</th>
-                    <th className="border-r border-gray-300 px-4 py-3 text-left font-medium text-gray-700">Student Name</th>
-                    <th className="border-r border-gray-300 px-4 py-3 text-left font-medium text-gray-700">Subject</th>
+                    <th className="border-r border-gray-300 px-4 py-3 text-left font-medium text-gray-700">
+                      S/N
+                    </th>
+                    <th className="border-r border-gray-300 px-4 py-3 text-left font-medium text-gray-700">
+                      Reg. No
+                    </th>
+                    <th className="border-r border-gray-300 px-4 py-3 text-left font-medium text-gray-700">
+                      Student Name
+                    </th>
+                    <th className="border-r border-gray-300 px-4 py-3 text-left font-medium text-gray-700">
+                      Subject
+                    </th>
                     <th className="border-r border-gray-300 px-4 py-3 text-center font-medium text-gray-700">
                       Score{" "}
                       <span className="text-xs text-gray-400 font-normal">
@@ -218,7 +317,10 @@ export default function ViewExamPage() {
                 </thead>
                 <tbody>
                   {examTemplates.map((template, idx) => (
-                    <tr key={template.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={template.id}
+                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
                       <td className="border-r border-gray-300 px-4 py-4 text-center text-gray-500 text-xs">
                         {idx + 1}
                       </td>
@@ -238,7 +340,13 @@ export default function ViewExamPage() {
                             min={0}
                             max={template.maxScore}
                             value={getScore(template.studentId, template.id)}
-                            onChange={(e) => setScore(template.studentId, template.id, e.target.value)}
+                            onChange={(e) =>
+                              setScore(
+                                template.studentId,
+                                template.id,
+                                e.target.value,
+                              )
+                            }
                             className="w-20 h-8 text-center border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-400"
                             placeholder="0"
                           />

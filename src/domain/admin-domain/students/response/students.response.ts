@@ -71,10 +71,6 @@ export interface Data {
   academicSession?: AcademicSession | null;
 }
 
-export interface Campus {
-  id: number
-  name: string
-}
 
 // Change Student Class
 export interface ChangeStudentClassResponse {
@@ -96,9 +92,9 @@ export interface Class {
 
 export interface ClassGroup {
   id: number;
-  classId: number;
+  classId?: number;
   name: string;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface Campus {

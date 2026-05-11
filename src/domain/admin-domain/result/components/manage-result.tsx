@@ -1,8 +1,9 @@
 import { SlArrowDown } from "react-icons/sl";
-import SetupGradesTab from "../components/setup-grade";
+// import SetupGradesTab from "../components/setup-grade";
 import ViewClassResultTab from "../components/view-class-result";
 import ViewStudentResultTab from "./view-student-result";
 import ViewTeacherResultTab from "./view-teachers-result";
+import RemarkSchemeTab from "./remark-scheme";
 import { useManageResult } from "../hooks";
 
 export default function ManageResult() {
@@ -10,10 +11,11 @@ export default function ManageResult() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "Setup Grades": return <SetupGradesTab />;
+      // case "Setup Grades": return <SetupGradesTab />;
       case "View Class Result": return <ViewClassResultTab />;
       case "View students Result": return <ViewStudentResultTab />;
       case "View Teacher Result": return <ViewTeacherResultTab />;
+      case "Remark Scheme": return <RemarkSchemeTab />;
       default: return null;
     }
   };

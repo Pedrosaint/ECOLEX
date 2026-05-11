@@ -1,7 +1,8 @@
 import { useState } from "react";
 
 export const RESULT_TABS = [
-  "Setup Grades",
+  // "Setup Grades",
+  "Remark Scheme",
   "View Class Result",
   "View students Result",
   "View Teacher Result",
@@ -10,7 +11,7 @@ export const RESULT_TABS = [
 export type ResultTab = (typeof RESULT_TABS)[number];
 
 export function useManageResult() {
-  const [activeTab, setActiveTab] = useState<ResultTab>("Setup Grades");
+  const [activeTab, setActiveTab] = useState<ResultTab>("Remark Scheme");
   const [showDropdown, setShowDropdown] = useState(false);
 
   const selectTab = (tab: ResultTab) => {

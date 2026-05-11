@@ -5,6 +5,7 @@ import type {
   GetSessionsResponse,
   CreateSessionResponse,
   CreateTermResponse,
+  UpdateTermResponse,
   ActivateTermResponse,
 } from '../types';
 
@@ -37,8 +38,13 @@ export const adminOverviewApi = createApi({
       invalidatesTags: ["Sessions", "Overview"],
     }),
 
-    createTerm: builder.mutation<CreateTermResponse, { sessionId: number; name: string }>({
+    createTerm: builder.mutation<CreateTermResponse, { sessionId: number; name: string; resumptionDate?: string }>({
       query: (body) => ({ url: "admin/term", method: "POST", body }),
+      invalidatesTags: ["Sessions", "Overview"],
+    }),
+
+    updateTerm: builder.mutation<UpdateTermResponse, { id: number; name?: string; resumptionDate?: string }>({
+      query: ({ id, ...body }) => ({ url: `admin/term/${id}`, method: "PUT", body }),
       invalidatesTags: ["Sessions", "Overview"],
     }),
 
@@ -54,5 +60,6 @@ export const {
   useGetSessionsQuery,
   useCreateSessionMutation,
   useCreateTermMutation,
+  useUpdateTermMutation,
   useActivateTermMutation,
 } = adminOverviewApi;

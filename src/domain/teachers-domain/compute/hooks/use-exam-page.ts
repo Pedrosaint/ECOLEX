@@ -8,11 +8,13 @@ import {
   useGetTeacherExamTemplatesQuery,
   useGetActiveTermQuery,
   useSubmitExamScoresMutation,
+  useGetTeacherSubjectsByGroupQuery,
 } from "../../overview/hooks";
 
 export function useExamPage() {
   const [classId, setClassIdState] = useState<number | null>(null);
   const [classGroupId, setClassGroupId] = useState<number | null>(null);
+  const [subjectId, setSubjectId] = useState<number | null>(null);
   const [isFiltered, setIsFiltered] = useState(false);
   // key: `${studentId ?? 'none'}_${examId}`, value: raw string so empty fields stay empty
   const [scores, setScores] = useState<Record<string, string>>({});
@@ -20,14 +22,19 @@ export function useExamPage() {
   const { data: classesData, isLoading: classesLoading } = useGetTeacherClassesQuery();
   const { data: classGroupsData, isLoading: classGroupsLoading } = useGetTeacherClassGroupsQuery();
   const { data: activeTermData } = useGetActiveTermQuery();
+  const { data: subjectsData, isLoading: subjectsLoading } = useGetTeacherSubjectsByGroupQuery();
+
   const { data: examData, isLoading: examLoading } = useGetTeacherExamTemplatesQuery(
-    isFiltered && classId && classGroupId ? { classId, classGroupId } : skipToken
+    isFiltered && classId && classGroupId ? { classId, classGroupId, ...(subjectId ? { subjectId } : {}) } : skipToken
   );
   const [submitExamScores, { isLoading: isSubmitting }] = useSubmitExamScoresMutation();
 
   const classes = classesData?.data ?? [];
   const allGroups = classGroupsData?.data ?? [];
+  const allSubjects = subjectsData?.subjects ?? [];
+
   const filteredGroups = classId ? allGroups.filter((g) => g.classId === classId) : [];
+  const filteredSubjects = classId ? allSubjects.filter((s) => s.class.id === classId) : [];
 
   const responseData = examData?.data;
   const exams = responseData?.exams ?? [];
@@ -66,6 +73,7 @@ export function useExamPage() {
   const setClassId = (id: number | null) => {
     setClassIdState(id);
     setClassGroupId(null);
+    setSubjectId(null);
     setIsFiltered(false);
     setScores({});
   };
@@ -85,6 +93,7 @@ export function useExamPage() {
   const handleClearFilters = () => {
     setClassIdState(null);
     setClassGroupId(null);
+    setSubjectId(null);
     setIsFiltered(false);
     setScores({});
   };
@@ -122,11 +131,15 @@ export function useExamPage() {
     setClassId,
     classGroupId,
     setClassGroupId,
+    subjectId,
+    setSubjectId,
     isFiltered,
     classes,
     classesLoading,
     filteredGroups,
     classGroupsLoading,
+    filteredSubjects,
+    subjectsLoading,
     examTemplates,
     examLoading,
     handleFilter,

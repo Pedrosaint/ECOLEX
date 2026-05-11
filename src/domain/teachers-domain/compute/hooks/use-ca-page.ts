@@ -8,11 +8,13 @@ import {
   useGetTeacherCaTemplatesQuery,
   useGetActiveTermQuery,
   useSubmitCaScoresMutation,
+  useGetTeacherSubjectsByGroupQuery,
 } from "../../overview/hooks";
 
 export function useCaPage() {
   const [classId, setClassIdState] = useState<number | null>(null);
   const [classGroupId, setClassGroupId] = useState<number | null>(null);
+  const [subjectId, setSubjectId] = useState<number | null>(null);
   const [isFiltered, setIsFiltered] = useState(false);
   // key: `${rowKey}_${colName}`, value: raw string so empty fields stay empty
   const [scores, setScores] = useState<Record<string, string>>({});
@@ -20,12 +22,13 @@ export function useCaPage() {
   const { data: classesData, isLoading: classesLoading } = useGetTeacherClassesQuery();
   const { data: classGroupsData, isLoading: classGroupsLoading } = useGetTeacherClassGroupsQuery();
   const { data: activeTermData } = useGetActiveTermQuery();
+  const { data: subjectsData, isLoading: subjectsLoading } = useGetTeacherSubjectsByGroupQuery();
 
   const academicSessionId = activeTermData?.data?.activeSession?.id;
 
   const { data: caData, isLoading: caLoading, error: caError } = useGetTeacherCaTemplatesQuery(
     isFiltered && classId && classGroupId
-      ? { classId, classGroupId }
+      ? { classId, classGroupId, ...(subjectId ? { subjectId } : {}) }
       : skipToken
   );
   const [submitCaScores, { isLoading: isSubmitting, isSuccess, reset: resetSubmit }] =
@@ -33,7 +36,10 @@ export function useCaPage() {
 
   const classes = classesData?.data ?? [];
   const allGroups = classGroupsData?.data ?? [];
+  const allSubjects = subjectsData?.subjects ?? [];
+  
   const filteredGroups = classId ? allGroups.filter((g) => g.classId === classId) : [];
+  const filteredSubjects = classId ? allSubjects.filter((s) => s.class.id === classId) : [];
 
   const responseData = caData?.data;
   const caTemplates = responseData?.cas ?? [];
@@ -83,6 +89,7 @@ export function useCaPage() {
   const setClassId = (id: number | null) => {
     setClassIdState(id);
     setClassGroupId(null);
+    setSubjectId(null);
     setIsFiltered(false);
     setScores({});
   };
@@ -102,6 +109,7 @@ export function useCaPage() {
   const handleClearFilters = () => {
     setClassIdState(null);
     setClassGroupId(null);
+    setSubjectId(null);
     setIsFiltered(false);
     setScores({});
   };
@@ -139,11 +147,15 @@ export function useCaPage() {
     setClassId,
     classGroupId,
     setClassGroupId,
+    subjectId,
+    setSubjectId,
     isFiltered,
     classes,
     classesLoading,
     filteredGroups,
     classGroupsLoading,
+    filteredSubjects,
+    subjectsLoading,
     caTemplates,
     caColumns,
     subjectRows,

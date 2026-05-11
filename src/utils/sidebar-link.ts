@@ -20,13 +20,13 @@ interface NavLink {
 
 //admin navlink
 export const navLinks: NavLink[] = [
-  { path: "/admin/dashboard", icon: GoHomeFill , label: "Overview" },
+  { path: "/admin/dashboard", icon: GoHomeFill, label: "Overview" },
   { path: "/admin/student's", icon: Users, label: "Manage Students" },
   { path: "/admin/staff", icon: UserCheck, label: "Manage Staff" },
   { path: "/admin/classes", icon: BookOpen, label: "Manage Classes" },
+  { path: "/admin/subjects", icon: BookOpen, label: "Manage Subject" },
   { path: "/admin/campuses", icon: Building, label: "Campuses" },
   { path: "/admin/result", icon: FileText, label: "Manage Result" },
-  { path: "/admin/subjects", icon: BookOpen, label: "Manage Subject" },
   { path: "/admin/generate-result", icon: FileText, label: "Generate Result" },
   { path: "/admin/ca-template", icon: ClipboardList, label: "CA Template" },
 ];
