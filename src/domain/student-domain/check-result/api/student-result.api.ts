@@ -4,6 +4,7 @@ export * from "../types";
 import type {
   GetStudentResultsResponse,
   GetStudentResultsParams,
+  GetStudentSessionsResponse,
 } from "../types";
 
 export const studentResultApi = createApi({
@@ -17,13 +18,17 @@ export const studentResultApi = createApi({
     },
   }),
   endpoints: (builder) => ({
+    getStudentSessions: builder.query<GetStudentSessionsResponse, void>({
+      query: () => ({ url: "dashboard/student/sessions", method: "GET" }),
+    }),
+
     getStudentResults: builder.query<GetStudentResultsResponse, GetStudentResultsParams>({
-      query: ({ termId }) => ({
-        url: `dashboard/student/results?termId=${termId}`,
+      query: ({ academicSessionId }) => ({
+        url: `dashboard/student/results?academicSessionId=${academicSessionId}`,
         method: "GET",
       }),
     }),
   }),
 });
 
-export const { useGetStudentResultsQuery } = studentResultApi;
+export const { useGetStudentSessionsQuery, useGetStudentResultsQuery } = studentResultApi;

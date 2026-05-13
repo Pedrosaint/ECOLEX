@@ -1,113 +1,26 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Printer, SearchX } from "lucide-react";
 import SearchTeachersComp from "./search-teachers.comp";
 import { useViewTeacherResult } from "../hooks";
-import Print from "../../../../general/common/print";
+import { printContent } from "../../../../utils/print-content";
 import EmptyBroadsheet from "../../../../assets/image/classResult.png";
-import passport from "../../../../assets/image/passport.png";
-import type { TeacherResultStaff } from "../types";
-
-const TeacherBlock = ({ staff }: { staff: TeacherResultStaff }) => {
-  const allSubjects = staff.assignments?.map((a) => a.subjectName).join(", ") || "—";
-  const allClasses = staff.assignments?.map((a) => a.className).join(", ") || "—";
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      {/* Teacher Info Header */}
-      <div className="md:flex md:justify-between items-start bg-[#e6e7e8] border-b border-[#D1D1D1] p-5 rounded-t-2xl">
-        <div className="hidden md:block">
-          <h1 className="text-xl font-semibold text-gray-800 mb-4">Teacher's Information</h1>
-          <div className="space-y-1 text-sm text-gray-600">
-            <div><span className="font-medium">Name:</span> {staff.staffName || "—"}</div>
-            <div><span className="font-medium">Registration Number:</span> {staff.registrationNumber || "—"}</div>
-            <div><span className="font-medium">Subject:</span> {allSubjects}</div>
-            <div><span className="font-medium">Class:</span> {allClasses}</div>
-            <div><span className="font-medium">Session:</span> —</div>
-            <div><span className="font-medium">Campus:</span> —</div>
-            <div><span className="font-medium">Submission Status:</span> —</div>
-            <div><span className="font-medium">Date Submitted:</span> —</div>
-          </div>
-        </div>
-
-        {/* Avatar */}
-        <div className="w-32 h-32 bg-pink-200 rounded-lg overflow-hidden flex-shrink-0">
-          <img
-            src={passport}
-            className="w-full h-full object-cover"
-            alt="avatar"
-          />
-        </div>
-
-        {/* Mobile info */}
-        <div className="md:hidden mt-3">
-          <h1 className="text-xl font-semibold text-gray-800 mb-4">Teacher's Information</h1>
-          <div className="space-y-1 text-sm text-gray-600">
-            <div><span className="font-medium">Name:</span> {staff.staffName || "—"}</div>
-            <div><span className="font-medium">Registration Number:</span> {staff.registrationNumber || "—"}</div>
-            <div><span className="font-medium">Subject:</span> {allSubjects}</div>
-            <div><span className="font-medium">Class:</span> {allClasses}</div>
-            <div><span className="font-medium">Session:</span> —</div>
-            <div><span className="font-medium">Campus:</span> —</div>
-            <div><span className="font-medium">Submission Status:</span> —</div>
-            <div><span className="font-medium">Date Submitted:</span> —</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Assignments Table */}
-      <div className="mb-4 rounded-b-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full border-separate border-spacing-0 bg-[#FAFAFA] min-w-[400px]">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">Reg. No</th>
-                <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">Student Name</th>
-                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">1st CA</th>
-                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">2nd CA</th>
-                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Exam Score</th>
-                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Total</th>
-                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Grade</th>
-                <th className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">Remarks</th>
-              </tr>
-            </thead>
-            <tbody>
-              {staff.assignments.length > 0 ? (
-                staff.assignments.map((a, i) => (
-                  <tr key={i}>
-                    <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">—</td>
-                    <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">—</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">—</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center text-sm text-blue-600">—</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center text-sm text-gray-700">—</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700">—</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center text-sm font-medium text-green-600">—</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center text-sm text-green-600">—</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={8} className="border border-gray-300 px-4 py-6 text-center text-sm text-gray-400">
-                    No assignments found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-};
+import passportFemale from "../../../../assets/image/passport.png";
+import passportMale from "../../../../assets/image/passport_2.png";
 
 export default function ViewTeacherResultTab() {
   const {
     searchParams,
     page, setPage,
-    isPrintModalOpen, setIsPrintModalOpen,
-    staffArray, totalCount, totalPages, PAGE_SIZE,
+    teacherInformation, students, totalCount, totalPages, PAGE_SIZE,
     isFetching, isError,
     handleSearch, renderPageButtons,
   } = useViewTeacherResult();
+
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Derive CA column headers from the first student's cas array
+  const caHeaders = students[0]?.cas.map((ca) => ca.name) ?? [];
 
   return (
     <div>
@@ -127,24 +40,24 @@ export default function ViewTeacherResultTab() {
       {searchParams && (
         <>
           {isFetching ? (
-            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 flex items-center justify-center">
+            <div className="mt-6 bg-white rounded shadow-sm border border-gray-200 p-10 flex items-center justify-center">
               <div className="flex flex-col items-center gap-3 text-gray-400">
                 <div className="w-8 h-8 border-4 border-[#8000BD] border-t-transparent rounded-full animate-spin" />
                 <p className="text-sm">Loading result...</p>
               </div>
             </div>
           ) : isError ? (
-            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center text-sm text-red-500">
+            <div className="mt-6 bg-white rounded shadow-sm border border-gray-200 p-10 text-center text-sm text-red-500">
               Failed to load result. Please try again.
             </div>
-          ) : staffArray.length === 0 ? (
-            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-16 flex flex-col items-center justify-center text-center">
+          ) : !teacherInformation ? (
+            <div className="mt-6 bg-white rounded shadow-sm border border-gray-200 p-16 flex flex-col items-center justify-center text-center">
               <div className="bg-gray-50 p-4 rounded-full mb-4">
                 <SearchX className="h-8 w-8 text-gray-400" />
               </div>
               <h3 className="text-base font-semibold text-gray-900 mb-1">No Results Found</h3>
               <p className="text-sm text-gray-500 max-w-sm">
-                We couldn't find any records matching your selected criteria. Please try adjusting your filters.
+                No records found for the selected criteria. Please adjust your filters.
               </p>
             </div>
           ) : (
@@ -156,28 +69,95 @@ export default function ViewTeacherResultTab() {
             >
               <div className="flex justify-end mb-4">
                 <button
-                  onClick={() => setIsPrintModalOpen(true)}
+                  onClick={() => contentRef.current && printContent(contentRef.current.innerHTML, "Teacher Result")}
                   className="bg-[#4B0082] text-white cursor-pointer px-3 py-2 rounded-sm flex items-center gap-2 text-sm font-semibold hover:bg-[#3a006b] transition-colors"
                 >
                   <Printer size={18} /> PRINT RECORD
                 </button>
               </div>
 
-              {staffArray.map((staff) => (
-                <TeacherBlock key={staff.staffId} staff={staff} />
-              ))}
+              <div ref={contentRef} className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+                {/* Teacher Info Header */}
+                <div className="flex justify-between items-start bg-[#e6e7e8] p-5">
+                  <div className="space-y-1.5 text-sm text-gray-700">
+                    <h2 className="text-base font-semibold text-gray-800 mb-3">Teacher's Information</h2>
+                    <div><span className="font-medium">Name:</span> {teacherInformation.name}</div>
+                    <div><span className="font-medium">Reg. No:</span> {teacherInformation.registrationNumber}</div>
+                    <div><span className="font-medium">Subject:</span> {teacherInformation.subject} ({teacherInformation.subjectCode})</div>
+                    <div><span className="font-medium">Class:</span> {teacherInformation.class}</div>
+                    <div><span className="font-medium">Campus:</span> {teacherInformation.campus}</div>
+                    <div><span className="font-medium">Session:</span> {teacherInformation.session}</div>
+                    <div><span className="font-medium">Term:</span> {teacherInformation.term}</div>
+                    <div>
+                      <span className="font-medium">Date Submitted:</span>{" "}
+                      {teacherInformation.dateSubmitted
+                        ? new Date(teacherInformation.dateSubmitted).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                        : "—"}
+                    </div>
+                  </div>
+                  <div className="w-28 h-28 bg-pink-200 rounded-lg overflow-hidden flex-shrink-0">
+                    <img
+                      src={teacherInformation.gender?.toLowerCase() === "male" ? passportMale : passportFemale}
+                      className="w-full h-full object-cover"
+                      alt="avatar"
+                    />
+                  </div>
+                </div>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-2 mb-4 px-2">
+                {/* Students Table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead className="bg-[#EDF9FD] border-b border-gray-200">
+                      <tr>
+                        <th className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-center">S/N</th>
+                        <th className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-left">Reg. No</th>
+                        <th className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-left">Student Name</th>
+                        {caHeaders.map((ca) => (
+                          <th key={ca} className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-center">
+                            {ca}
+                          </th>
+                        ))}
+                        <th className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-center">CA Score</th>
+                        <th className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-center">Exam Score</th>
+                        <th className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-center">Total</th>
+                        <th className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-center">Grade</th>
+                        <th className="py-3 px-3 text-xs font-semibold text-gray-700 uppercase tracking-wider text-left">Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {students.map((student, idx) => (
+                        <tr key={student.registrationNumber} className="hover:bg-gray-50">
+                          <td className="py-3 px-3 text-sm text-gray-700 border-r border-gray-200 text-center">
+                            {(page - 1) * PAGE_SIZE + idx + 1}
+                          </td>
+                          <td className="py-3 px-3 text-sm text-gray-500 border-r border-gray-200">{student.registrationNumber}</td>
+                          <td className="py-3 px-3 text-sm font-medium text-gray-800 border-r border-gray-200">{student.studentName}</td>
+                          {student.cas.map((ca, i) => (
+                            <td key={i} className="py-3 px-3 text-sm text-gray-700 border-r border-gray-200 text-center">
+                              {ca.score ?? "—"}
+                            </td>
+                          ))}
+                          <td className="py-3 px-3 text-sm text-gray-700 border-r border-gray-200 text-center">{student.caScore}</td>
+                          <td className="py-3 px-3 text-sm text-gray-700 border-r border-gray-200 text-center">{student.examScore ?? "—"}</td>
+                          <td className="py-3 px-3 text-sm font-semibold text-[#8000BD] border-r border-gray-200 text-center">{student.total}</td>
+                          <td className="py-3 px-3 text-sm font-semibold text-gray-800 border-r border-gray-200 text-center">{student.grade}</td>
+                          <td className="py-3 px-3 text-sm text-gray-500">{student.remarks}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="px-6 py-3 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
                   <p className="text-sm text-gray-500">
-                    Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} of {totalCount}
+                    Showing {students.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} of {totalCount}
                   </p>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40"
+                      className="p-2 rounded border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
@@ -188,7 +168,7 @@ export default function ViewTeacherResultTab() {
                         <button
                           key={p}
                           onClick={() => setPage(p as number)}
-                          className={`w-8 h-8 rounded-lg text-sm font-medium ${page === p ? "bg-[#8000BD] text-white" : "border border-gray-300 hover:bg-gray-50"}`}
+                          className={`w-8 h-8 rounded text-sm font-medium ${page === p ? "bg-[#8000BD] text-white" : "border border-gray-300 hover:bg-gray-50"}`}
                         >
                           {p}
                         </button>
@@ -197,19 +177,18 @@ export default function ViewTeacherResultTab() {
                     <button
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
-                      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40"
+                      className="p-2 rounded border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
-              )}
+              </div>
             </motion.div>
           )}
         </>
       )}
 
-      {isPrintModalOpen && <Print onClose={() => setIsPrintModalOpen(false)} />}
     </div>
   );
 }

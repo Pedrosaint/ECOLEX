@@ -2,6 +2,8 @@ import { SlArrowDown } from "react-icons/sl";
 import ViewBroadsheet from "./view-broadsheet";
 import ViewPendingResult from "./view-pending-result";
 import ViewApprovedResult from "./view-approved-result";
+import ViewRejectedResult from "./view-rejected-result";
+import ViewRestoreResult from "./view-restore-result";
 import ViewPromotion from "./view-promotion";
 import ViewRepeatStudents from "./view-repeat-students";
 import CustomizeCANaming from "./customize-ca-naming";
@@ -19,6 +21,10 @@ export default function ManageBroadSheet() {
         return <ViewPendingResult />;
       case "Approved Result":
         return <ViewApprovedResult />;
+      case "Rejected Result":
+        return <ViewRejectedResult />;
+      case "Restore Result":
+        return <ViewRestoreResult />;
       case "Promotion":
         return <ViewPromotion />;
       case "Repeat Students":

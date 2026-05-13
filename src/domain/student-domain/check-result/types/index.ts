@@ -1,32 +1,30 @@
-export interface StudentSubjectResult {
+export interface StudentSession {
+  id: number;
+  name: string;
+  isActive: boolean;
+}
+
+export interface GetStudentSessionsResponse {
+  success: boolean;
+  data: StudentSession[];
+}
+
+export interface SubjectResult {
+  sn: number;
   subject: string;
-  ca1: number;
-  ca2: number;
-  ca3: number;
-  caTotal: number;
+  cas: number[];
   exam: number;
   total: number;
   grade: string;
-  remark: string;
-  position?: number | null;
-}
-
-export interface StudentResultData {
-  studentName: string;
-  registrationNumber: string;
-  className: string;
-  sessionName: string;
-  termName: string;
-  results: StudentSubjectResult[];
-  grandTotal: number;
-  overallPosition?: number | null;
+  classAvg: number;
+  position: number;
 }
 
 export interface GetStudentResultsResponse {
   success: boolean;
-  data: StudentResultData;
+  data: SubjectResult[];
 }
 
 export interface GetStudentResultsParams {
-  termId: number;
+  academicSessionId: number;
 }

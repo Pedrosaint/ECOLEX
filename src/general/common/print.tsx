@@ -84,7 +84,10 @@ const Print = ({ onClose }: { onClose: () => void }) => {
 
         {/* Buttons */}
         <div className="p-6 flex items-center justify-end space-x-3 mt-70">
-          <button className="px-8 py-2 bg-[#8000BD] text-white rounded-full text-sm font-medium hover:bg-purple-700 transition-colors cursor-pointer">
+          <button
+            onClick={() => { onClose(); setTimeout(() => window.print(), 100); }}
+            className="px-8 py-2 bg-[#8000BD] text-white rounded-full text-sm font-medium hover:bg-purple-700 transition-colors cursor-pointer"
+          >
             Print
           </button>
           <button

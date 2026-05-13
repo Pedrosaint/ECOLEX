@@ -10,6 +10,11 @@ export interface StudentMetricsData {
       name: string;
     };
   };
+  currentTerm: {
+    id: number;
+    name: string;
+    resumptionDate: string;
+  } | null;
   stats: {
     totalSchoolFee: number;
     totalStudentsInClass: number;

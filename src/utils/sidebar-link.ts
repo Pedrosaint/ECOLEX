@@ -58,6 +58,6 @@ export const staffNavLinks: NavLink[] = [
   {
     path: "/staff/view-class-results",
     icon: BookOpen,
-    label: "View Class Results",
+    label: "View Class Broadsheet",
   },
 ];

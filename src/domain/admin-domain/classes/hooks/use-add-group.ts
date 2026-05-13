@@ -42,12 +42,10 @@ export function useAddGroup() {
 
   const classOptions: DropdownOption[] = [
     { value: "", label: "Select Class" },
-    ...(data?.classes
-      ?.filter((c: any) => c.classGroups?.length === 0)
-      ?.map((c: any) => ({
-        value: String(c.id),
-        label: c.name,
-      })) || []),
+    ...(data?.classes?.map((c: any) => ({
+      value: String(c.id),
+      label: c.name,
+    })) || []),
   ];
 
   const getSelectedLabel = (

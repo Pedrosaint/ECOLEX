@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetSessionsQuery } from "../../overview/hooks";
 import { useGetClassesQuery } from "../../classes/hooks";
-import { useGetClassSubjectsQuery } from "../../manage-subject/hooks";
+import { useGetAllSubjectQuery } from "../../manage-subject/hooks";
 import { useGetAllStaffQuery } from "../../staff/hooks";
-import { useGetCampusQuery } from "../../campus/hooks";
 import type { TeacherSearchParams } from "../types";
 
 interface UseSearchTeachersProps {
@@ -14,28 +12,19 @@ interface UseSearchTeachersProps {
 
 export function useSearchTeachers({ onSearch, isSearching }: UseSearchTeachersProps) {
   const [sessionId, setSessionId] = useState("");
-  const [termId, setTermId] = useState("");
   const [staffId, setStaffId] = useState("");
-  const [classId, setClassId] = useState("");
   const [subjectId, setSubjectId] = useState("");
-  const [campusId, setCampusId] = useState("");
+  const [classId, setClassId] = useState("");
 
   const { data: sessionsData, isLoading: sessionsLoading } = useGetSessionsQuery();
   const { data: classesData, isLoading: classesLoading } = useGetClassesQuery();
   const { data: staffData, isLoading: staffLoading } = useGetAllStaffQuery({ pageSize: 200 });
-  const { data: subjectsData, isLoading: subjectsLoading } = useGetClassSubjectsQuery(
-    classId ? Number(classId) : skipToken
-  );
-  const { data: campusesData, isLoading: campusesLoading } = useGetCampusQuery();
+  const { data: subjectsData, isLoading: subjectsLoading } = useGetAllSubjectQuery();
 
-  const selectedSession = (sessionsData?.data ?? []).find((s) => s.id === Number(sessionId));
-  const terms = selectedSession?.terms ?? [];
-  const subjects = subjectsData?.data?.subjects ?? [];
-  const campuses = campusesData?.campuses ?? [];
-  const canSearch = !!(sessionId && termId && staffId && classId && subjectId && campusId);
+  const subjects = subjectsData?.subjects ?? [];
+  const canSearch = !!(sessionId && staffId && subjectId && classId);
 
-  const handleSessionChange = (val: string) => { setSessionId(val); setTermId(""); };
-  const handleClassChange = (val: string) => { setClassId(val); setSubjectId(""); };
+  const handleSessionChange = (val: string) => setSessionId(val);
 
   const handleSearch = () => {
     if (!canSearch) return;
@@ -44,22 +33,19 @@ export function useSearchTeachers({ onSearch, isSearching }: UseSearchTeachersPr
       classId: Number(classId),
       subjectId: Number(subjectId),
       academicSessionId: Number(sessionId),
-      termId: Number(termId),
-      campusId: Number(campusId),
     });
   };
 
   return {
-    sessionId, termId, setTermId,
+    sessionId,
     staffId, setStaffId,
-    classId, subjectId, setSubjectId,
-    campusId, setCampusId,
+    subjectId, setSubjectId,
+    classId, setClassId,
     sessionsData, sessionsLoading,
     classesData, classesLoading,
     staffData, staffLoading,
     subjectsLoading, subjects,
-    campusesLoading, campuses,
-    terms, canSearch, isSearching,
-    handleSessionChange, handleClassChange, handleSearch,
+    canSearch, isSearching,
+    handleSessionChange, handleSearch,
   };
 }

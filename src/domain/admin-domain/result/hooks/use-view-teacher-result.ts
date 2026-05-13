@@ -8,15 +8,16 @@ const PAGE_SIZE = 10;
 export function useViewTeacherResult() {
   const [searchParams, setSearchParams] = useState<TeacherSearchParams | null>(null);
   const [page, setPage] = useState(1);
-  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
   const { data, isFetching, isError } = useGetTeacherResultQuery(
-    searchParams ? { ...searchParams, page } : skipToken
+    searchParams ? { ...searchParams, page } : skipToken,
+    { refetchOnMountOrArgChange: true }
   );
 
-  const staffArray = data?.data?.data ?? [];
+  const teacherInformation = data?.data?.teacherInformation ?? null;
+  const students = data?.data?.students ?? [];
   const totalCount = data?.data?.pagination?.totalCount ?? 0;
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const totalPages = Math.max(1, data?.data?.pagination?.totalPages ?? 1);
 
   const handleSearch = (params: TeacherSearchParams) => {
     setSearchParams(params);
@@ -40,8 +41,7 @@ export function useViewTeacherResult() {
   return {
     searchParams,
     page, setPage,
-    isPrintModalOpen, setIsPrintModalOpen,
-    staffArray, totalCount, totalPages, PAGE_SIZE,
+    teacherInformation, students, totalCount, totalPages, PAGE_SIZE,
     isFetching, isError,
     handleSearch, renderPageButtons,
   };

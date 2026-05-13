@@ -20,7 +20,7 @@ export function useRemarkScheme() {
   const [rules, setRules] = useState<RemarkRuleRow[]>(DEFAULT_RULES);
 
   const { data: schemesData, isLoading: loadingSchemes } = useGetRemarkSchemesQuery();
-  const schemes = schemesData?.data ?? [];
+  const schemes = schemesData?.data ? [schemesData.data] : [];
 
   const [createRemarkScheme, { isLoading: isSaving }] = useCreateRemarkSchemeMutation();
 

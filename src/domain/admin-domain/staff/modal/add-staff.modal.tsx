@@ -247,6 +247,26 @@ export default function AddStaffFormModal({
                 className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200"
               />
             </div>
+
+            {/* Gender */}
+            <div className="flex flex-col">
+              <label htmlFor="gender" className="text-sm font-medium mb-1">
+                Gender
+              </label>
+              <div className="relative">
+                <select
+                  id="gender"
+                  value={formData.gender}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, gender: e.target.value }))}
+                  className="h-10 w-full rounded-md border-2 px-3 py-2 text-sm outline-none border-gray-200 appearance-none pr-8"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

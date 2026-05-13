@@ -84,7 +84,7 @@ export function useListOfStaff() {
       page: 1,
       pageSize: 9,
     });
-    setShowTable(false);
+    setShowTable(true);
   };
 
   const handlePageChange = (newPage: number) => {

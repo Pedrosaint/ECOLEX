@@ -14,3 +14,4 @@ export { useAddNotice } from './use-add-notice';
 export { useViewNotice } from './use-view-notice';
 export { useUpcomingExamModal } from './use-upcoming-exam-modal';
 export { useOverview } from './use-overview';
+export { useResultStatusChart } from './use-result-status-chart';

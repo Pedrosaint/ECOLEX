@@ -8,4 +8,5 @@ export interface CreateStaffRequest {
   dateEmployed: string;
   payroll: number;
   campusId: number;
+  gender: string;
 }

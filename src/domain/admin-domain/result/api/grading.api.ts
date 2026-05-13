@@ -71,8 +71,8 @@ export const gradingApi = createApi({
     }),
 
     getTeacherResult: builder.query<GetTeacherResultResponse, GetTeacherResultParams>({
-      query: ({ staffId, classId, subjectId, academicSessionId, termId, campusId, page = 1 }) => ({
-        url: `admin/result/teacher?staffId=${staffId}&classId=${classId}&subjectId=${subjectId}&academicSessionId=${academicSessionId}&termId=${termId}&campusId=${campusId}&page=${page}`,
+      query: ({ staffId, classId, subjectId, academicSessionId, page = 1 }) => ({
+        url: `admin/result/teacher?staffId=${staffId}&classId=${classId}&subjectId=${subjectId}&academicSessionId=${academicSessionId}&page=${page}`,
         method: "GET",
       }),
     }),
@@ -94,6 +94,14 @@ export const gradingApi = createApi({
         url: "admin/results/reject",
         method: "POST",
         body,
+      }),
+      invalidatesTags: ["Results"],
+    }),
+
+    rejectSubmission: builder.mutation<RejectResultsResponse, { id: number }>({
+      query: ({ id }) => ({
+        url: `admin/results/submissions/${id}/reject`,
+        method: "DELETE",
       }),
       invalidatesTags: ["Results"],
     }),
@@ -123,6 +131,7 @@ export const {
   useGetTeacherResultQuery,
   useGetPendingSubmissionsQuery,
   useRejectResultsMutation,
+  useRejectSubmissionMutation,
   useGetRemarkSchemesQuery,
   useCreateRemarkSchemeMutation,
 } = gradingApi;

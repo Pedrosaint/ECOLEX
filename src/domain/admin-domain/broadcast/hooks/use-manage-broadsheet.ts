@@ -8,10 +8,12 @@ export function useManageBroadsheet() {
     "View Broadsheet",
     "Pending Result",
     "Approved Result",
-    "Promotion",
-    "Repeat Students",
-    "Customize CA Naming",
-    "Class Teacher Remark Access",
+    "Rejected Result",
+    "Restore Result",
+    // "Promotion",
+    // "Repeat Students",
+    // "Customize CA Naming",
+    // "Class Teacher Remark Access",
   ];
 
   const selectTab = (tab: string) => {

@@ -4,6 +4,7 @@ import { StatsCardSkeleton } from "../../../../general/ui/skeleton-loader.ui";
 import { useOverview } from "../hooks";
 import SessionTermSetup from "../components/current-academy-info";
 import StudentsChart from "../components/students";
+import ResultStatusChart from "../components/result-status-chart";
 import UpcomingExams from "../components/upcoming-exam";
 import NoticeBoard from "../components/notice-board";
 import CustomCalendar from "../components/custom-calender";
@@ -38,9 +39,9 @@ export default function Overview() {
         </motion.div>
       )}
 
-      {/* ── Row 2: Session/Term Setup (2/3) + Students Chart (1/3) ── */}
+      {/* ── Row 2: Session/Term Setup (2/3) + Students Chart + Results Chart ── */}
       <motion.div
-        className="grid grid-cols-1 lg:grid-cols-3 gap-5"
+        className="grid grid-cols-1 lg:grid-cols-4 gap-5"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}
@@ -55,6 +56,9 @@ export default function Overview() {
             girls={stats?.students.girls ?? 0}
             isLoading={isLoading}
           />
+        </div>
+        <div>
+          <ResultStatusChart />
         </div>
       </motion.div>
 

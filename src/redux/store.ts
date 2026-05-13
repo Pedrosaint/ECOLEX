@@ -54,6 +54,7 @@ import { teacherOverviewApi } from "../domain/teachers-domain/overview/api/teach
 import { adminOverviewApi } from "../domain/admin-domain/overview/api/admin-overview.api";
 import { studentResultApi } from "../domain/student-domain/check-result/api/student-result.api";
 import { studentDashboardApi } from "../domain/student-domain/dashboard/api/student-dashboard.api";
+import { broadsheetApi } from "../domain/admin-domain/broadcast/api/broadsheet.api";
 
 // Persist config for school slice only
 const schoolSetupPersistConfig = {
@@ -85,6 +86,7 @@ export const store = configureStore({
     [adminOverviewApi.reducerPath]: adminOverviewApi.reducer,
     [studentResultApi.reducerPath]: studentResultApi.reducer,
     [studentDashboardApi.reducerPath]: studentDashboardApi.reducer,
+    [broadsheetApi.reducerPath]: broadsheetApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -110,6 +112,7 @@ export const store = configureStore({
       adminOverviewApi.middleware,
       studentResultApi.middleware,
       studentDashboardApi.middleware,
+      broadsheetApi.middleware,
     ]),
 });
 

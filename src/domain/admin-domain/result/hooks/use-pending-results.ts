@@ -5,7 +5,7 @@ import { useGetSessionsQuery } from "../../overview/hooks";
 import { useGetClassesQuery } from "../../classes/hooks";
 import { useGetClassSubjectsQuery } from "../../manage-subject/hooks";
 import { useGetCampusQuery } from "../../campus/hooks";
-import { useGetPendingSubmissionsQuery, usePublishResultsMutation, useRejectResultsMutation } from "../api/grading.api";
+import { useGetPendingSubmissionsQuery, usePublishResultsMutation, useRejectSubmissionMutation } from "../api/grading.api";
 import type { PendingSubmission } from "../types";
 
 export function usePendingResults() {
@@ -28,7 +28,7 @@ export function usePendingResults() {
     skip: !hasLoaded,
   });
   const [publishResults] = usePublishResultsMutation();
-  const [rejectResults] = useRejectResultsMutation();
+  const [rejectSubmission] = useRejectSubmissionMutation();
 
   const sessions = sessionsData?.data ?? [];
   const terms = sessions.find((s) => s.id === Number(sessionId))?.terms ?? [];
@@ -85,11 +85,7 @@ export function usePendingResults() {
   const handleReject = async (sub: PendingSubmission) => {
     setActioningId(sub.id);
     try {
-      await rejectResults({
-        classId: sub.class.id,
-        subjectId: sub.subject.id,
-        academicSessionId: sub.academicSession.id,
-      }).unwrap();
+      await rejectSubmission({ id: sub.id }).unwrap();
       toast.success("Result rejected successfully.");
       refetch();
     } catch {

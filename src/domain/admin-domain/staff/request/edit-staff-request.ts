@@ -8,4 +8,5 @@ export interface EditStaffRequest {
   dateEmployed?: string | null;
   payroll: number;
   campusId: number;
+  gender: string;
 }

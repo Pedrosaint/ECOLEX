@@ -14,13 +14,6 @@ export function useStudentDashboard() {
 
   const { data: metricsData, isLoading } = useGetStudentMetricsQuery();
 
-  const adminCards: Array<StatsCardProps> = [
-    { title: "Total Students", value: "1,200", isPrimary: true },
-    { title: "Staff", value: "60" },
-    { title: "Campuses", value: "100", isPrimary: true },
-    { title: "Revenue", value: "N5,000,000" },
-  ];
-
   useEffect(() => {
     if (!isLoading && metricsData?.data) {
       const stats = metricsData.data.stats;
@@ -55,5 +48,8 @@ export function useStudentDashboard() {
     }
   }, [metricsData, isLoading]);
 
-  return { loading, cardsToShow };
+  const currentTerm = metricsData?.data?.currentTerm ?? null;
+  const student = metricsData?.data?.student ?? null;
+
+  return { loading, cardsToShow, currentTerm, student };
 }

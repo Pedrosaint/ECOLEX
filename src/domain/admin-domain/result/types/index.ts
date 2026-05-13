@@ -178,30 +178,47 @@ export interface PublishResultsResponse {
   };
 }
 
-export interface TeacherResultAssignment {
-  classId: number;
-  className: string;
-  subjectId: number;
-  subjectName: string;
+export interface TeacherCAScore {
+  name: string;
+  score: number | null;
 }
 
-export interface TeacherResultStaff {
-  staffId: number;
-  staffName: string;
+export interface TeacherStudentResult {
   registrationNumber: string;
-  assignments: TeacherResultAssignment[];
+  studentName: string;
+  cas: TeacherCAScore[];
+  caScore: number;
+  examScore: number | null;
+  total: number;
+  grade: string;
+  remarks: string;
+}
+
+export interface TeacherInformation {
+  name: string;
+  registrationNumber: string;
+  gender: string | null;
+  subject: string;
+  subjectCode: string;
+  class: string;
+  campus: string;
+  session: string;
+  academicYear: string;
+  term: string;
+  dateSubmitted: string | null;
 }
 
 export interface GetTeacherResultResponse {
   success: boolean;
   data: {
+    teacherInformation: TeacherInformation;
+    students: TeacherStudentResult[];
     pagination: {
       page: number;
       pageSize: number;
       totalCount: number;
       totalPages: number;
     };
-    data: TeacherResultStaff[];
   };
 }
 
@@ -210,8 +227,6 @@ export interface GetTeacherResultParams {
   classId: number;
   subjectId: number;
   academicSessionId: number;
-  termId: number;
-  campusId: number;
   page?: number;
 }
 
@@ -284,7 +299,7 @@ export interface CreateRemarkSchemeResponse {
 
 export interface GetRemarkSchemesResponse {
   success: boolean;
-  data: RemarkScheme[];
+  data: RemarkScheme;
 }
 
 export interface GradeRow {
@@ -313,6 +328,4 @@ export interface TeacherSearchParams {
   classId: number;
   subjectId: number;
   academicSessionId: number;
-  termId: number;
-  campusId: number;
 }

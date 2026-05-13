@@ -70,9 +70,24 @@ export function useSearchStaffComp({
   const dropdownRef = useRef({ campusId, duty });
   useEffect(() => { dropdownRef.current = { campusId, duty }; }, [campusId, duty]);
 
-  // Debounce: fire search 400ms after the user stops typing
+  // Track whether a search has been fired so clearing on initial render is a no-op
+  const hasSearchedRef = useRef(false);
+
+  // Debounce: fire search 400ms after the user stops typing; clear when emptied
   useEffect(() => {
-    if (!searchName.trim()) return;
+    if (!searchName.trim()) {
+      if (!hasSearchedRef.current) return;
+      if (!dropdownRef.current.campusId && !dropdownRef.current.duty) {
+        onClearFilters();
+      } else {
+        onDisplayStaff({
+          campusId: dropdownRef.current.campusId || undefined,
+          duty: dropdownRef.current.duty || undefined,
+        });
+      }
+      return;
+    }
+    hasSearchedRef.current = true;
     const timer = setTimeout(() => {
       onDisplayStaff({
         campusId: dropdownRef.current.campusId || undefined,

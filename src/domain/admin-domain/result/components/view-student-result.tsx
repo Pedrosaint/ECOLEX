@@ -7,19 +7,25 @@ import passport from "../../../../assets/image/passport.png";
 import EmptyBroadsheet from "../../../../assets/image/classResult.png";
 import type { StudentResultData } from "../types";
 
+const SERVER_BASE = (import.meta.env.VITE_API_BASE_URL as string).replace(/\/$/, "");
+
 const StudentBlock = ({ result }: { result: StudentResultData }) => {
   const { studentInformation: info, academicInfo, subjects, performanceSummary, teacherRemark, schoolRecommendationDate } = result;
 
   const maxCAs = Math.max(...subjects.map((s) => s.cas.length), 0);
   const caHeaders = Array.from({ length: maxCAs }, (_, i) => `CA ${i + 1}`);
 
+  const passportSrc = info.passportUrl
+    ? `${SERVER_BASE}${info.passportUrl}`
+    : passport;
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       {/* Student Info Header */}
-      <div className="md:flex md:justify-between items-start bg-[#e6e7e8] border-b border-[#D1D1D1] p-5 rounded-t-2xl gap-6">
-        <div className="flex-1">
+      <div className="flex justify-between items-start bg-[#e6e7e8] border-b border-[#D1D1D1] p-5 rounded-t-2xl gap-6">
+        <div>
           <h1 className="text-xl font-semibold text-gray-800 mb-4">Student Information</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 text-sm text-gray-600">
+          <div className="space-y-1 text-sm text-gray-600">
             <div><span className="font-medium">Name:</span> {info.surname} {info.name} {info.otherNames}</div>
             <div><span className="font-medium">Reg. Number:</span> {info.registrationNumber}</div>
             <div><span className="font-medium">Class:</span> {info.className}</div>
@@ -31,9 +37,10 @@ const StudentBlock = ({ result }: { result: StudentResultData }) => {
           </div>
         </div>
 
-        <div className="w-28 h-28 bg-pink-200 rounded-lg overflow-hidden flex-shrink-0 mt-4 md:mt-0">
+        <div className="w-28 h-28 bg-pink-200 rounded-lg overflow-hidden flex-shrink-0">
           <img
-            src={info.passportUrl ?? passport}
+            src={passportSrc}
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = passport; }}
             className="w-full h-full object-cover"
             alt="passport"
           />

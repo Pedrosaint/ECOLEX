@@ -21,6 +21,7 @@ export function useAddStaff({ onClose }: UseAddStaffProps) {
     dateEmployed: "",
     payroll: "",
     campusId: "",
+    gender: "",
   });
 
   const [createStaff, { isLoading }] = useCreateStaffMutation();
@@ -69,6 +70,7 @@ export function useAddStaff({ onClose }: UseAddStaffProps) {
         dateEmployed: "",
         payroll: "",
         campusId: "",
+        gender: "",
       });
 
       onClose();

@@ -142,6 +142,15 @@ export default function ViewStaffModal({
                     {data.staff.phoneNumber}
                   </div>
                 </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Gender
+                  </label>
+                  <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+                    {data.staff.gender || "—"}
+                  </div>
+                </div>
               </div>
             </>
           )}

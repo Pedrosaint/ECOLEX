@@ -29,6 +29,7 @@ export function useEditStaff({ onClose, staffId, initialData }: UseEditStaffProp
     phoneNumber: initialData?.phoneNumber || "",
     nextOfKin: initialData?.nextOfKin || "",
     campusId: initialData?.campusId || "",
+    gender: initialData?.gender || "",
   });
 
   const { data } = useGetCampusQuery();

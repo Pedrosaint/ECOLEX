@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, SearchX } from "lucide-react";
+import { ChevronLeft, ChevronRight, XCircle } from "lucide-react";
 import { useGetResultsByStatusQuery } from "../api/broadsheet.api";
 
 const PAGE_SIZE = 10;
 
-export default function ViewApprovedResult() {
+export default function ViewRejectedResult() {
   const [page, setPage] = useState(1);
 
-  const { data, isFetching, isError } = useGetResultsByStatusQuery({ status: "published" });
+  const { data, isFetching, isError } = useGetResultsByStatusQuery({ status: "rejected" });
 
   const allResults = data?.data ?? [];
   const totalPages = Math.ceil(allResults.length / PAGE_SIZE);
@@ -24,31 +24,36 @@ export default function ViewApprovedResult() {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {isFetching ? (
-        <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 flex items-center justify-center">
+        <div className="mt-6 bg-white rounded shadow-sm border border-gray-200 p-10 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3 text-gray-400">
             <div className="w-8 h-8 border-4 border-[#8000BD] border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm">Loading published results...</p>
+            <p className="text-sm">Loading rejected results...</p>
           </div>
         </div>
       ) : isError || !data?.success ? (
-        <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 flex flex-col items-center justify-center text-center">
-          <div className="bg-gray-50 p-4 rounded-full mb-4">
-            <SearchX className="h-8 w-8 text-gray-400" />
+        <div className="mt-6 bg-white rounded shadow-sm border border-gray-200 p-14 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
+            <XCircle className="h-8 w-8 text-red-400" />
           </div>
-          <h3 className="text-base font-semibold text-gray-900 mb-1">Failed to Load</h3>
-          <p className="text-sm text-gray-500">Could not fetch published results. Please try again.</p>
+          <h3 className="text-base font-semibold text-gray-800 mb-1">Failed to Load</h3>
+          <p className="text-sm text-gray-400 max-w-xs">Could not fetch rejected results. Please try again later.</p>
         </div>
       ) : allResults.length === 0 ? (
-        <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-10 flex flex-col items-center justify-center text-center">
-          <div className="bg-gray-50 p-4 rounded-full mb-4">
-            <SearchX className="h-8 w-8 text-gray-400" />
+        <div className="mt-6 bg-white rounded shadow-sm border border-gray-200 p-14 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
+            <XCircle className="h-8 w-8 text-red-400" />
           </div>
-          <p className="text-sm text-gray-500">No published results found.</p>
+          <h3 className="text-base font-semibold text-gray-800 mb-1">No Rejected Results</h3>
+          <p className="text-sm text-gray-400 max-w-xs">
+            There are currently no results with a rejected status.
+          </p>
         </div>
       ) : (
         <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden mt-6">
-          <div className="px-5 py-4 border-b border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-800">Published Results</h2>
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-red-400" />
+            <h2 className="text-sm font-semibold text-gray-800">Rejected Results</h2>
+            <span className="ml-auto text-xs text-gray-400 font-medium">{allResults.length} record{allResults.length !== 1 ? "s" : ""}</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -60,8 +65,8 @@ export default function ViewApprovedResult() {
                   <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-left">Term</th>
                   <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-left">Subject</th>
                   <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-left">Class</th>
-                  <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-left">Published By</th>
-                  <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider text-center">Published At</th>
+                  <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 text-left">Rejected By</th>
+                  <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider text-center">Rejected At</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">

@@ -23,7 +23,8 @@ export default function RemarkSchemeTab() {
   return (
     <div className="space-y-6">
       <div className="bg-[#F4A300] text-white p-3 rounded text-sm text-center">
-        Each remark will automatically include the student's name when displayed on their result sheet.
+        Each remark will automatically include the student's name when displayed
+        on their result sheet.
       </div>
 
       {/* Existing Schemes */}
@@ -31,9 +32,11 @@ export default function RemarkSchemeTab() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-white rounded shadow-sm border border-gray-200 p-5"
+        className="bg-white rounded shadow-sm border border-gray-200 p-5 max-w-3xl"
       >
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Existing Remark Schemes</h2>
+        <h2 className="text-base font-semibold text-gray-900 mb-4">
+          Existing Remark Schemes
+        </h2>
 
         {loadingSchemes ? (
           <div className="space-y-2">
@@ -42,20 +45,37 @@ export default function RemarkSchemeTab() {
             ))}
           </div>
         ) : schemes.length === 0 ? (
-          <p className="text-sm text-gray-400 italic">No remark schemes created yet.</p>
+          <p className="text-sm text-gray-400 italic">
+            No remark schemes created yet.
+          </p>
         ) : (
           <div className="space-y-2">
             {schemes.map((scheme) => (
-              <div key={scheme.id} className="border border-gray-200 rounded-lg overflow-hidden">
+              <div
+                key={scheme.id}
+                className="border border-gray-200 rounded-lg overflow-hidden"
+              >
                 <button
                   type="button"
-                  onClick={() => setExpandedScheme(expandedScheme === scheme.id ? null : scheme.id)}
+                  onClick={() =>
+                    setExpandedScheme(
+                      expandedScheme === scheme.id ? null : scheme.id,
+                    )
+                  }
                   className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-gray-800">{scheme.name}</span>
-                    <span className="text-xs text-gray-400">{scheme.rules.length} rule{scheme.rules.length !== 1 ? "s" : ""}</span>
-                    <span className="text-xs text-gray-400">· Created {new Date(scheme.createdAt).toLocaleDateString()}</span>
+                    <span className="text-sm font-semibold text-gray-800">
+                      {scheme.name}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {scheme.rules.length} rule
+                      {scheme.rules.length !== 1 ? "s" : ""}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      · Created{" "}
+                      {new Date(scheme.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                   {expandedScheme === scheme.id ? (
                     <ChevronDown size={15} className="text-gray-400" />
@@ -70,7 +90,10 @@ export default function RemarkSchemeTab() {
                       <thead className="bg-[#EDF9FD] border-b border-gray-200">
                         <tr>
                           {["Min Score", "Max Score", "Remark"].map((h) => (
-                            <th key={h} className="py-2 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider text-left border-r last:border-r-0 border-gray-200">
+                            <th
+                              key={h}
+                              className="py-2 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider text-left border-r last:border-r-0 border-gray-200"
+                            >
                               {h}
                             </th>
                           ))}
@@ -79,9 +102,15 @@ export default function RemarkSchemeTab() {
                       <tbody className="divide-y divide-gray-100">
                         {scheme.rules.map((rule) => (
                           <tr key={rule.id} className="hover:bg-gray-50">
-                            <td className="py-2 px-4 text-sm text-gray-700 border-r border-gray-200 w-28">{rule.minScore}</td>
-                            <td className="py-2 px-4 text-sm text-gray-700 border-r border-gray-200 w-28">{rule.maxScore}</td>
-                            <td className="py-2 px-4 text-sm text-gray-600">{rule.remark}</td>
+                            <td className="py-2 px-4 text-sm text-gray-700 border-r border-gray-200 w-28">
+                              {rule.minScore}
+                            </td>
+                            <td className="py-2 px-4 text-sm text-gray-700 border-r border-gray-200 w-28">
+                              {rule.maxScore}
+                            </td>
+                            <td className="py-2 px-4 text-sm text-gray-600">
+                              {rule.remark}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -99,9 +128,11 @@ export default function RemarkSchemeTab() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden p-5"
+        className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden p-5 max-w-3xl"
       >
-        <h2 className="text-base font-semibold text-gray-900 mb-5">Create New Remark Scheme</h2>
+        <h2 className="text-base font-semibold text-gray-900 mb-5">
+          Create New Remark Scheme
+        </h2>
 
         {/* Scheme Name */}
         <div className="mb-6 max-w-sm">
@@ -139,7 +170,9 @@ export default function RemarkSchemeTab() {
                     <input
                       type="number"
                       value={rule.minScore}
-                      onChange={(e) => updateRule(index, "minScore", e.target.value)}
+                      onChange={(e) =>
+                        updateRule(index, "minScore", e.target.value)
+                      }
                       placeholder="0"
                       className="w-20 p-2 border border-gray-300 rounded text-center text-sm"
                     />
@@ -148,7 +181,9 @@ export default function RemarkSchemeTab() {
                     <input
                       type="number"
                       value={rule.maxScore}
-                      onChange={(e) => updateRule(index, "maxScore", e.target.value)}
+                      onChange={(e) =>
+                        updateRule(index, "maxScore", e.target.value)
+                      }
                       placeholder="100"
                       className="w-20 p-2 border border-gray-300 rounded text-center text-sm"
                     />
@@ -157,7 +192,9 @@ export default function RemarkSchemeTab() {
                     <input
                       type="text"
                       value={rule.remark}
-                      onChange={(e) => updateRule(index, "remark", e.target.value)}
+                      onChange={(e) =>
+                        updateRule(index, "remark", e.target.value)
+                      }
                       placeholder="demonstrates excellent performance..."
                       className="w-full p-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#4B0082]"
                     />
@@ -193,8 +230,10 @@ export default function RemarkSchemeTab() {
           <button
             onClick={handleSubmit}
             disabled={isSaving}
-            className={`w-full max-w-lg bg-[#4B0082] text-white px-6 py-3 rounded-md text-base font-medium transition-colors ${
-              isSaving ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:bg-[#3a0066]"
+            className={`w-80 bg-[#4B0082] text-white px-6 py-3 rounded-md text-base font-medium transition-colors ${
+              isSaving
+                ? "opacity-60 cursor-not-allowed"
+                : "cursor-pointer hover:bg-[#3a0066]"
             }`}
           >
             {isSaving ? "Saving..." : "Save Remark Scheme"}

@@ -6,6 +6,11 @@ body {
 
 }
 
+select,
+select option {
+  color: #111827;
+}
+
 .font-poppins {
   font-family: 'Poppins', sans-serif;
 }
