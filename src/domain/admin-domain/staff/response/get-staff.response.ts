@@ -48,4 +48,5 @@ export interface Assignment {
     name: string;
     code: string;
   };
+  campus: { id: number; name: string } | null;
 }

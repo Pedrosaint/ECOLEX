@@ -24,15 +24,16 @@ export default function SearchTeachersComp({ onSearch, isSearching }: Props) {
 
   const {
     sessionId,
-    staffId, setStaffId,
-    subjectId, setSubjectId,
+    staffId,
+    subjectId,
     classId, setClassId,
     sessionsData, sessionsLoading,
-    classesData, classesLoading,
     staffData, staffLoading,
-    subjectsLoading, subjects,
+    staffDetailLoading,
+    teacherSubjects,
+    teacherClasses,
     canSearch,
-    handleSessionChange, handleSearch,
+    handleSessionChange, handleStaffChange, handleSubjectChange, handleSearch,
   } = useSearchTeachers({ onSearch, isSearching });
 
   return (
@@ -71,7 +72,7 @@ export default function SearchTeachersComp({ onSearch, isSearching }: Props) {
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Select Teacher <span className="text-red-500">*</span></label>
               <div className="relative">
-                <select value={staffId} onChange={(e) => setStaffId(e.target.value)} disabled={staffLoading} className={`${selectBase} ${staffId ? "text-gray-900" : "text-gray-400"}`}>
+                <select value={staffId} onChange={(e) => handleStaffChange(e.target.value)} disabled={staffLoading} className={`${selectBase} ${staffId ? "text-gray-900" : "text-gray-400"}`}>
                   <option value="">{staffLoading ? "Loading..." : "Select Teacher"}</option>
                   {(staffData?.staff ?? []).map((s) => <option key={s.id} value={String(s.id)}>{s.name}</option>)}
                 </select>
@@ -79,25 +80,39 @@ export default function SearchTeachersComp({ onSearch, isSearching }: Props) {
               </div>
             </div>
 
-            {/* Subject */}
+            {/* Subject — filtered by teacher's assignments */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Select Subject <span className="text-red-500">*</span></label>
               <div className="relative">
-                <select value={subjectId} onChange={(e) => setSubjectId(e.target.value)} disabled={subjectsLoading} className={`${selectBase} ${subjectId ? "text-gray-900" : "text-gray-400"}`}>
-                  <option value="">{subjectsLoading ? "Loading..." : "Select Subject"}</option>
-                  {subjects.map((s) => <option key={s.id} value={String(s.id)}>{s.name}</option>)}
+                <select
+                  value={subjectId}
+                  onChange={(e) => handleSubjectChange(e.target.value)}
+                  disabled={!staffId || staffDetailLoading}
+                  className={`${selectBase} ${subjectId ? "text-gray-900" : "text-gray-400"} ${!staffId ? "bg-gray-50 cursor-not-allowed" : ""}`}
+                >
+                  <option value="">
+                    {!staffId ? "Select a teacher first" : staffDetailLoading ? "Loading..." : teacherSubjects.length === 0 ? "No subjects assigned" : "Select Subject"}
+                  </option>
+                  {teacherSubjects.map((s) => <option key={s.id} value={String(s.id)}>{s.name}</option>)}
                 </select>
                 {chevron}
               </div>
             </div>
 
-            {/* Class */}
+            {/* Class — filtered by teacher + subject */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Select Class <span className="text-red-500">*</span></label>
               <div className="relative">
-                <select value={classId} onChange={(e) => setClassId(e.target.value)} disabled={classesLoading} className={`${selectBase} ${classId ? "text-gray-900" : "text-gray-400"}`}>
-                  <option value="">{classesLoading ? "Loading..." : "Select Class"}</option>
-                  {(classesData?.classes ?? []).map((c) => <option key={c.id} value={String(c.id)}>{c.name}</option>)}
+                <select
+                  value={classId}
+                  onChange={(e) => setClassId(e.target.value)}
+                  disabled={!subjectId}
+                  className={`${selectBase} ${classId ? "text-gray-900" : "text-gray-400"} ${!subjectId ? "bg-gray-50 cursor-not-allowed" : ""}`}
+                >
+                  <option value="">
+                    {!subjectId ? "Select a subject first" : teacherClasses.length === 0 ? "No classes for this subject" : "Select Class"}
+                  </option>
+                  {teacherClasses.map((c) => <option key={c.id} value={String(c.id)}>{c.name}</option>)}
                 </select>
                 {chevron}
               </div>

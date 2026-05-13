@@ -1,8 +1,7 @@
 import { useState } from "react";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetSessionsQuery } from "../../overview/hooks";
-import { useGetClassesQuery } from "../../classes/hooks";
-import { useGetAllSubjectQuery } from "../../manage-subject/hooks";
-import { useGetAllStaffQuery } from "../../staff/hooks";
+import { useGetAllStaffQuery, useGetStaffQuery } from "../../staff/hooks";
 import type { TeacherSearchParams } from "../types";
 
 interface UseSearchTeachersProps {
@@ -17,14 +16,40 @@ export function useSearchTeachers({ onSearch, isSearching }: UseSearchTeachersPr
   const [classId, setClassId] = useState("");
 
   const { data: sessionsData, isLoading: sessionsLoading } = useGetSessionsQuery();
-  const { data: classesData, isLoading: classesLoading } = useGetClassesQuery();
   const { data: staffData, isLoading: staffLoading } = useGetAllStaffQuery({ pageSize: 200 });
-  const { data: subjectsData, isLoading: subjectsLoading } = useGetAllSubjectQuery();
+  const { data: staffDetail, isLoading: staffDetailLoading } = useGetStaffQuery(
+    staffId ? { id: Number(staffId) } : skipToken
+  );
 
-  const subjects = subjectsData?.subjects ?? [];
+  const assignments = staffDetail?.staff?.assignments ?? [];
+
+  // Unique subjects this teacher is assigned to
+  const teacherSubjects = assignments
+    .map((a) => a.subject)
+    .filter((s, i, arr) => arr.findIndex((x) => x.id === s.id) === i);
+
+  // Classes for this teacher filtered by the selected subject
+  const teacherClasses = subjectId
+    ? assignments
+        .filter((a) => a.subjectId === Number(subjectId))
+        .map((a) => a.class)
+        .filter((c, i, arr) => arr.findIndex((x) => x.id === c.id) === i)
+    : [];
+
   const canSearch = !!(sessionId && staffId && subjectId && classId);
 
   const handleSessionChange = (val: string) => setSessionId(val);
+
+  const handleStaffChange = (val: string) => {
+    setStaffId(val);
+    setSubjectId("");
+    setClassId("");
+  };
+
+  const handleSubjectChange = (val: string) => {
+    setSubjectId(val);
+    setClassId("");
+  };
 
   const handleSearch = () => {
     if (!canSearch) return;
@@ -38,14 +63,15 @@ export function useSearchTeachers({ onSearch, isSearching }: UseSearchTeachersPr
 
   return {
     sessionId,
-    staffId, setStaffId,
-    subjectId, setSubjectId,
+    staffId,
+    subjectId,
     classId, setClassId,
     sessionsData, sessionsLoading,
-    classesData, classesLoading,
     staffData, staffLoading,
-    subjectsLoading, subjects,
+    staffDetailLoading,
+    teacherSubjects,
+    teacherClasses,
     canSearch, isSearching,
-    handleSessionChange, handleSearch,
+    handleSessionChange, handleStaffChange, handleSubjectChange, handleSearch,
   };
 }
