@@ -6,6 +6,12 @@ import { useNavigate } from "react-router-dom";
 
 export default function UsersLogin() {
   const navigate = useNavigate();
+
+  const handleAdminClick = () => {
+    const accountCreated = localStorage.getItem("adminAccountCreated") === "true";
+    navigate(accountCreated ? "/auth/auth-layout/admin-login" : "/auth/auth-layout/super-admin");
+  };
+
   return (
     <>
       <div className="bg-gray-100 h-screen">
@@ -71,7 +77,7 @@ export default function UsersLogin() {
               </div>
 
               <div 
-              onClick={() => navigate("/auth/auth-layout/admin-login")}
+              onClick={handleAdminClick}
               className="relative bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center hover:shadow-md transition-all cursor-pointer overflow-hidden group">
                 {/* Diagonal overlay - now using group-hover */}
                 <div className="absolute inset-0 overflow-hidden">

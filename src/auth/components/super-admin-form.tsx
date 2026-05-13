@@ -60,6 +60,7 @@ export const SuperAdminForm = () => {
 
       dispatch(markTokenAsUsed(data.uniqueKey));
       localStorage.setItem("token", token);
+      localStorage.setItem("adminAccountCreated", "true");
 
       console.log('token:,', token)
       console.log("Response:", response);

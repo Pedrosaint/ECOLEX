@@ -266,6 +266,7 @@ export const AdminLogin = () => {
           : ""
       );
       localStorage.setItem("hasLoggedIn", String(response.data.admin.hasLoggedIn));
+      localStorage.setItem("adminAccountCreated", "true");
 
 
       // Check backend for incomplete setup progress - PASS THE TOKEN
