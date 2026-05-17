@@ -240,14 +240,14 @@ export type TeacherExamTemplatesResponse = TeacherStudentsWithScoresResponse;
 
 export interface TeacherCaTemplatesParams {
   classId: number;
-  classGroupId: number;
-  subjectId?: number;
+  subjectId: number;
+  classGroupId?: number;
 }
 
 export interface TeacherExamTemplatesParams {
   classId: number;
-  classGroupId: number;
-  subjectId?: number;
+  subjectId: number;
+  classGroupId?: number;
 }
 
 export interface TeacherSubjectsByGroupResponse {

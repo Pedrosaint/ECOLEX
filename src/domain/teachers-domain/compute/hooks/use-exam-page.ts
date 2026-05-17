@@ -24,11 +24,13 @@ export function useExamPage() {
   const { data: activeTermData } = useGetActiveTermQuery();
   const { data: subjectsData, isLoading: subjectsLoading } = useGetTeacherSubjectsByGroupQuery();
 
-  const { data: examData, isLoading: examLoading } = useGetTeacherExamTemplatesQuery(
-    isFiltered && classId && subjectId
-      ? { classId, subjectId, ...(classGroupId ? { classGroupId } : {}) }
-      : skipToken
-  );
+  const examArg = (() => {
+    if (!isFiltered || !classId || !subjectId) return skipToken;
+    const a: { classId: number; subjectId: number; classGroupId?: number } = { classId, subjectId };
+    if (classGroupId) a.classGroupId = classGroupId;
+    return a;
+  })();
+  const { data: examData, isLoading: examLoading } = useGetTeacherExamTemplatesQuery(examArg);
   const [submitExamScores, { isLoading: isSubmitting }] = useSubmitExamScoresMutation();
 
   const classes = classesData?.data ?? [];

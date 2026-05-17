@@ -9,7 +9,6 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { GoHomeFill } from "react-icons/go";
-import { SlPlus } from "react-icons/sl";
 import { svgIcons } from "../assets/icon/svg";
 
 interface NavLink {

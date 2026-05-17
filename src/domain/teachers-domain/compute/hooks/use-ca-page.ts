@@ -26,11 +26,13 @@ export function useCaPage() {
 
   const academicSessionId = activeTermData?.data?.activeSession?.id;
 
-  const { data: caData, isLoading: caLoading, error: caError } = useGetTeacherCaTemplatesQuery(
-    isFiltered && classId && subjectId
-      ? { classId, subjectId, ...(classGroupId ? { classGroupId } : {}) }
-      : skipToken
-  );
+  const caArg = (() => {
+    if (!isFiltered || !classId || !subjectId) return skipToken;
+    const a: { classId: number; subjectId: number; classGroupId?: number } = { classId, subjectId };
+    if (classGroupId) a.classGroupId = classGroupId;
+    return a;
+  })();
+  const { data: caData, isLoading: caLoading, error: caError } = useGetTeacherCaTemplatesQuery(caArg);
   const [submitCaScores, { isLoading: isSubmitting, isSuccess, reset: resetSubmit }] =
     useSubmitCaScoresMutation();
 
