@@ -11,10 +11,14 @@ export default function Sidebar({
   navLinks,
   onClick,
   onLogoutClick,
+  schoolName,
+  schoolLogo,
 }: {
   navLinks: NavLinkItem[];
   onClick?: () => void;
   onLogoutClick?: () => void;
+  schoolName?: string;
+  schoolLogo?: string;
 }) {
 
 
@@ -25,10 +29,18 @@ export default function Sidebar({
           {/* Logo */}
           <div className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="bg-white text-purple-600 px-2 py-1 rounded text-sm font-semibold">
-                logo
-              </div>
-              <span className="text-sm">school name</span>
+              {schoolLogo ? (
+                <img
+                  src={schoolLogo}
+                  alt={schoolName || "School Logo"}
+                  className="w-10 h-10 object-contain rounded bg-white p-1 shrink-0"
+                />
+              ) : (
+                <div className="bg-white text-purple-600 px-2 py-1 rounded text-sm font-semibold shrink-0">
+                  logo
+                </div>
+              )}
+              <span className="text-sm truncate">{schoolName || "school name"}</span>
             </div>
           </div>
 

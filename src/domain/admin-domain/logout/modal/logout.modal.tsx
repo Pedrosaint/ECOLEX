@@ -26,7 +26,7 @@ export default function LogoutModal({ isOpen, onClose, onConfirm, isLoading = fa
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
         isOpen ? "opacity-100" : "opacity-0"
       }`}
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
     >
       {/* Backdrop */}
       <div className="absolute inset-0 backdrop-blur-sm" onClick={onClose} />
@@ -36,14 +36,14 @@ export default function LogoutModal({ isOpen, onClose, onConfirm, isLoading = fa
         className={`relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto transform transition-all duration-300 ${
           isOpen ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
         }`}
-        style={{ boxShadow: "0 25px 50px -12px rgba(106, 0, 161, 0.25)" }}
+        style={{ boxShadow: "0 25px 50px -12px rgba(0,0,0,0.15)" }}
       >
         {/* Header */}
         <div className="p-8 text-center">
           {/* Icon */}
           <div
             className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: "#6a00a1" }}
+            style={{ backgroundColor: "var(--color-secondary)" }}
           >
             <svg
               className="w-8 h-8 text-white"

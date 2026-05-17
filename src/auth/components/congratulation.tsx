@@ -32,6 +32,7 @@ const Congratulation = () => {
               src={congratulation}
               alt="Congratulations illustration"
               className="w-[672px] h-[522px]"
+              loading="lazy"
             />
           </div>
 

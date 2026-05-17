@@ -50,11 +50,11 @@ export const staffNavLinks: NavLink[] = [
     icon: svgIcons.add,
     label: "Compute/Edit  Result",
   },
-  {
-    path: "/staff/result-mark",
-    icon: SlPlus,
-    label: "Teachers Result Remark",
-  },
+  // {
+  //   path: "/staff/result-mark",
+  //   icon: SlPlus,
+  //   label: "Teachers Result Remark",
+  // },
   {
     path: "/staff/view-class-results",
     icon: BookOpen,

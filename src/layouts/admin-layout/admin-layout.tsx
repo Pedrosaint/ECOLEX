@@ -2,6 +2,7 @@ import { navLinks, studentNavLinks, staffNavLinks } from "../../utils/sidebar-li
 import Sidebar from "../admin-layout/sidebar";
 import Header from "../admin-layout/header";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { getSchoolBranding } from "../../utils/school-branding";
 import { useState } from "react";
 import LogoutModal from "../../domain/admin-domain/logout/modal/logout.modal";
 import { toast } from "sonner";
@@ -32,7 +33,14 @@ export default function DashboardLayout() {
    try {
      setIsLoggingOut(true);
      localStorage.clear();
+     // Preserve school branding so the login page still shows the school's identity after logout
+     const brandName   = sessionStorage.getItem("schoolBrandingName");
+     const brandLogo   = sessionStorage.getItem("schoolBrandingLogo");
+     const brandColors = sessionStorage.getItem("schoolBrandingColors");
      sessionStorage.clear();
+     if (brandName)   sessionStorage.setItem("schoolBrandingName",   brandName);
+     if (brandLogo)   sessionStorage.setItem("schoolBrandingLogo",   brandLogo);
+     if (brandColors) sessionStorage.setItem("schoolBrandingColors", brandColors);
 
      // Reset ALL API caches so the next user never sees stale data
      dispatch(authApi.util.resetApiState());
@@ -63,6 +71,7 @@ export default function DashboardLayout() {
   const [showSensitiveData, setShowSensitiveData] = useState(false);
 
   const { pathname } = useLocation();
+  const { schoolName, schoolLogo } = getSchoolBranding();
   const userRole = pathname.startsWith("/admin")
     ? "admin"
     : pathname.startsWith("/student")
@@ -84,7 +93,13 @@ export default function DashboardLayout() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out`}
       >
-        <Sidebar navLinks={linksToShow} onClick={() => setSidebarOpen(false)} onLogoutClick={() => setIsLogoutOpen(true)} />
+        <Sidebar
+            navLinks={linksToShow}
+            onClick={() => setSidebarOpen(false)}
+            onLogoutClick={() => setIsLogoutOpen(true)}
+            schoolName={schoolName ?? undefined}
+            schoolLogo={schoolLogo ?? undefined}
+          />
       </div>
 
       {/* Overlay for mobile */}

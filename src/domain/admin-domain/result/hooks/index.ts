@@ -1,5 +1,8 @@
 export {
+  useGetGradingQuery,
   useCreateGradingMutation,
+  useDeleteGradingMutation,
+  useUpdateGradingMutation,
   useGetAcademicSessionsQuery,
   useGetBroadsheetQuery,
   useGetStudentResultQuery,

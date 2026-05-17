@@ -79,6 +79,14 @@ export const subjectApi = createApi({
       }),
       invalidatesTags: ["Subject"],
     }),
+
+    deleteClassSubject: builder.mutation<{ success: boolean; message: string }, { classId: number; subjectId: number }>({
+      query: ({ classId, subjectId }) => ({
+        url: `admin/class-subject/${classId}/${subjectId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ClassSubject"],
+    }),
   }),
 });
 
@@ -89,4 +97,5 @@ export const {
   useAssignSubjectToClassMutation,
   useGetClassSubjectsQuery,
   useDeleteSubjectMutation,
+  useDeleteClassSubjectMutation,
 } = subjectApi;

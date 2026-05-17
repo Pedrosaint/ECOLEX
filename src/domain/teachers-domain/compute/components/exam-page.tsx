@@ -71,7 +71,7 @@ export default function ExamPage() {
     examTemplates,
     examLoading,
     handleFilter,
-    handleCancel,
+    // handleCancel,
     handleClearFilters,
     hasActiveFilters,
     canFilter,
@@ -95,7 +95,7 @@ export default function ExamPage() {
             {/* Class */}
             <div>
               <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">
-                Select Class
+                Select Class <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
@@ -122,7 +122,7 @@ export default function ExamPage() {
             {/* Group */}
             <div>
               <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">
-                Select Group
+                Select Group <span className="text-gray-400 text-xs font-normal">(Optional)</span>
               </label>
               <div className="relative">
                 <select
@@ -160,13 +160,10 @@ export default function ExamPage() {
               </div>
             </div>
 
-            {/* Subject (Optional) */}
+            {/* Subject */}
             <div>
               <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">
-                Select Subject{" "}
-                <span className="text-gray-400 text-xs font-normal">
-                  (Optional)
-                </span>
+                Select Subject <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
@@ -235,7 +232,7 @@ export default function ExamPage() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="p-6 bg-white border border-gray-200 mt-5"
         >
-          <div className="bg-gray-100 p-4 shadow-sm flex justify-between items-start mb-4">
+          {/* <div className="bg-gray-100 p-4 shadow-sm flex justify-between items-start mb-4">
             <div>
               <p className="text-gray-700 text-sm">
                 Add examination scores for each subject.
@@ -251,36 +248,36 @@ export default function ExamPage() {
             >
               ✕ Cancel
             </button>
-          </div>
+          </div> */}
 
           {examLoading ? (
             <div className="text-center py-12 text-gray-400 text-sm">
               Loading exam data...
             </div>
           ) : examTemplates.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                <svg
-                  className="w-6 h-6 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
+            classGroupId ? (
+              <div className="flex items-start gap-3 bg-amber-50 border border-amber-300 rounded-lg px-5 py-4">
+                <svg className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
+                <div>
+                  <p className="text-amber-800 font-semibold text-sm">No students found in this class group</p>
+                  <p className="text-amber-700 text-xs mt-1">
+                    Students in this class have not been assigned to a class group yet. Please contact the admin to assign students to their respective class groups.
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-500 font-medium text-sm">
-                No exam templates found
-              </p>
-              <p className="text-gray-400 text-xs mt-1">
-                No exams have been configured for this class.
-              </p>
-            </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <p className="text-gray-500 font-medium text-sm">No exam templates found</p>
+                <p className="text-gray-400 text-xs mt-1">No exams have been configured for this class.</p>
+              </div>
+            )
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse border border-gray-200 text-sm min-w-[600px]">

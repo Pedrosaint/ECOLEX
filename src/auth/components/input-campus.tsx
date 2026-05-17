@@ -212,6 +212,7 @@
 import { useState, useEffect } from "react";
 import Logo from "../../assets/logo/logo.png";
 import { IoIosArrowBack } from "react-icons/io";
+import { getSchoolBranding } from "../../utils/school-branding";
 import { useNavigate } from "react-router-dom";
 import CampusModal from "../modal/campus-modal";
 import {
@@ -225,6 +226,7 @@ const InputCampus = () => {
   const [isModal, setIsModal] = useState(false);
   const [campusCount, setCampusCount] = useState(0);
   const navigate = useNavigate();
+  const { schoolName, schoolLogo } = getSchoolBranding();
 
   // Initialize step progress and check for saved state on component mount
   useEffect(() => {
@@ -325,10 +327,10 @@ const InputCampus = () => {
 
   return (
     <section className="h-screen bg-gray-100 relative">
-      <div className="relative p-2 pt-6">
-        <img src={Logo} alt=" " />
-        <p className="absolute top-5 left-22 text-[#313131] text-3xl font-semibold">
-          COLEX
+      <div className="flex items-center gap-2 p-2 pt-6">
+        <img src={schoolLogo ?? Logo} alt={schoolName ?? "Ecolex"} loading="lazy" className={schoolLogo ? "w-12 h-12 object-contain" : ""} />
+        <p className="text-[#313131] text-3xl font-semibold">
+          {schoolName ?? "COLEX"}
         </p>
       </div>
 

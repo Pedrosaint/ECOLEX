@@ -3,16 +3,19 @@ import signUpImage from "../../assets/image/signup-image.png";
 import backgroundImage from "../../assets/image/bg-image.png";
 import Logo from "../../assets/logo/logo.png";
 import { useInView } from "react-intersection-observer";
+import { getSchoolBranding } from "../../utils/school-branding";
 
 const SharedLayout = () => {
    const { ref, inView } = useInView({
      triggerOnce: true,
      threshold: 0.1,
    });
+  const { schoolName, schoolLogo } = getSchoolBranding();
+
   return (
     <div
       ref={ ref }
-      className="min-h-screen flex flex-col justify-center py-12 px-5 md:py-10 md:px-10 lg:px-10 2xl:px-100"
+      className="h-screen overflow-hidden flex flex-col justify-center py-12 px-5 md:py-10 md:px-10 lg:px-10 2xl:px-100"
       style={{
         // backgroundImage: `url(${backgroundImage})`,
         backgroundImage: inView ? `url(${backgroundImage})` : "none",
@@ -22,10 +25,10 @@ const SharedLayout = () => {
       }}
     >
       <div className="">
-        <div className="relative p-2">
-          <img src={Logo} alt=" " loading="lazy" />
-          <p className="absolute top-5 left-22 text-[#f0eeee] text-3xl font-semibold">
-            COLEX
+        <div className="flex items-center gap-2 p-2">
+          <img src={schoolLogo ?? Logo} alt={schoolName ?? "Ecolex"} loading="lazy" className={schoolLogo ? "w-12 h-12 object-contain" : ""} />
+          <p className="text-[#f0eeee] text-3xl font-semibold">
+            {schoolName ?? "COLEX"}
           </p>
         </div>
       </div>

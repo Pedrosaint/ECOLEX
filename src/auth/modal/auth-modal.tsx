@@ -30,7 +30,7 @@ const AuthModal = ({ token, onClose }: AuthModalProps) => {
 
         {/* Checkmark Badge */}
         <div className="flex justify-center mb-6">
-          <img src={Mark} alt="success badge" className="" />
+          <img src={Mark} alt="success badge" className="" loading="lazy" />
         </div>
 
         <h2 className="text-xl font-bold text-[#141414]">
@@ -41,21 +41,16 @@ const AuthModal = ({ token, onClose }: AuthModalProps) => {
         </p>
 
         {/* Token Box */}
-        <div className="relative bg-white border border-gray-300 rounded-md px-4 py-3 mb-6">
-          {/* Centered Token Text */}
-          <span className="absolute left-34 top-1/2 transform -translate-x-1/2 -translate-y-1/2 font-medium text-[13px] md:text-lg  text-gray-800">
+        <div className="bg-white border border-gray-300 rounded-md px-4 py-3 mb-6 flex items-center justify-between gap-3">
+          <span className="font-medium text-sm text-gray-800 break-all text-left">
             {token}
           </span>
-
-          {/* Copy Button aligned to the right */}
-          <div className="flex justify-end">
-            <button
-              onClick={handleCopy}
-              className="text-[#8000BD] font-medium md:text-sm text-[10px] cursor-pointer"
-            >
-              {copied ? "Copied!" : "Copy token"}
-            </button>
-          </div>
+          <button
+            onClick={handleCopy}
+            className="text-[#8000BD] font-medium text-sm cursor-pointer whitespace-nowrap flex-shrink-0"
+          >
+            {copied ? "Copied!" : "Copy token"}
+          </button>
         </div>
 
         {/* Close Button */}

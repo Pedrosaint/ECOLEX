@@ -72,7 +72,7 @@ export default function ViewCaPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">
-                Select Class
+                Select Class <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
@@ -99,7 +99,7 @@ export default function ViewCaPage() {
 
             <div>
               <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">
-                Select Group
+                Select Group <span className="text-gray-400 text-xs font-normal">(Optional)</span>
               </label>
               <div className="relative">
                 <select
@@ -138,13 +138,10 @@ export default function ViewCaPage() {
               </div>
             </div>
 
-            {/* Subject (Optional) */}
+            {/* Subject */}
             <div>
               <label className="block text-sm font-semibold font-inter text-gray-700 mb-2">
-                Select Subject{" "}
-                <span className="text-gray-400 text-xs font-normal">
-                  (Optional)
-                </span>
+                Select Subject <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select

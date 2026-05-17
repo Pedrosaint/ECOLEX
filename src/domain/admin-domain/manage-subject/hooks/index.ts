@@ -5,6 +5,7 @@ export {
   useAssignSubjectToClassMutation,
   useGetClassSubjectsQuery,
   useDeleteSubjectMutation,
+  useDeleteClassSubjectMutation,
 } from '../api/subject.api';
 
 export { useManageSubject } from './use-manage-subject';

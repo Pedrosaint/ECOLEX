@@ -302,11 +302,61 @@ export interface GetRemarkSchemesResponse {
   data: RemarkScheme;
 }
 
+export interface GradingSchemeGrade {
+  id: number;
+  minScore: number;
+  maxScore: number;
+  grade: string;
+  remark: string;
+}
+
+export interface GradingScheme {
+  id: number;
+  schoolId: number;
+  name: string;
+  usePosition: boolean;
+  createdAt: string;
+  campusId: number | null;
+  grades: GradingSchemeGrade[];
+  classes: { classId: number }[];
+}
+
+export interface GetGradingResponse {
+  success: boolean;
+  message: string;
+  data: GradingScheme[];
+}
+
 export interface GradeRow {
   min: string;
   max: string;
   grade: string;
   remark: string;
+}
+
+export interface UpdateGradingRequest {
+  name: string;
+  usePosition: boolean;
+  classIds: number[];
+  campusId?: number | null;
+  grades: GradeItem[];
+}
+
+export interface UpdateGradingResponse {
+  success: boolean;
+  message: string;
+  data: {
+    scheme: {
+      id: number;
+      schoolId: number;
+      name: string;
+      usePosition: boolean;
+      campusId: number | null;
+      createdAt: string;
+    };
+    gradesUpdated: boolean;
+    grades: number;
+  };
 }
 
 export interface ClassSearchParams {

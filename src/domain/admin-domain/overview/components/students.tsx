@@ -55,8 +55,8 @@ export default function StudentsChart({ total, boys, girls, isLoading }: Props) 
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="flex items-center">
-                  <img src={male} alt="Male" />
-                  <img src={female} alt="Female" className="-ml-5" />
+                  <img src={male} alt="Male" loading="lazy" />
+                  <img src={female} alt="Female" className="-ml-5" loading="lazy" />
                 </div>
               </div>
             </div>

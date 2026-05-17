@@ -53,7 +53,7 @@ const ChangeStudentModal = ({ onClose }: { onClose: () => void }) => {
         {!isFiltered ? (
           <>
             <div className="w-[100px] h-[100px] mx-auto my-10">
-              <img src={students} alt="" className="" />
+              <img src={students} alt="" className="" loading="lazy" />
             </div>
             <p className="text-center text-lg font-semibold">Oops! No result was found</p>
             <p className="text-center text-gray-500 text-sm mb-9">Please select a campus, class, and group to view students.</p>

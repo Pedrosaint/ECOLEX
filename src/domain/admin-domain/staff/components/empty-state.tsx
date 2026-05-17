@@ -19,7 +19,7 @@ export function EmptyStaffState() {
           ease: "easeInOut",
         }}
       >
-        <img src={empty} alt="empty" className="h-[400px]" />
+        <img src={empty} alt="empty" className="h-[400px]" loading="lazy" />
       </motion.div>
 
       <h3 className="text-xl font-semibold text-gray-700 mb-2 text-center">

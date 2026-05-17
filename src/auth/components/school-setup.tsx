@@ -256,17 +256,17 @@ export default function SchoolSetup() {
             />
             <label
               htmlFor="name"
-              className="absolute left-3 top-2 text-white text-sm transition-all 
-              peer-placeholder-shown:text-base 
-              peer-placeholder-shown:text-gray-300 
-              peer-placeholder-shown:top-2 
-              peer-focus:top-[-12px] 
-              peer-focus:text-sm 
-              peer-focus:text-gray-100 
+              className="absolute left-3 top-2 text-white text-sm transition-all
+              peer-placeholder-shown:text-base
+              peer-placeholder-shown:text-gray-300
+              peer-placeholder-shown:top-2
+              peer-focus:top-[-12px]
+              peer-focus:text-sm
+              peer-focus:text-gray-100
               peer-not-placeholder-shown:top-[-11px]
                   peer-not-placeholder-shown:bg-black/100
                   peer-not-placeholder-shown:px-2
-              peer-focus:bg-black/90 
+              peer-focus:bg-black/90
               peer-focus:px-2
               peer-focus:backdrop-blur-4xl"
             >
@@ -302,17 +302,17 @@ export default function SchoolSetup() {
             />
             <label
               htmlFor="email"
-              className="absolute left-3 top-2 text-white text-sm transition-all 
-              peer-placeholder-shown:text-base 
-              peer-placeholder-shown:text-gray-300 
-              peer-placeholder-shown:top-2 
-              peer-focus:top-[-12px] 
-              peer-focus:text-sm 
-              peer-focus:text-gray-100 
+              className="absolute left-3 top-2 text-white text-sm transition-all
+              peer-placeholder-shown:text-base
+              peer-placeholder-shown:text-gray-300
+              peer-placeholder-shown:top-2
+              peer-focus:top-[-12px]
+              peer-focus:text-sm
+              peer-focus:text-gray-100
               peer-not-placeholder-shown:top-[-11px]
                   peer-not-placeholder-shown:bg-black/100
                   peer-not-placeholder-shown:px-2
-              peer-focus:bg-black/90 
+              peer-focus:bg-black/90
               peer-focus:px-2
               peer-focus:backdrop-blur-4xl"
             >
@@ -455,43 +455,37 @@ export default function SchoolSetup() {
         </div>
 
         {/* Upload School Logo */}
-        <div className="mb-4">
-          <label
-            htmlFor="logoUpload"
-            className="bg-white rounded-md p-3 text-center border-2 border-gray-300 cursor-pointer block"
-          >
-            {logoPreview ? (
-              <div className="flex flex-col items-center bg-gray-400">
-                {/* Image Preview with X Icon */}
-                <div className="">
-                  <img
-                    src={logoPreview}
-                    alt="Logo preview"
-                    className="w-50 h-50 object-cover"
-                  />
-                </div>
-                <div className="self-end p-1">
-                  <button
-                    type="button"
-                    onClick={handleRemoveLogo}
-                    className="flex items-center bg-red-500 text-white rounded gap-1 p-1 hover:bg-red-600 transition-colors shadow-lg"
-                  >
-                    <X className="h-4 w-4" /> <span>Remove</span>
-                  </button>
-                </div>
+        <div>
+          {logoPreview ? (
+            <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-3 py-2.5">
+              <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
+                <img src={logoPreview} alt="Logo preview" className="w-full h-full object-cover" loading="lazy" />
               </div>
-            ) : (
-              <>
-                <div className="flex justify-center">
-                  <img src={upload} alt="Upload icon" />
-                </div>
-                <p className="text-[#545454]">Upload your school logo here</p>
-                <p className="text-[#BBC0C8] text-xs">
-                  (Only *.jpeg, *.webp and *.png images will be accepted)
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-800 truncate">School Logo</p>
+                <p className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full inline-block" />
+                  Uploaded successfully
                 </p>
-              </>
-            )}
-          </label>
+              </div>
+              <button
+                type="button"
+                onClick={handleRemoveLogo}
+                className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-colors cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <label
+              htmlFor="logoUpload"
+              className="flex flex-col items-center justify-center bg-white/10 rounded-lg py-3 border-2 border-dashed border-white/40 cursor-pointer hover:border-white/70 hover:bg-white/15 transition-colors"
+            >
+              <img src={upload} alt="Upload icon" className="w-6 h-6 mb-1 opacity-80" />
+              <p className="text-sm font-medium text-white">Upload your school logo here</p>
+              <p className="text-[11px] text-white/60">(Only *.jpeg, *.webp and *.png images will be accepted)</p>
+            </label>
+          )}
           <input
             type="file"
             id="logoUpload"
@@ -507,50 +501,37 @@ export default function SchoolSetup() {
         </div>
 
         {/* Upload School Stamp */}
-        <div className="mb-4">
-          <label
-            htmlFor="stampUpload"
-            className="bg-white rounded-md p-3 text-center border-2 border-gray-300 cursor-pointer block"
-          >
-            {stampPreview ? (
-              <div className="flex flex-col items-center bg-gray-400">
-                {/* Image Preview with X Icon */}
-                <div className="">
-                  <img
-                    src={stampPreview}
-                    alt="Stamp preview"
-                    className="w-50 h-50 object-cover rounded-lg"
-                  />
-                  {/* <button
-                    type="button"
-                    onClick={handleRemoveStamp}
-                    className="absolute top-5 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-lg"
-                  >
-                    <X className="h-4 w-4" />
-                  </button> */}
-                </div>
-                <div className="self-end p-1">
-                  <button
-                    type="button"
-                    onClick={handleRemoveStamp}
-                    className="flex items-center bg-red-500 text-white rounded gap-1 p-1 hover:bg-red-600 transition-colors shadow-lg"
-                  >
-                    <X className="h-4 w-4" /> <span>Remove</span>
-                  </button>
-                </div>
+        <div>
+          {stampPreview ? (
+            <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-3 py-2.5">
+              <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
+                <img src={stampPreview} alt="Stamp preview" className="w-full h-full object-cover" loading="lazy" />
               </div>
-            ) : (
-              <>
-                <div className="flex justify-center">
-                  <img src={upload} alt="Upload icon" />
-                </div>
-                <p className="text-[#545454]">Upload your school stamp here</p>
-                <p className="text-[#BBC0C8] text-xs">
-                  (Only *.jpeg, *.webp and *.png images will be accepted)
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-800 truncate">School Stamp</p>
+                <p className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full inline-block" />
+                  Uploaded successfully
                 </p>
-              </>
-            )}
-          </label>
+              </div>
+              <button
+                type="button"
+                onClick={handleRemoveStamp}
+                className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-colors cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <label
+              htmlFor="stampUpload"
+              className="flex flex-col items-center justify-center bg-white/10 rounded-lg py-3 border-2 border-dashed border-white/40 cursor-pointer hover:border-white/70 hover:bg-white/15 transition-colors"
+            >
+              <img src={upload} alt="Upload icon" className="w-6 h-6 mb-1 opacity-80" />
+              <p className="text-sm font-medium text-white">Upload your school stamp here</p>
+              <p className="text-[11px] text-white/60">(Only *.jpeg, *.webp and *.png images will be accepted)</p>
+            </label>
+          )}
           <input
             type="file"
             id="stampUpload"
@@ -558,7 +539,6 @@ export default function SchoolSetup() {
             className="hidden"
             onChange={handleStampChange}
           />
-
           {errors.stampUrl && (
             <p className="text-[#FF8682] text-xs mt-1 flex justify-end">
               {errors.stampUrl.message}

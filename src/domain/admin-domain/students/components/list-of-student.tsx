@@ -6,6 +6,7 @@ import {
   ChevronRight,
   User,
   ArrowLeftRight,
+  AlertTriangle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoEyeOutline } from "react-icons/io5";
@@ -100,6 +101,19 @@ export default function StudentsList() {
                 </button>
               </div>
             </div>
+
+            {/* Class group warning banner */}
+            {data && data.students.length > 0 && (() => {
+              const unassigned = data.students.filter((s: Student) => !s.classGroup).length;
+              return unassigned > 0 ? (
+                <div className="flex items-start gap-3 bg-amber-50 border border-amber-300 text-amber-800 rounded-lg px-4 py-3 mb-4 text-sm">
+                  <AlertTriangle size={18} className="flex-shrink-0 mt-0.5 text-amber-500" />
+                  <span>
+                    <span className="font-semibold">{unassigned} student{unassigned !== 1 ? "s" : ""}</span> on this page {unassigned !== 1 ? "have" : "has"} not been assigned to a class group. If your school uses class groups, kindly assign them — otherwise you can ignore this notice.
+                  </span>
+                </div>
+              ) : null;
+            })()}
 
             {/* Table or Empty State */}
             <AnimatePresence mode="wait">

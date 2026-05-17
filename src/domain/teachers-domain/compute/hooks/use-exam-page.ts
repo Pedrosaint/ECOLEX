@@ -25,7 +25,9 @@ export function useExamPage() {
   const { data: subjectsData, isLoading: subjectsLoading } = useGetTeacherSubjectsByGroupQuery();
 
   const { data: examData, isLoading: examLoading } = useGetTeacherExamTemplatesQuery(
-    isFiltered && classId && classGroupId ? { classId, classGroupId, ...(subjectId ? { subjectId } : {}) } : skipToken
+    isFiltered && classId && subjectId
+      ? { classId, subjectId, ...(classGroupId ? { classGroupId } : {}) }
+      : skipToken
   );
   const [submitExamScores, { isLoading: isSubmitting }] = useSubmitExamScoresMutation();
 
@@ -79,7 +81,7 @@ export function useExamPage() {
   };
 
   const handleFilter = () => {
-    if (classId && classGroupId) {
+    if (classId && subjectId) {
       setIsFiltered(true);
       setScores({});
     }
@@ -145,8 +147,8 @@ export function useExamPage() {
     handleFilter,
     handleCancel,
     handleClearFilters,
-    hasActiveFilters: !!(classId || classGroupId),
-    canFilter: !!(classId && classGroupId),
+    hasActiveFilters: !!(classId || classGroupId || subjectId),
+    canFilter: !!(classId && subjectId),
     resetScores: () => setScores({}),
     setScore,
     getScore,

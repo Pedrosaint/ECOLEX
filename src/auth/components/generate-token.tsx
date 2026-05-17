@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo/logo.png";
 import AuthModal from "../modal/auth-modal";
 import { registerSchema } from "../auth-schema";
 import { useGenerateTokenMutation } from "../api/auth-api";
+import { getSchoolBranding } from "../../utils/school-branding";
 // import { useAppDispatch } from "../../hooks/typed.hooks";
 // import { setRegistrationData } from "../redux/auth-slice";
 
 const GenerateToken = () => {
   // const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [generateToken] = useGenerateTokenMutation();
+  const { schoolName, schoolLogo } = getSchoolBranding();
 
   const formik = useFormik({
     initialValues: {
@@ -45,6 +49,7 @@ const GenerateToken = () => {
 
   const handleCloseModal = () => {
     setToken(null);
+    navigate("/auth/auth-layout/super-admin");
   };
 
   return (
@@ -54,10 +59,10 @@ const GenerateToken = () => {
 
       <div className="">
         <div className="">
-          <div className="relative p-2">
-            <img src={Logo} alt=" " />
-            <p className="absolute top-5 left-22 text-[#313131] text-3xl font-semibold">
-              COLEX
+          <div className="flex items-center gap-2 p-2">
+            <img src={schoolLogo ?? Logo} alt={schoolName ?? "Ecolex"} loading="lazy" className={schoolLogo ? "w-12 h-12 object-contain" : ""} />
+            <p className="text-[#313131] text-3xl font-semibold">
+              {schoolName ?? "COLEX"}
             </p>
           </div>
         </div>

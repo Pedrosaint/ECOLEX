@@ -150,7 +150,7 @@ export default function ViewStudentResultTab() {
 
       {!searchParams && (
         <div className="mt-6 flex flex-col items-center justify-center py-16 px-4 text-center">
-          <img src={EmptyBroadsheet} alt="No result yet" className="w-52 h-52 object-contain" />
+          <img src={EmptyBroadsheet} alt="No result yet" className="w-52 h-52 object-contain" loading="lazy" />
           <p className="text-sm font-semibold text-gray-700">No result displayed yet</p>
           <p className="text-xs text-gray-400 max-w-xs mt-1">
             Select a session, term, class, and student above, then click{" "}

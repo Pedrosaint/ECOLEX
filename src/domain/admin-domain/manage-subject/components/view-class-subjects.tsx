@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Trash2, AlertTriangle } from "lucide-react";
 import { TableSkeleton } from "../../../../general/ui/tables-skeleton.ui";
 import { useViewClassSubjects } from "../hooks";
 
@@ -13,11 +13,16 @@ export default function ViewClassSubjects() {
     isError,
     selectedClass,
     subjects,
+    confirmDelete,
+    isDeleting,
+    setConfirmDelete,
     handleClassSelect,
     toggleDropdown,
+    handleDeleteConfirm,
   } = useViewClassSubjects();
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
@@ -107,8 +112,11 @@ export default function ViewClassSubjects() {
                 <th className="text-center py-3 px-3 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                   Subject Name
                 </th>
-                <th className="text-center py-3 px-3 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                <th className="text-center py-3 px-3 text-xs font-semibold text-gray-900 uppercase tracking-wider border-r border-gray-200">
                   Code
+                </th>
+                <th className="text-center py-3 px-3 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  Action
                 </th>
               </tr>
             </thead>
@@ -122,14 +130,23 @@ export default function ViewClassSubjects() {
                     <td className="py-3 px-3 text-center text-sm text-gray-900 border-r border-gray-200">
                       {subject.name}
                     </td>
-                    <td className="py-3 px-3 text-center text-sm text-gray-600">
+                    <td className="py-3 px-3 text-center text-sm text-gray-600 border-r border-gray-200">
                       {subject.code || "—"}
+                    </td>
+                    <td className="py-3 px-3 text-center">
+                      <button
+                        onClick={() => setConfirmDelete({ subjectId: subject.id, subjectName: subject.name })}
+                        className="p-1.5 rounded hover:bg-red-50 transition-colors cursor-pointer"
+                        title="Remove from class"
+                      >
+                        <Trash2 size={16} className="text-red-500" />
+                      </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={3}>
+                  <td colSpan={4}>
                     <div className="flex flex-col items-center justify-center py-16 px-4">
                       <div className="relative mb-5">
                         <div className="w-20 h-20 rounded-2xl bg-orange-50 border-2 border-dashed border-orange-200 flex items-center justify-center">
@@ -161,5 +178,37 @@ export default function ViewClassSubjects() {
         </div>
       )}
     </motion.div>
+
+      {/* Delete confirmation modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 text-center">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle size={22} className="text-red-500" />
+            </div>
+            <h3 className="text-base font-bold text-gray-900 mb-2">Remove Subject?</h3>
+            <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+              Remove <span className="font-semibold text-gray-700">{confirmDelete.subjectName}</span> from <span className="font-semibold text-gray-700">{selectedClass?.name}</span>? This only unassigns it from the class.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2.5 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors cursor-pointer disabled:opacity-60"
+              >
+                {isDeleting ? "Removing..." : "Yes, Remove"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

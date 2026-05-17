@@ -1,6 +1,94 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Space+Grotesk:wght@300..700&display=swap');
 
+/* ── School brand CSS variables — defaults match existing purple theme ── */
+:root {
+  --color-primary:   #8000BD;
+  --color-secondary: #8000BD;
+  --color-accent:    #f3e8ff;
+  --color-text:      #1A1A1A;
+}
+
+/* ── Remap all hardcoded brand colors to CSS variables ──
+   These rules fire whenever a school sends brandColors in the URL.
+   The JS (school-branding.ts) overwrites the :root vars above;
+   every class below then automatically reflects the new values.     ── */
+
+/* Primary hex (#8000BD) */
+.bg-\[\#8000BD\], .bg-\[\#8000bd\]       { background-color: var(--color-secondary) !important; }
+.text-\[\#8000BD\], .text-\[\#8000bd\]   { color:            var(--color-secondary) !important; }
+.border-\[\#8000BD\], .border-\[\#8000bd\] { border-color:   var(--color-secondary) !important; }
+
+/* Darker shades used for active/border states (#6f079f) */
+.bg-\[\#6f079f\]     { background-color: var(--color-secondary) !important; }
+.text-\[\#6f079f\]   { color:            var(--color-secondary) !important; }
+.border-\[\#6f079f\] { border-color:     var(--color-secondary) !important; }
+
+/* Hover shades (#6a00a0) */
+.hover\:bg-\[\#6a00a0\]:hover   { background-color: color-mix(in srgb, var(--color-secondary) 80%, black) !important; }
+.hover\:text-\[\#8000BD\]:hover { color:            var(--color-secondary) !important; }
+
+/* Secondary brand hex (#4B0082 — dark indigo used on buttons/modals) */
+.bg-\[\#4B0082\], .bg-\[\#4b0082\]           { background-color: var(--color-secondary) !important; }
+.text-\[\#4B0082\], .text-\[\#4b0082\]       { color:            var(--color-secondary) !important; }
+.border-\[\#4B0082\], .border-\[\#4b0082\]   { border-color:     var(--color-secondary) !important; }
+.hover\:bg-\[\#4B0082\]:hover, .hover\:bg-\[\#4b0082\]:hover { background-color: var(--color-secondary) !important; }
+.hover\:text-\[\#4B0082\]:hover              { color:            var(--color-secondary) !important; }
+.hover\:border-\[\#4B0082\]:hover            { border-color:     var(--color-secondary) !important; }
+.focus\:border-\[\#4B0082\]:focus            { border-color:     var(--color-secondary) !important; }
+.focus\:ring-\[\#4B0082\]:focus              { --tw-ring-color:  var(--color-secondary) !important; }
+
+/* #6a00a1 / #6a00a0 (near-identical dark shades used on buttons and hover) */
+.bg-\[\#6a00a1\], .bg-\[\#6a00a0\]           { background-color: var(--color-secondary) !important; }
+.text-\[\#6a00a1\], .text-\[\#6a00a0\]       { color:            var(--color-secondary) !important; }
+.border-\[\#6a00a1\], .border-\[\#6a00a0\]   { border-color:     var(--color-secondary) !important; }
+.hover\:bg-\[\#6a00a1\]:hover, .hover\:bg-\[\#6a00a0\]:hover { background-color: color-mix(in srgb, var(--color-secondary) 85%, black) !important; }
+
+/* Hover darken shades (#3a006b / #3a0066 / #3a0063 / #3a0068 / #5a00a8 / #5a008a) */
+.hover\:bg-\[\#3a006b\]:hover,
+.hover\:bg-\[\#3a0066\]:hover,
+.hover\:bg-\[\#3a0063\]:hover,
+.hover\:bg-\[\#3a0068\]:hover               { background-color: color-mix(in srgb, var(--color-secondary) 72%, black) !important; }
+.hover\:bg-\[\#5a00a8\]:hover,
+.hover\:bg-\[\#5a008a\]:hover               { background-color: color-mix(in srgb, var(--color-secondary) 85%, black) !important; }
+.hover\:text-\[\#3a0066\]:hover             { color:            color-mix(in srgb, var(--color-secondary) 72%, black) !important; }
+
+/* Light tint backgrounds (#E2D8FC, #F3E8FF) */
+.bg-\[\#E2D8FC\]   { background-color: color-mix(in srgb, var(--color-secondary) 15%, white) !important; }
+.bg-\[\#F3E8FF\]   { background-color: color-mix(in srgb, var(--color-secondary)  8%, white) !important; }
+.text-\[\#F3E8FF\] { color:            color-mix(in srgb, var(--color-secondary)  8%, white) !important; }
+
+/* group-hover variants (Tailwind generates `.group:hover .group-hover\:*`) */
+.group:hover .group-hover\:text-\[\#8000BD\],
+.group:hover .group-hover\:text-\[\#8000bd\] { color: var(--color-secondary) !important; }
+.group:hover .group-hover\:bg-\[\#8000BD\],
+.group:hover .group-hover\:bg-\[\#8000bd\]   { background-color: var(--color-secondary) !important; }
+
+/* Tailwind purple scale → primary */
+.text-purple-600  { color:            var(--color-secondary) !important; }
+.text-purple-700  { color:            color-mix(in srgb, var(--color-secondary) 82%, black) !important; }
+.text-purple-400  { color:            color-mix(in srgb, var(--color-secondary) 65%, white) !important; }
+.text-purple-300  { color:            color-mix(in srgb, var(--color-secondary) 45%, white) !important; }
+
+.bg-purple-600    { background-color: var(--color-secondary) !important; }
+.bg-purple-700    { background-color: color-mix(in srgb, var(--color-secondary) 82%, black) !important; }
+.bg-purple-200    { background-color: color-mix(in srgb, var(--color-secondary) 20%, white) !important; }
+.bg-purple-100    { background-color: color-mix(in srgb, var(--color-secondary) 10%, white) !important; }
+.bg-purple-50     { background-color: color-mix(in srgb, var(--color-secondary)  5%, white) !important; }
+
+.border-purple-400 { border-color: color-mix(in srgb, var(--color-secondary) 55%, white) !important; }
+.border-purple-200 { border-color: color-mix(in srgb, var(--color-secondary) 25%, white) !important; }
+.border-purple-100 { border-color: color-mix(in srgb, var(--color-secondary) 15%, white) !important; }
+
+/* Checkbox (uses hardcoded hex in CSS, not a Tailwind class) */
+.custom-checkbox:checked {
+  background-color: var(--color-secondary) !important;
+  border-color:     var(--color-secondary) !important;
+}
+.custom-checkbox:focus {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-secondary) 30%, transparent) !important;
+}
+
 
 body {
 
@@ -256,12 +344,12 @@ select option {
 }
 
 .custom-checkbox:checked {
-  background-color: #8000bd; /* Your purple color */
-  border-color: #8000bd;
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
 }
 
 .custom-checkbox:focus {
-  box-shadow: 0 0 0 2px rgba(128, 0, 189, 0.2); /* purple focus ring */
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-secondary) 30%, transparent);
 }
 
 /* Checkmark - hidden by default */

@@ -3,6 +3,9 @@ import { BASE_URL } from "../../../../redux/apiConfig";
 import type {
   CreateGradingRequest,
   CreateGradingResponse,
+  GetGradingResponse,
+  UpdateGradingRequest,
+  UpdateGradingResponse,
   GetAcademicSessionsResponse,
   BroadsheetResponse,
   BroadsheetParams,
@@ -33,14 +36,37 @@ export const gradingApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Results", "RemarkSchemes"],
+  tagTypes: ["Results", "RemarkSchemes", "Grading"],
   endpoints: (builder) => ({
+    getGrading: builder.query<GetGradingResponse, void>({
+      query: () => ({ url: "admin/grading", method: "GET" }),
+      providesTags: ["Grading"],
+    }),
+
+    deleteGrading: builder.mutation<{ success: boolean; message: string }, number>({
+      query: (schemeId) => ({
+        url: `admin/grading/${schemeId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Grading"],
+    }),
+
+    updateGrading: builder.mutation<UpdateGradingResponse, { schemeId: number; body: UpdateGradingRequest }>({
+      query: ({ schemeId, body }) => ({
+        url: `admin/grading/${schemeId}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Grading"],
+    }),
+
     createGrading: builder.mutation<CreateGradingResponse, CreateGradingRequest>({
       query: (body) => ({
         url: "admin/grading/create",
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Grading"],
     }),
 
     getAcademicSessions: builder.query<GetAcademicSessionsResponse, void>({
@@ -123,7 +149,10 @@ export const gradingApi = createApi({
 });
 
 export const {
+  useGetGradingQuery,
   useCreateGradingMutation,
+  useDeleteGradingMutation,
+  useUpdateGradingMutation,
   useGetAcademicSessionsQuery,
   useGetBroadsheetQuery,
   useGetStudentResultQuery,

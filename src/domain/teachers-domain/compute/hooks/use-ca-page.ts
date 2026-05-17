@@ -27,8 +27,8 @@ export function useCaPage() {
   const academicSessionId = activeTermData?.data?.activeSession?.id;
 
   const { data: caData, isLoading: caLoading, error: caError } = useGetTeacherCaTemplatesQuery(
-    isFiltered && classId && classGroupId
-      ? { classId, classGroupId, ...(subjectId ? { subjectId } : {}) }
+    isFiltered && classId && subjectId
+      ? { classId, subjectId, ...(classGroupId ? { classGroupId } : {}) }
       : skipToken
   );
   const [submitCaScores, { isLoading: isSubmitting, isSuccess, reset: resetSubmit }] =
@@ -95,7 +95,7 @@ export function useCaPage() {
   };
 
   const handleFilter = () => {
-    if (classId && classGroupId) {
+    if (classId && subjectId) {
       setIsFiltered(true);
       setScores({});
     }
@@ -164,8 +164,8 @@ export function useCaPage() {
     handleFilter,
     handleCancel,
     handleClearFilters,
-    hasActiveFilters: !!(classId || classGroupId),
-    canFilter: !!(classId && classGroupId),
+    hasActiveFilters: !!(classId || classGroupId || subjectId),
+    canFilter: !!(classId && subjectId),
     setScore,
     getScore,
     resetScores: () => setScores({}),

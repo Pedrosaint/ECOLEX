@@ -5,7 +5,7 @@ import ViewCaPage from "./view-ca-page";
 import ViewExamPage from "./view-exam-page";
 import SubmitResultsPanel from "./submit-results-panel";
 
-const tabs = ["CA", "Exam", "View CA", "View Exam"];
+const tabs = ["CA", "Exam", "View CA", "View Exam", "Submit Final Exam"];
 
 const ComputeResult = () => {
   const [activeTab, setActiveTab] = useState("CA");
@@ -38,9 +38,8 @@ const ComputeResult = () => {
         {activeTab === "Exam" && <ExamPage />}
         {activeTab === "View CA" && <ViewCaPage />}
         {activeTab === "View Exam" && <ViewExamPage />}
+        {activeTab === "Submit Final Exam" && <SubmitResultsPanel />}
       </div>
-
-      <SubmitResultsPanel />
     </div>
   );
 };

@@ -1,4 +1,5 @@
-import { Trash2, Plus, Pencil } from "lucide-react";
+import { useState } from "react";
+import { Trash2, Plus, Pencil, AlertTriangle } from "lucide-react";
 import ConfirmCancelModal from "../../../../general/common/confirm-cancel.modal";
 import { useDefaultTemplate } from "../hooks";
 
@@ -19,6 +20,18 @@ export default function DefaultTemplate() {
     handleConfirmedCancel,
     startEditing,
   } = useDefaultTemplate();
+
+  const [showExamWarning, setShowExamWarning] = useState(false);
+  const [showEditWarning, setShowEditWarning] = useState(false);
+
+  const handleSaveClick = () => {
+    const hasExam = rows.some((r) => r.isExam);
+    if (!hasExam) {
+      setShowExamWarning(true);
+      return;
+    }
+    handleSubmit();
+  };
 
   if (isLoadingTemplate) {
     return (
@@ -51,6 +64,54 @@ export default function DefaultTemplate() {
         successMessage="Your changes have been discarded"
       />
 
+      {showEditWarning && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 text-center">
+            <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle size={22} className="text-amber-500" />
+            </div>
+            <h3 className="text-base font-bold text-gray-900 mb-2">Edit Template?</h3>
+            <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+              Any changes made to this template will <span className="font-semibold text-gray-700">directly affect</span> the score structure for all teachers' <span className="font-semibold text-[#8000BD]">CA</span> and <span className="font-semibold text-[#8000BD]">Exam</span> records. Proceed with caution.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowEditWarning(false)}
+                className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { setShowEditWarning(false); startEditing(); }}
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[#8000BD] text-white text-sm font-medium hover:bg-[#6a00a1] transition-colors cursor-pointer"
+              >
+                Proceed to Edit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showExamWarning && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 text-center">
+            <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle size={22} className="text-amber-500" />
+            </div>
+            <h3 className="text-base font-bold text-gray-900 mb-2">Exam Required</h3>
+            <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+              You must toggle at least <span className="font-semibold text-gray-700">one entry</span> as <span className="font-semibold text-[#8000BD]"> Exam</span> before saving the template.
+            </p>
+            <button
+              onClick={() => setShowExamWarning(false)}
+              className="w-full px-4 py-2.5 rounded-lg bg-[#8000BD] text-white text-sm font-medium hover:bg-[#6a00a1] transition-colors cursor-pointer"
+            >
+              Go Back & Set Exam
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-start justify-between mb-6">
           <div>
@@ -61,7 +122,7 @@ export default function DefaultTemplate() {
           </div>
           {savedRows && !isEditing && (
             <button
-              onClick={startEditing}
+              onClick={() => setShowEditWarning(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#8000BD] text-[#8000BD] text-sm font-medium hover:bg-purple-50 transition-colors cursor-pointer"
             >
               <Pencil className="w-3.5 h-3.5" />
@@ -178,7 +239,7 @@ export default function DefaultTemplate() {
 
             <div className="flex flex-col sm:flex-row gap-3 mt-8">
               <button
-                onClick={handleSubmit}
+                onClick={handleSaveClick}
                 disabled={isLoading}
                 className={`flex-1 py-3 rounded-xl text-white text-sm font-semibold bg-[#8000BD] hover:bg-[#6a00a1] transition-colors ${isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"}`}
               >

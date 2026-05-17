@@ -56,7 +56,7 @@ const EmptyStaffData = ({ onAddStaffClick, activeTab = "All" }: EmptyStaffDataPr
             ease: "easeInOut",
           }}
         >
-          <img src={currentImage} alt={title} className="h-[300px]" />
+          <img src={currentImage} alt={title} className="h-[300px]" loading="lazy" />
         </motion.div>
 
         {/* Text content with glassmorphism */}
