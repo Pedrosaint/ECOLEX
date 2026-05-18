@@ -80,6 +80,28 @@
 .border-purple-200 { border-color: color-mix(in srgb, var(--color-secondary) 25%, white) !important; }
 .border-purple-100 { border-color: color-mix(in srgb, var(--color-secondary) 15%, white) !important; }
 
+/* #C48ADF — light purple used for links (Terms, Privacy Policies, Login) */
+.text-\[\#C48ADF\], .text-\[\#c48adf\] { color: var(--color-secondary) !important; }
+.bg-\[\#C48ADF\], .bg-\[\#c48adf\]     { background-color: var(--color-secondary) !important; }
+
+/* focus:ring overrides — ring color must target --tw-ring-color */
+.focus\:ring-\[\#8000BD\]:focus,
+.focus\:ring-\[\#8000bd\]:focus         { --tw-ring-color: var(--color-secondary) !important; }
+.focus\:ring-\[\#4B0082\]:focus,
+.focus\:ring-\[\#4b0082\]:focus         { --tw-ring-color: var(--color-secondary) !important; }
+.focus\:ring-purple-400:focus           { --tw-ring-color: color-mix(in srgb, var(--color-secondary) 60%, white) !important; }
+.focus\:ring-purple-500:focus           { --tw-ring-color: var(--color-secondary) !important; }
+
+/* Indigo utilities (used on checkbox) */
+.text-indigo-600                        { color:            var(--color-secondary) !important; }
+.focus\:ring-indigo-500:focus           { --tw-ring-color:  var(--color-secondary) !important; }
+.bg-indigo-600                          { background-color: var(--color-secondary) !important; }
+
+/* Native browser focus outline on select/input elements */
+select:focus, input:focus, textarea:focus {
+  outline-color: var(--color-secondary) !important;
+}
+
 /* Checkbox (uses hardcoded hex in CSS, not a Tailwind class) */
 .custom-checkbox:checked {
   background-color: var(--color-secondary) !important;
