@@ -101,7 +101,6 @@ export function useSetupGrade() {
   const handleUpdate = async () => {
     if (!editingScheme) return;
     if (!editName.trim()) { toast.error("Scheme name is required"); return; }
-    if (editClassIds.length === 0) { toast.error("Select at least one class"); return; }
     const invalid = editGrades.some(
       (g) => !g.grade.trim() || !g.remark.trim() || g.min === "" || g.max === "" || Number(g.min) > Number(g.max)
     );

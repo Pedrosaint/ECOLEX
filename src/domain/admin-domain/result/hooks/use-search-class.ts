@@ -25,7 +25,7 @@ export function useSearchClass({ onSearch, isSearching }: UseSearchClassProps) {
   const terms = selectedSession?.terms ?? [];
   const filteredGroups = (groupsData?.groups ?? []).filter((g) => g.classId === Number(classId));
 
-  const canSearch = !!(campusId && sessionId && termId && classId && classGroupId);
+  const canSearch = !!(campusId && sessionId && termId && classId);
 
   const handleSessionChange = (val: string) => { setSessionId(val); setTermId(""); };
   const handleClassChange = (val: string) => { setClassId(val); setClassGroupId(""); };
@@ -37,7 +37,7 @@ export function useSearchClass({ onSearch, isSearching }: UseSearchClassProps) {
       sessionId: Number(sessionId),
       termId: Number(termId),
       classId: Number(classId),
-      classGroupId: Number(classGroupId),
+      ...(classGroupId ? { classGroupId: Number(classGroupId) } : {}),
     });
   };
 

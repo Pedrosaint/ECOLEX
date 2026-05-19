@@ -19,7 +19,7 @@ export function useSubmitResults() {
   const { data: classGroupsData, isLoading: classGroupsLoading } = useGetTeacherClassGroupsQuery();
   const { data: activeTermData } = useGetActiveTermQuery();
   const { data: subjectsData, isLoading: subjectsLoading } = useGetTeacherSubjectsByGroupQuery(
-    classId && classGroupId ? { classGroupId, classId } : skipToken
+    classId ? { classId } : skipToken
   );
   const [submitResults, { isLoading: isSubmitting, reset }] = useSubmitResultsMutation();
 
@@ -87,6 +87,6 @@ export function useSubmitResults() {
     isSubmitting,
     handleSubmit,
     handleReset,
-    canSubmit: !!(classId && classGroupId && subjectId),
+    canSubmit: !!(classId && subjectId),
   };
 }

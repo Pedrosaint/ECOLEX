@@ -67,12 +67,12 @@ export const teacherOverviewApi = createApi({
 
     getTeacherCaTemplates: builder.query<TeacherCaTemplatesResponse, TeacherCaTemplatesParams>({
       query: ({ classId, classGroupId, subjectId }) =>
-        `teacher/students-with-scores?classId=${classId}&classGroupId=${classGroupId}${subjectId ? `&subjectId=${subjectId}` : ""}`,
+        `teacher/students-with-scores?classId=${classId}${classGroupId != null ? `&classGroupId=${classGroupId}` : ""}&subjectId=${subjectId}`,
     }),
 
     getTeacherExamTemplates: builder.query<TeacherExamTemplatesResponse, TeacherExamTemplatesParams>({
       query: ({ classId, classGroupId, subjectId }) =>
-        `teacher/students-with-scores?classId=${classId}&classGroupId=${classGroupId}${subjectId ? `&subjectId=${subjectId}` : ""}`,
+        `teacher/students-with-scores?classId=${classId}${classGroupId != null ? `&classGroupId=${classGroupId}` : ""}&subjectId=${subjectId}`,
     }),
 
     submitCaScores: builder.mutation<ScoreSubmitResponse, SubmitCaScoresRequest>({

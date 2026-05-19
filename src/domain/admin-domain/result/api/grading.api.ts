@@ -75,7 +75,7 @@ export const gradingApi = createApi({
 
     getBroadsheet: builder.query<BroadsheetResponse, BroadsheetParams>({
       query: ({ classId, classGroupId, campusId, sessionId, termId }) => ({
-        url: `admin/broadsheet?classId=${classId}&classGroupId=${classGroupId}&campusId=${campusId}&sessionId=${sessionId}&termId=${termId}`,
+        url: `admin/broadsheet?classId=${classId}${classGroupId != null ? `&classGroupId=${classGroupId}` : ""}&campusId=${campusId}&sessionId=${sessionId}&termId=${termId}`,
         method: "GET",
       }),
     }),

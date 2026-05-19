@@ -72,12 +72,16 @@ export function useCaPage() {
         const key = `${s.id}-0`;
         s.caScores?.forEach((ca) => {
           if (ca.score !== null && ca.score !== undefined) {
-            initialScores[`${key}_${ca.caName}`] = String(ca.score);
+            // Use caId to find the exact template name used as the column key
+            const template = caTemplates.find((t) => t.id === ca.caId);
+            const colKey = template?.name ?? ca.caName;
+            initialScores[`${key}_${colKey}`] = String(ca.score);
           }
         });
       });
       setScores(initialScores);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [students]);
 
   // Score helpers

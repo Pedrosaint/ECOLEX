@@ -60,7 +60,7 @@ export interface BroadsheetRow {
 
 export interface BroadsheetParams {
   classId: number;
-  classGroupId: number;
+  classGroupId?: number;
   campusId: number;
   sessionId: number;
   termId: number;
@@ -361,7 +361,7 @@ export interface UpdateGradingResponse {
 
 export interface ClassSearchParams {
   classId: number;
-  classGroupId: number;
+  classGroupId?: number;
   campusId: number;
   sessionId: number;
   termId: number;

@@ -147,19 +147,19 @@ export default function SubmitResultsPanel() {
             <label className="block text-xs font-semibold text-gray-600 mb-1.5">Select Subject</label>
             <div className="relative">
               <select
-                className={`${selectBase} ${!classGroupId
+                className={`${selectBase} ${!classId
                   ? "text-gray-400 bg-gray-50 cursor-not-allowed"
                   : subjectId
                     ? "text-gray-900"
                     : "text-gray-400"
                   }`}
-                disabled={!classGroupId || subjectsLoading}
+                disabled={!classId || subjectsLoading}
                 value={subjectId ?? ""}
                 onChange={(e) => setSubjectId(e.target.value ? Number(e.target.value) : null)}
               >
                 <option value="">
-                  {!classGroupId
-                    ? "Select a group first"
+                  {!classId
+                    ? "Select a class first"
                     : subjectsLoading
                       ? "Loading..."
                       : subjects.length === 0
